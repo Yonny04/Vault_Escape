@@ -1,6 +1,6 @@
 package vaultescape.entity;
 
-public class Entity {
+public abstract class Entity {
     int x, y;
     int speed;
 }
