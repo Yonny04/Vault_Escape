@@ -10,7 +10,7 @@
 //     Random r = new Random();
 //     GamePanel gp;
 
-//     // private int enemyMove = r.nextInt(4);
+//     private int enemyMove = r.nextInt(4);
     
 //     public Enemy(GamePanel gp){
 //         this.gp = gp;

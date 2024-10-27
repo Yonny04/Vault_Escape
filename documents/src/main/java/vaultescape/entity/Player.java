@@ -5,11 +5,14 @@ import java.awt.Graphics2D;
 
 import vaultescape.map.GamePanel;
 import vaultescape.map.KeyDetector;
+import vaultescape.map.Wall;
+import vaultescape.entity.Entity;
 
 public class Player extends Entity{
     GamePanel gp;
     KeyDetector keyh;
     public boolean alive = true;
+    Wall wall;
 
     public Player(GamePanel gp, KeyDetector keyh){
         this.gp = gp;
@@ -19,8 +22,8 @@ public class Player extends Entity{
 
     //Sets default values
     public void setDefault(){
-        x = 10;
-        y = 10;
+        x = 50;
+        y = 50;
         speed = 5;
     }
 
@@ -30,17 +33,15 @@ public class Player extends Entity{
         if(keyh.a == true)  x -= speed;
         if(keyh.s == true)  y += speed; 
         if(keyh.d == true)  x += speed; 
-        
-        if(alive == false){
-            //shows menu for when the player dies
-            //for later...
-            System.out.println("Player Died");
 
-        }
-        if (x < 0) x = 0;
-        if (x > gp.screenWidth - gp.tilesize) {x = gp.screenWidth - gp.tilesize;} 
-        if (y < 0) y = 0;
+        // Borders for the outer line
+        if (x < gp.tilesize) x = gp.tilesize;
+        if (x > gp.screenWidth - gp.tilesize) x = gp.screenWidth - gp.tilesize; 
+        if (y < gp.tilesize) y = gp.tilesize;
         if (y > gp.screenHeight - gp.tilesize) y = gp.screenHeight - gp.tilesize;
+
+        // wall.collision = false;
+        // gp.cck.checkTile(this);
     }
 
     //draw method for player entity
