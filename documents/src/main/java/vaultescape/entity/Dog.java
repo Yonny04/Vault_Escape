@@ -3,6 +3,7 @@ package vaultescape.entity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
+
 import vaultescape.map.GamePanel;
 
 public class Dog extends Enemy {
@@ -63,7 +64,7 @@ public class Dog extends Enemy {
     // Draw method for dog entity
     @Override
     public void draw(Graphics2D g2) {
-        g2.setColor(Color.brown); // Color of the dog
+        g2.setColor(Color.orange); // Color of the dog
         g2.fillRect(x, y, gp.tilesize - 3, gp.tilesize - 3); // Drawing the dog
     }
 }

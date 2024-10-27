@@ -2,7 +2,6 @@ package vaultescape.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import vaultescape.map.GamePanel;
 
 public class BonusReward extends Reward {
     private int points;

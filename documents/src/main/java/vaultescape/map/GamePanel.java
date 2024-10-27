@@ -1,8 +1,7 @@
 package vaultescape.map;
 
-import java.awt.Dimension;
 import java.awt.Color;
-
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -28,7 +27,7 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread; //to run the game "ticks"
     KeyDetector keyh = new KeyDetector();
     TileGenerator tm = new TileGenerator(this);
-    Player player = new Player(this,keyh);
+    public Player player = new Player(this,keyh);
     // public CollisionCheck cck = new CollisionCheck(this);
     
 
