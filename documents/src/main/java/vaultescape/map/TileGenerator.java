@@ -28,10 +28,10 @@ public class TileGenerator  {
 
     // Draws tiles in gamepanel
     public void draw(Graphics2D g2){
-        for(int i=0; i <= 200; i= i + gp.tilesize){
+        for(int i=0; i <= gp.screenWidth; i= i + gp.tilesize){
             g2.drawImage(wall[0].image, i, 0, gp.tilesize, gp.tilesize,null);
         }
-        for(int i=0; i <= 200; i= i+ gp.tilesize){
+        for(int i=0; i <= gp.screenHeight; i= i+ gp.tilesize){
             g2.drawImage(wall[0].image, 0, i, gp.tilesize, gp.tilesize,null);
         }
     } 

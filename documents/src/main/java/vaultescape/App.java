@@ -8,7 +8,6 @@ import vaultescape.map.GamePanel;
 public class App extends JFrame{
     public static void main(String[] args) {
         App window = new App();
-        window.setVisible(true); //visibility of window
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         window.setSize(1980, 1080); //setting the height and width
@@ -17,10 +16,13 @@ public class App extends JFrame{
 
         GamePanel panel = new GamePanel(); // object for game panel
         window.add(panel); // Adding the board
+        
         panel.startGameThread(); //start the tic
 
+        window.setVisible(true); //visibility of window
         window.revalidate(); // Revalidate the window
         window.repaint();    // Repaint the window
 
+        
     }
 }

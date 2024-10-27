@@ -19,16 +19,16 @@ public class Player extends Entity{
 
     //Sets default values
     public void setDefault(){
-        x = 100; 
-        y = 100;
+        x = 10;
+        y = 10;
         speed = 5;
     }
 
     // Update method for player entity
     public void update(){
-        if(keyh.w == true)  {y -= speed; System.out.println("W");} 
-        if(keyh.a == true)  x -= speed; 
-        if(keyh.s == true)  {y += speed; System.out.println("S");}
+        if(keyh.w == true)  y -= speed; 
+        if(keyh.a == true)  x -= speed;
+        if(keyh.s == true)  y += speed; 
         if(keyh.d == true)  x += speed; 
         
         if(alive == false){
@@ -38,9 +38,9 @@ public class Player extends Entity{
 
         }
         if (x < 0) x = 0;
-        if (x > gp.maxColume - gp.tilesize) x = gp.maxColume - gp.tilesize; // Assuming player width is 32
+        if (x > gp.screenWidth - gp.tilesize) {x = gp.screenWidth - gp.tilesize;} 
         if (y < 0) y = 0;
-        if (y > gp.maxRow - gp.tilesize) y = gp.maxRow - gp.tilesize; // Assuming player height is 32
+        if (y > gp.screenHeight - gp.tilesize) y = gp.screenHeight - gp.tilesize;
     }
 
     //draw method for player entity

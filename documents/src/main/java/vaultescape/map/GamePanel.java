@@ -17,17 +17,17 @@ public class GamePanel extends JPanel implements Runnable{
     final int scale = 3; //scaling to 16 by 3 to make a bigger 
 
     public final int tilesize = defaultTileSize * scale;
-    public final int maxColume = 1530;
-    public final int maxRow = 835;
+    final int maxColume = 32;
+    final int maxRow = 18;
 
-    final int screenWidth = tilesize * maxColume; 
-    final int screenHeight = tilesize * maxRow;
+    public final int screenWidth = tilesize * maxColume; 
+    public final int screenHeight = tilesize * maxRow;
 
-    final int fps = 60;
+    final int fps = 120;
 
     Thread gameThread; //to run the game "ticks"
     KeyDetector keyh = new KeyDetector();
-    // TileGenerator tm = new TileGenerator(this);
+    TileGenerator tm = new TileGenerator(this);
     Player player = new Player(this,keyh);
     
 
@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
+        this.requestFocusInWindow(); // Request focus for capturing key events
     }
 
     //begins tic
@@ -81,14 +82,11 @@ public class GamePanel extends JPanel implements Runnable{
     //repaints the board
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        
         Graphics2D g2 = (Graphics2D)g;
-
-        // tm.draw(g2);
+        tm.draw(g2);
         player.draw(g2);
+        System.out.println("tic");
         g2.dispose();   // removes memory
-
-
     }
 
 
