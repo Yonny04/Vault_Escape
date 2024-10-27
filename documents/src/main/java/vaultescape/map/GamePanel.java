@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-// import vaultescape.map.TileManager;
 import javax.swing.JPanel;
 
 import vaultescape.entity.Player;
@@ -18,8 +17,8 @@ public class GamePanel extends JPanel implements Runnable{
     final int scale = 3; //scaling to 16 by 3 to make a bigger 
 
     public final int tilesize = defaultTileSize * scale;
-    final int maxColume = 1980;
-    final int maxRow = 1080;
+    public final int maxColume = 1530;
+    public final int maxRow = 835;
 
     final int screenWidth = tilesize * maxColume; 
     final int screenHeight = tilesize * maxRow;
@@ -28,9 +27,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     Thread gameThread; //to run the game "ticks"
     KeyDetector keyh = new KeyDetector();
+    // TileGenerator tm = new TileGenerator(this);
     Player player = new Player(this,keyh);
     
-    // TileManager tm = new TileManager(this);
 
 
     public GamePanel() {
@@ -82,10 +81,11 @@ public class GamePanel extends JPanel implements Runnable{
     //repaints the board
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+        
         Graphics2D g2 = (Graphics2D)g;
 
+        // tm.draw(g2);
         player.draw(g2);
-
         g2.dispose();   // removes memory
 
 
