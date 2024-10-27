@@ -12,13 +12,15 @@ public class App extends JFrame{
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         window.setSize(1980, 1080); //setting the height and width
-        window.setResizable(true); //user cannot resize
+        window.setResizable(false); //user cannot resize
         window.setTitle("VaultEscape"); //title of the window
 
         GamePanel panel = new GamePanel(); // object for game panel
         window.add(panel); // Adding the board
-        
         panel.startGameThread(); //start the tic
+
+        window.revalidate(); // Revalidate the window
+        window.repaint();    // Repaint the window
 
     }
 }

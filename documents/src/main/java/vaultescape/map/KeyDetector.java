@@ -14,19 +14,10 @@ public class KeyDetector implements KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if(key == KeyEvent.VK_W){
-            w = true;
-        }
-        if(key == KeyEvent.VK_A){
-            a = true;
-        }
-        if(key == KeyEvent.VK_S){
-            s = true;
-        }
-        if(key == KeyEvent.VK_D){
-            d = true;
-        }
-        
+        if(key == KeyEvent.VK_W)   w = true;
+        if(key == KeyEvent.VK_A)   a = true;
+        if(key == KeyEvent.VK_S)   s = true;
+        if(key == KeyEvent.VK_D)   d = true;
     }
 
     //KeyReleased
@@ -34,18 +25,10 @@ public class KeyDetector implements KeyListener{
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
 
-        if(key == KeyEvent.VK_W){
-            w = false;
-        }
-        if(key == KeyEvent.VK_A){
-            a = false;
-        }
-        if(key == KeyEvent.VK_S){
-            s = false;
-        }
-        if(key == KeyEvent.VK_D){
-            d = false;
-        }
+        if(key == KeyEvent.VK_W) w = false;
+        if(key == KeyEvent.VK_A) a = false;
+        if(key == KeyEvent.VK_S) s = false;
+        if(key == KeyEvent.VK_D) d = false;
     }
     
 }
