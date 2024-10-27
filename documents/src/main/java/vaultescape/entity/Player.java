@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import vaultescape.map.GamePanel;
 import vaultescape.map.KeyDetector;
 import vaultescape.map.Wall;
-import vaultescape.entity.Entity;
 
 public class Player extends Entity{
     GamePanel gp;
