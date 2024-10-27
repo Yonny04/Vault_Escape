@@ -34,5 +34,11 @@ public class TileGenerator  {
         for(int i=0; i <= gp.screenHeight; i= i+ gp.tilesize){
             g2.drawImage(wall[0].image, 0, i, gp.tilesize, gp.tilesize,null);
         }
+        for(int i=192; i <= gp.screenWidth; i= i+ gp.tilesize){
+            g2.drawImage(wall[0].image, i, 144, gp.tilesize, gp.tilesize,null);
+        }
+        for(int i=144; i <= gp.screenHeight; i= i+ gp.tilesize){
+            g2.drawImage(wall[0].image, 144, i, gp.tilesize, gp.tilesize,null);
+        }
     } 
 }

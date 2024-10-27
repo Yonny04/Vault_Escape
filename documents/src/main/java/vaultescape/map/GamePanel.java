@@ -23,7 +23,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int screenWidth = tilesize * maxColume; 
     public final int screenHeight = tilesize * maxRow;
 
-    final int fps = 120;
+    final int fps = 60;
 
     Thread gameThread; //to run the game "ticks"
     KeyDetector keyh = new KeyDetector();
@@ -85,7 +85,7 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D g2 = (Graphics2D)g;
         tm.draw(g2);
         player.draw(g2);
-        System.out.println("tic");
+        // System.out.println("tic");
         g2.dispose();   // removes memory
     }
 
