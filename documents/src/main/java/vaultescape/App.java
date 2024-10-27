@@ -8,7 +8,7 @@ import vaultescape.map.GamePanel;
 public class App extends JFrame{
     public static void main(String[] args) {
         App window = new App();
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
 
         window.setSize(1980, 1080); //setting the height and width
         window.setResizable(false); //user cannot resize
