@@ -13,22 +13,23 @@ import vaultescape.entity.Player;
 
 public class GamePanel extends JPanel implements Runnable{
     // Setting the game panel to appear in the window app
-    final int defaultTileSize = 16; // creating
+    final int defaultTileSize = 8; // creating
     final int scale = 3; //scaling to 16 by 3 to make a bigger 
 
     public final int tilesize = defaultTileSize * scale;
-    final int maxColume = 32;
-    final int maxRow = 18;
+    final int maxColume = 63;
+    final int maxRow = 34;
 
     public final int screenWidth = tilesize * maxColume; 
     public final int screenHeight = tilesize * maxRow;
 
-    final int fps = 60;
+    final int fps = 80;
 
     Thread gameThread; //to run the game "ticks"
     KeyDetector keyh = new KeyDetector();
     TileGenerator tm = new TileGenerator(this);
     Player player = new Player(this,keyh);
+    // public CollisionCheck cck = new CollisionCheck(this);
     
 
 
