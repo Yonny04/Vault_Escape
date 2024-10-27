@@ -1,2 +1,5 @@
 # VSCode specific ignores
 .vscode/*
+
+# Java target ignores
+documents/target/*
