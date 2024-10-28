@@ -4,90 +4,75 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import javax.swing.JPanel;
-
 import vaultescape.entity.Player;
 
-
-public class GamePanel extends JPanel implements Runnable{
-    // Setting the game panel to appear in the window app
-    final int defaultTileSize = 8; // creating
-    final int scale = 3; //scaling to 16 by 3 to make a bigger 
-
+public class GamePanel extends JPanel implements Runnable {
+    final int defaultTileSize = 8;
+    final int scale = 3;
     public final int tilesize = defaultTileSize * scale;
-    final int maxColume = 63;
-    final int maxRow = 34;
-
-    public final int screenWidth = tilesize * maxColume; 
-    public final int screenHeight = tilesize * maxRow;
+    public final int screenWidth = tilesize * 63;
+    public final int screenHeight = tilesize * 34;
 
     final int fps = 60;
 
-    Thread gameThread; //to run the game "ticks"
-    KeyDetector keyh = new KeyDetector();
-    TileGenerator tm = new TileGenerator(this);
-    public Player player = new Player(this,keyh);
-    // public CollisionCheck cck = new CollisionCheck(this);
-    
+    private Thread gameThread;
+    private KeyDetector keyh = new KeyDetector();
+    private TileGenerator tileGenerator = new TileGenerator(this);
+    private Player player = new Player(this, keyh);
 
-
+    public Player getPlayer(){
+        return player;
+    }
+    // Constructor
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
-        this.requestFocusInWindow(); // Request focus for capturing key events
     }
 
-    //begins tic
-    public void startGameThread(){
+    public TileGenerator getTileGenerator() {
+        return tileGenerator;  // Provide access to tile generator
+    }
+
+    public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
-    
-    // A clock to the game
+
     @Override
     public void run() {
-        double drawIntv = 1000000000/fps;
-        double nextIntv = System.nanoTime() + drawIntv;
+        double drawInterval = 1000000000 / fps;
+        double nextDrawTime = System.nanoTime() + drawInterval;
 
-        while(gameThread != null){
-
+        while (gameThread != null) {
             update();
             repaint();
 
-            try{
-                double remainTime = nextIntv - System.nanoTime();
-                remainTime = remainTime/1000000;
-
-                if(remainTime < 0){
-                    remainTime = 0;
-                }
-                Thread.sleep((long) remainTime);
-                nextIntv += drawIntv;
-            }
-            catch(InterruptedException e){
+            try {
+                double remainingTime = nextDrawTime - System.nanoTime();
+                remainingTime /= 1000000;
+                if (remainingTime < 0) remainingTime = 0;
+                Thread.sleep((long) remainingTime);
+                nextDrawTime += drawInterval;
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    // Update function for repainting (Drawing)
-    public void update(){
-        player.update();
+    public void update() {
+        player.update();  // Update player (with collision handling)
     }
 
-    //repaints the board
-    public void paintComponent(Graphics g){
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-        tm.draw(g2);
-        player.draw(g2);
-        // System.out.println("tic");
-        g2.dispose();   // removes memory
+        Graphics2D g2 = (Graphics2D) g;
+        tileGenerator.draw(g2);  // Draw walls
+        player.draw(g2);  // Draw player
+        g2.dispose();
     }
-
-
-} 
+}
