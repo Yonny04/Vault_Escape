@@ -59,7 +59,7 @@ public class TileGenerator {
 
             for (int row = 0; row < gp.numRows; row++) {
                 String line = reader.readLine();
-                String numberStrings[] = line.split(" ");
+                String numberStrings[] = line.split("\t");
                 for (int col = 0; col < gp.numCols; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
                     if (tileNumber > 0) createTile(col,row,tileNumber);
