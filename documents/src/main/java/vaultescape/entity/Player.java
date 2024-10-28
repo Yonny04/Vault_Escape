@@ -15,7 +15,7 @@ public class Player extends Entity {
 
     int direction = 1;  
     double spriteCounter;  
-    BufferedImage[][] spritesheet;  
+    BufferedImage spritesheet;  
 
     // Constructor
     public Player(GamePanel gp, KeyDetector keyh) {
@@ -27,25 +27,16 @@ public class Player extends Entity {
 
     // Sets default values
     public void setDefault() {
-        x = 50;  
-        y = 50;
+        x = 8 * gp.tilesize;  
+        y = 8 * gp.tilesize;
         speed = 5; 
     }
 
      //Sets player spritesheet
     public void setPlayerSpritesheet() {
         try {
-            spritesheet = new BufferedImage[4][3];
-
-            for (int i = 0; i < 3; i++) {
-                spritesheet[0][i] = ImageIO.read(getClass().getResourceAsStream(String.format("/entity/player/up%d.png", i + 1)));
-                spritesheet[1][i] = ImageIO.read(getClass().getResourceAsStream(String.format("/entity/player/down%d.png", i + 1)));
-                spritesheet[2][i] = ImageIO.read(getClass().getResourceAsStream(String.format("/entity/player/left%d.png", i + 1)));
-                spritesheet[3][i] = ImageIO.read(getClass().getResourceAsStream(String.format("/entity/player/right%d.png", i + 1)));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/entity/player/spritesheet.png")));
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     // Update method for player entity
@@ -57,19 +48,19 @@ public class Player extends Entity {
         if (keyh.w || keyh.a || keyh.s || keyh.d) {
             if (keyh.w) {
                 y -= speed;
-                direction = 0; 
+                direction = 2; 
             }
             else if (keyh.s) {
                 y += speed;
-                direction = 1; 
+                direction = 3; 
             }
             if (keyh.a) {
                 x -= speed;
-                direction = 2;  
+                direction = 0;  
             }
             else if (keyh.d) {
                 x += speed;
-                direction = 3;
+                direction = 1;
             }
 
             // Increment sprite animation counter
@@ -90,6 +81,7 @@ public class Player extends Entity {
             }
         }
         int spriteNum = (int) Math.floor(spriteCounter / 10.0);
-        this.setImage(spritesheet[direction][spriteNum]);
+        BufferedImage currentFrame = spritesheet.getSubimage(spriteNum*16,direction*16,16,16);
+        this.setImage(currentFrame);
     }
 } 

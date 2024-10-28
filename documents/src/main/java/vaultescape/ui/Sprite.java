@@ -37,4 +37,13 @@ public abstract class Sprite {
     public void draw(Graphics2D g2) {
         g2.drawImage(image, x, y, width, height, null);
     }
+
+    static public Sprite createSprite(int x, int y, int width, int height) {
+        Sprite newSprite = new Sprite(){};
+        newSprite.x = x;
+        newSprite.y = y;
+        newSprite.width = width;
+        newSprite.height = height;
+        return newSprite;
+    }
 }

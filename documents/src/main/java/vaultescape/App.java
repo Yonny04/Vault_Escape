@@ -9,7 +9,7 @@ public class App extends JFrame{
     public static void main(String[] args) {
         App window = new App();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
-        window.setSize(1600, 900); //setting the height and width
+        window.setSize(1024, 768); // 4:3 game resolution
         window.setResizable(false); //user cannot resize
         window.setTitle("VaultEscape"); //title of the window
 
