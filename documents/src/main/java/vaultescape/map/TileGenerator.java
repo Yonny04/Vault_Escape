@@ -27,7 +27,7 @@ public class TileGenerator {
 
     public void setTileSpritesheet() {
         try {
-            spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/map/tiles.png")));
+            spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/map/spritesheet.png")));
         } catch (Exception e) {e.printStackTrace();}
     }
     // Generate tiles with images and positions
