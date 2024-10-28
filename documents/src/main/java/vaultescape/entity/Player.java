@@ -21,6 +21,8 @@ public class Player extends Entity {
     public Player(GamePanel gp, KeyDetector keyh) {
         super(gp);
         this.keyh = keyh;
+        this.width -= 3;
+        this.height -= 3;
         setDefault();  
         setPlayerSpritesheet();  
     }
@@ -80,6 +82,7 @@ public class Player extends Entity {
                 break;
             }
         }
+        // Set player animation frame from the floored spriteCounter
         int spriteNum = (int) Math.floor(spriteCounter);
         BufferedImage currentFrame = spritesheet.getSubimage(spriteNum*16,direction*16,16,16);
         this.setImage(currentFrame);
