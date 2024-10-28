@@ -1,4 +1,4 @@
-package vaultescape.map;
+ package vaultescape.map;
 
 import java.awt.Graphics2D;
 import java.io.IOException;

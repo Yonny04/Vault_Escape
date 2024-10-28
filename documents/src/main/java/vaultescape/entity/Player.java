@@ -87,6 +87,6 @@ public class Player extends Entity{
         BufferedImage image = null;
         int spriteNum = (int)Math.floor(spriteCounter / 10.0);
         image = spritesheet[direction][spriteNum];
-        g2.drawImage(image, x, y, gp.tilesize, gp.tilesize, null);
+        g2.drawImage(image, x, y, gp.tilesize+10, gp.tilesize+10, null);
     }
-}
+} 
