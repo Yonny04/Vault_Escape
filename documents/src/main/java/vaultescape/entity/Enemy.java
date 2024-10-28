@@ -8,12 +8,11 @@ import vaultescape.map.GamePanel;
 
 public class Enemy extends Entity {
     Random r = new Random();
-    GamePanel gp;
 
-    private int enemyMove = r.nextInt(4);
+    //private int enemyMove = r.nextInt(4);
     
     public Enemy(GamePanel gp){
-        this.gp = gp;
+        super(gp);
     }
 
     //Sets default values
@@ -31,8 +30,8 @@ public class Enemy extends Entity {
     }
 
     //draw method for enemy entity
+    @Override
     public void draw(Graphics2D g2){
-        
         g2.setColor(Color.red); //color of the character
         g2.fillRect(x, y, gp.tilesize-3, gp.tilesize-3); //making the "character"
     }

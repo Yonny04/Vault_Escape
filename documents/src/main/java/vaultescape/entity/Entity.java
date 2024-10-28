@@ -1,18 +1,21 @@
 package vaultescape.entity;
 
-public abstract class Entity {
-    int x, y;
-    int speed;
-    public int getX(){
-        return x;
+import vaultescape.map.GamePanel;
+import vaultescape.ui.Sprite;
+
+public class Entity extends Sprite{
+    protected int speed;
+    protected GamePanel gp;
+
+    // Constructor
+    public Entity(GamePanel gp) {
+        this.gp = gp;
+        this.width = gp.tilesize;
+        this.height = gp.tilesize;
     }
-    public int getY(){
-        return y;
-    }
-    public void setX(int value){
-        this.x = value;
-    }
-    public void setY(int value){
-        this.y = value;
+
+    // Abstract adapter method for collision detection
+    public boolean isTouching(Sprite sprite) {
+        return (sprite.getBounds().intersects(this.getBounds()));
     }
 }
