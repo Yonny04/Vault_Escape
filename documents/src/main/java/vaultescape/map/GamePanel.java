@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import vaultescape.entity.Player;
+import vaultescape.ui.Timer;
 
 public class GamePanel extends JPanel implements Runnable {
     final int defaultTileSize = 16; // 16x16 image tile
@@ -26,6 +27,9 @@ public class GamePanel extends JPanel implements Runnable {
     private TileGenerator tileGenerator = new TileGenerator(this);
     private Player player = new Player(this, keyh);
 
+    private Timer timer;
+    public long levelTime = 60;
+
     public Player getPlayer(){
         return player;
     }
@@ -36,6 +40,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
+
+        timer = new Timer(levelTime);
     }
 
     public TileGenerator getTileGenerator() {
@@ -55,7 +61,10 @@ public class GamePanel extends JPanel implements Runnable {
         while (gameThread != null) {
             update();
             repaint();
-
+            if(timer.isTimeUp()){
+                System.out.println("Time is up! Exit is closed!");
+                break;
+            }
             try {
                 double remainingTime = nextDrawTime - System.nanoTime();
                 remainingTime /= 1000000;
@@ -76,8 +85,16 @@ public class GamePanel extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(java.awt.Color.WHITE);
+
         tileGenerator.draw(g2);  // Draw tiles
         player.draw(g2);  // Draw player
+
+
+        g2.setFont(g2.getFont().deriveFont(20f)); 
+        g2.setColor(java.awt.Color.WHITE);
+        g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, 680);
+
         g2.dispose();
     }
 }
