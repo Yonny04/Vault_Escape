@@ -48,6 +48,10 @@ public class TileGenerator {
                 //}
             //}
     //}
+
+    /**
+     * Loads and generates tiles from the given resource stream .txt file.
+     */
     public void loadMap() {
         try {
             InputStream stream = getClass().getResourceAsStream("/map/testlevel.txt");

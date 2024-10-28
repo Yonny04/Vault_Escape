@@ -64,10 +64,10 @@ public class Player extends Entity {
             }
 
             // Increment sprite animation counter
-            spriteCounter++;
-            if (spriteCounter > 29.0) spriteCounter = 0.0;
+            spriteCounter += 0.1;
+            if (spriteCounter > 3.9) spriteCounter = 0.0;
         } else {
-            spriteCounter = 10.0;  // Reset sprite counter when idle
+            spriteCounter = 1.0;  // Reset sprite counter when idle
         }
 
         // Check for collisions with walls
@@ -76,11 +76,11 @@ public class Player extends Entity {
                 // go back if collided (?)
                 x = oldX;
                 y = oldY;
-                spriteCounter = 10.0;  // Reset sprite counter when idle
+                spriteCounter = 1.0;  // Reset sprite counter when idle
                 break;
             }
         }
-        int spriteNum = (int) Math.floor(spriteCounter / 10.0);
+        int spriteNum = (int) Math.floor(spriteCounter);
         BufferedImage currentFrame = spritesheet.getSubimage(spriteNum*16,direction*16,16,16);
         this.setImage(currentFrame);
     }
