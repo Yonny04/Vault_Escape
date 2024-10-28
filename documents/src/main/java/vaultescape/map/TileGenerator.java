@@ -73,7 +73,7 @@ public class TileGenerator {
      * @param tileNumber 0 is floor, any other number is a wall (for now)
      */
     private void createTile(int tileX, int tileY, int tileNumber) {
-        if (tileNumber > 0) {
+        if ((tileNumber > 0 && tileNumber % 2 == 1) || tileNumber == 14 || tileNumber == 16) {
             createWall(tileX, tileY, tileNumber);
         }
         Sprite tile = Sprite.createSprite(tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
