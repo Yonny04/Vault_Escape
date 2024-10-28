@@ -22,7 +22,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int screenWidth = tilesize * maxColume; 
     public final int screenHeight = tilesize * maxRow;
 
-    final int fps = 80;
+    final int fps = 60;
 
     Thread gameThread; //to run the game "ticks"
     KeyDetector keyh = new KeyDetector();
