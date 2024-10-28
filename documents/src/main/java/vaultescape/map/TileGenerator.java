@@ -1,7 +1,8 @@
- package vaultescape.map;
+package vaultescape.map;
 
 import java.awt.Graphics2D;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 public class TileGenerator  {
@@ -20,6 +21,8 @@ public class TileGenerator  {
         try{
             wall[0] = new Wall();
             wall[0].image = ImageIO.read(getClass().getResourceAsStream("/wall/block1.png"));
+            wall[1] = new Wall();
+            wall[1].image = ImageIO.read(getClass().getResourceAsStream("/wall/floor.png"));
         }
         catch(IOException e){
             e.printStackTrace();
@@ -28,24 +31,30 @@ public class TileGenerator  {
 
     // Draws tiles in gamepanel
     public void draw(Graphics2D g2){
+        //Temporary draw floor
+        for(int i=gp.tilesize; i < gp.screenWidth; i=i+gp.tilesize) {
+            for (int j=gp.tilesize; j < gp.screenHeight; j=j+gp.tilesize) {
+                g2.drawImage(wall[1].image, i, j, gp.tilesize, gp.tilesize,null);
+            }
+        }
         //Right and Left borders
-        for(int i=0; i <= gp.screenWidth; i= i + gp.tilesize){
+        for(int i=0; i <= gp.screenWidth; i=i+gp.tilesize){
             g2.drawImage(wall[0].image, i, 0, gp.tilesize, gp.tilesize,null);
             g2.drawImage(wall[0].image, i, gp.screenHeight, gp.tilesize, gp.tilesize,null);
         }
-        
+
         //Top and bottom borders
-        for(int i=0; i <= gp.screenHeight; i= i+ gp.tilesize){
+        for(int i=0; i <= gp.screenHeight; i=i+gp.tilesize){
             g2.drawImage(wall[0].image, 0, i, gp.tilesize, gp.tilesize,null);
             g2.drawImage(wall[0].image, gp.screenWidth, i, gp.tilesize, gp.tilesize,null);   
         }
 
         // "Walls"
-        for(int i=198; i <= gp.screenWidth; i= i + gp.tilesize * 5){
+        for(int i=198; i <= gp.screenWidth; i= i+gp.tilesize*5){
             g2.drawImage(wall[0].image, i, 144, gp.tilesize, gp.tilesize,null);
-            g2.drawImage(wall[0].image, i-100, 250, gp.tilesize, gp.tilesize,null);
-            g2.drawImage(wall[0].image, i-232, 400, gp.tilesize, gp.tilesize,null);
-            g2.drawImage(wall[0].image, i-433, 550, gp.tilesize, gp.tilesize,null);
+            g2.drawImage(wall[0].image, i-64, 250, gp.tilesize, gp.tilesize,null);
+            g2.drawImage(wall[0].image, i-128, 400, gp.tilesize, gp.tilesize,null);
+            g2.drawImage(wall[0].image, i-64, 550, gp.tilesize, gp.tilesize,null);
         }
 
     } 
