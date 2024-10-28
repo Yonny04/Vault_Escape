@@ -1,15 +1,14 @@
 package vaultescape.entity;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+
 import javax.imageio.ImageIO;
+
 import vaultescape.map.GamePanel;
 import vaultescape.map.KeyDetector;
 import vaultescape.map.Wall;
 
 public class Player extends Entity {
-    GamePanel gp;
     KeyDetector keyh;
     public boolean alive = true;
     Wall wall;  
@@ -20,7 +19,7 @@ public class Player extends Entity {
 
     // Constructor
     public Player(GamePanel gp, KeyDetector keyh) {
-        this.gp = gp;
+        super(gp);
         this.keyh = keyh;
         setDefault();  
         setPlayerSpritesheet();  
@@ -29,7 +28,7 @@ public class Player extends Entity {
     // Sets default values
     public void setDefault() {
         x = 50;  
-        y = 50; 
+        y = 50;
         speed = 5; 
     }
 
@@ -60,7 +59,7 @@ public class Player extends Entity {
                 y -= speed;
                 direction = 0; 
             }
-            if (keyh.s) {
+            else if (keyh.s) {
                 y += speed;
                 direction = 1; 
             }
@@ -68,7 +67,7 @@ public class Player extends Entity {
                 x -= speed;
                 direction = 2;  
             }
-            if (keyh.d) {
+            else if (keyh.d) {
                 x += speed;
                 direction = 3;
             }
@@ -82,25 +81,15 @@ public class Player extends Entity {
 
         // Check for collisions with walls
         for (Wall wall : gp.getTileGenerator().walls) {
-            if (wall.getBounds().intersects(getBounds())) {
+            if (isTouching(wall)) {
                 // go back if collided (?)
                 x = oldX;
                 y = oldY;
+                spriteCounter = 10.0;  // Reset sprite counter when idle
                 break;
             }
         }
-    }
-
-    // Get rectangle around olayer (collider)
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, gp.tilesize, gp.tilesize);
-    }
-
-    //draw method for player entity
-    public void draw(Graphics2D g2) {
-        BufferedImage image = null; 
         int spriteNum = (int) Math.floor(spriteCounter / 10.0);
-        image = spritesheet[direction][spriteNum];
-        g2.drawImage(image, x, y, gp.tilesize+10, gp.tilesize+10, null);
+        this.setImage(spritesheet[direction][spriteNum]);
     }
 } 
