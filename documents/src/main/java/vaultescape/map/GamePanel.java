@@ -90,8 +90,9 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(java.awt.Color.WHITE);
 
-        tileGenerator.draw(g2);  // Draw tiles
+        tileGenerator.drawBottom(g2);  // Draw bottom tiles
         player.draw(g2);  // Draw player
+        tileGenerator.drawTop(g2); // Draw top tiles
 
 
         g2.setFont(g2.getFont().deriveFont(20f)); 
