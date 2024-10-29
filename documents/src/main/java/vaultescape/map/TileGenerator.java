@@ -98,8 +98,11 @@ public class TileGenerator {
      * @param tileNumber
      */
     private void createWall(int tileX, int tileY, int tileNumber) {
-        Wall wall = new Wall(tileX*gp.tilesize+16,tileY*gp.tilesize+48,48,16);
-        wall.setImage(getTileImage(tileNumber));
+        Wall wall;
+        // Top Pillar has different hitbox
+        if (tileNumber == 21) wall = new Wall(tileX*gp.tilesize+8,(tileY+1)*gp.tilesize,48,16);
+        else wall = new Wall(tileX*gp.tilesize+8,tileY*gp.tilesize+48,48,32);
+        wall.setImage(getTileImage(0));
         walls.add(wall);
     }
 
@@ -117,5 +120,9 @@ public class TileGenerator {
         for (Sprite tile : topTiles) {
             tile.draw(g2);  
         }
+        // Uncomment to see debugging wall collisions
+        //for (Wall wall : walls) {
+        //   wall.draw(g2);
+        //}
     }
 }
