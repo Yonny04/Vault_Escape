@@ -40,8 +40,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
-
-        timer = new Timer(levelTime);
     }
 
     public TileGenerator getTileGenerator() {
@@ -49,6 +47,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGameThread() {
+        timer = new Timer(levelTime);
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -63,7 +62,8 @@ public class GamePanel extends JPanel implements Runnable {
             repaint();
             if(timer.isTimeUp()){
                 System.out.println("Time is up! Exit is closed!");
-                break;
+                gameThread = null;
+                return;
             }
             try {
                 double remainingTime = nextDrawTime - System.nanoTime();
@@ -79,6 +79,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();  // Update player (with collision handling)
+        if(timer.isTimeUp()){
+            // gameThread = null;
+        }
     }
 
     @Override
