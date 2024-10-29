@@ -15,7 +15,7 @@ public class RegularReward extends Reward {
     // Draw method for regular reward
     public void draw(Graphics2D g2) {
         g2.setColor(Color.orange); // Color of the regular reward
-        g2.fillRect(x, y, 10, 10); // Drawing the regular reward
+        g2.fillRect(x, y, 25, 25); // Drawing the regular reward
     }
 
     // Getter for points
