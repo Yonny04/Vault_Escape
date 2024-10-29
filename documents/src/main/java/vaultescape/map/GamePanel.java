@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import vaultescape.entity.Player;
+import vaultescape.reward.RewardGenerator;
 import vaultescape.ui.Timer;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -30,6 +31,9 @@ public class GamePanel extends JPanel implements Runnable {
     private Timer timer;
     public long levelTime = 60;
 
+    private RewardGenerator rewardGenerator;
+    private int regularRewardCount = 7;
+
     public Player getPlayer(){
         return player;
     }
@@ -40,6 +44,9 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
+
+        tileGenerator = new TileGenerator(this);
+        rewardGenerator = new RewardGenerator(this, tileGenerator);
     }
 
     public TileGenerator getTileGenerator() {
@@ -48,6 +55,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void startGameThread() {
         timer = new Timer(levelTime);
+        rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -79,12 +87,15 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void resetGame() {
         timer = new Timer(levelTime);  
-        player.setX(50);
-        player.setY(50);
+        player.setX(8 * tilesize);
+        player.setY(8 * tilesize);
+        rewardGenerator.generateRegularRewards(regularRewardCount);
     }
 
     public void update() {
         player.update();  // Update player (with collision handling)
+        rewardGenerator.generateBonusRewards();
+        rewardGenerator.removeExpiredBonusRewards();
         if(timer.isTimeUp()){
             // gameThread = null;
         }
@@ -96,9 +107,10 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(java.awt.Color.WHITE);
 
-        tileGenerator.drawBottom(g2);  // Draw bottom tiles
+        tileGenerator.drawBottom(g2);  // Draw bottom tile
         player.draw(g2);  // Draw player
         tileGenerator.drawTop(g2); // Draw top tiles
+        rewardGenerator.drawRewards(g2);
 
 
         g2.setFont(g2.getFont().deriveFont(20f)); 

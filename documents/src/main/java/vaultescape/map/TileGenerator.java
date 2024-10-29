@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -17,6 +18,9 @@ public class TileGenerator {
     public ArrayList<Sprite> bottomTiles = new ArrayList<>();  // filter bottom tiles
     public ArrayList<Sprite> topTiles = new ArrayList<>();  // filter top tiles
     public ArrayList<Wall> walls = new ArrayList<>();  // filter wall collision tiles
+
+    public List<int[]> availableTiles = new ArrayList<>();
+
     protected BufferedImage spritesheet;
 
     // Constructor
@@ -58,17 +62,25 @@ public class TileGenerator {
         try {
             InputStream stream = getClass().getResourceAsStream("/map/testlevel.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-
+    
             for (int row = 0; row < gp.numRows; row++) {
                 String line = reader.readLine();
                 String numberStrings[] = line.split("\t");
+    
                 for (int col = 0; col < gp.numCols; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
-                    if (tileNumber > 0) createTile(col,row,tileNumber);
+    
+                    if (tileNumber > 0) {
+                        createTile(col, row, tileNumber);
+                    } else {
+                        availableTiles.add(new int[]{col * gp.tilesize, row * gp.tilesize});
+                    }
                 }
             }
             reader.close();
-        } catch(Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
