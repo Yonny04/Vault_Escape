@@ -7,20 +7,27 @@ import java.awt.event.ActionListener;
 public class MenuPanel extends JPanel{
     private Image background;
 
-    public MenuPanel(ActionListener startListener, ActionListener exitListener){
+    public MenuPanel(ActionListener startListener, ActionListener bestScoresLestener, ActionListener exitListener){
         this.setLayout(null);
         background = new ImageIcon(getClass().getClassLoader().getResource("menu/background.png")).getImage();
+        
         JButton buttonStart = new JButton("Start");
         styleButton(buttonStart);
         buttonStart.setBounds(500, 300, 200, 50);  
         buttonStart.addActionListener(startListener); 
 
+        JButton buttonBestScores = new JButton("Best Scores");
+        styleButton(buttonBestScores);
+        buttonBestScores.setBounds(500, 370, 200, 50);  
+        buttonBestScores.addActionListener(bestScoresLestener); 
+
         JButton buttonExit = new JButton("Exit");
         styleButton(buttonExit);
-        buttonExit.setBounds(500, 400, 200, 50); 
+        buttonExit.setBounds(500, 440, 200, 50); 
         buttonExit.addActionListener(exitListener); 
         
         this.add(buttonStart);
+        this.add(buttonBestScores);
         this.add(buttonExit);
     }
     private void styleButton(JButton button){

@@ -77,6 +77,12 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    public void resetGame() {
+        timer = new Timer(levelTime);  
+        player.setX(50);
+        player.setY(50);
+    }
+
     public void update() {
         player.update();  // Update player (with collision handling)
         if(timer.isTimeUp()){
