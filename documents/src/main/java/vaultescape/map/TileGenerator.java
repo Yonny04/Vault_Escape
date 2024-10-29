@@ -13,8 +13,10 @@ import vaultescape.ui.Sprite;
 
 public class TileGenerator {
     private GamePanel gp;
-    public ArrayList<Sprite> tiles = new ArrayList<>();  // store all tiles here
-    public ArrayList<Wall> walls = new ArrayList<>();  // store only walls here
+    //public ArrayList<Sprite> tiles = new ArrayList<>();  // store all tiles here
+    public ArrayList<Sprite> bottomTiles = new ArrayList<>();  // filter bottom tiles
+    public ArrayList<Sprite> topTiles = new ArrayList<>();  // filter top tiles
+    public ArrayList<Wall> walls = new ArrayList<>();  // filter wall collision tiles
     protected BufferedImage spritesheet;
 
     // Constructor
@@ -77,12 +79,16 @@ public class TileGenerator {
      * @param tileNumber 0 is floor, any other number is a wall (for now)
      */
     private void createTile(int tileX, int tileY, int tileNumber) {
-        if ((tileNumber > 0 && tileNumber % 2 == 1) || tileNumber == 12 || tileNumber == 14 || tileNumber == 16) {
+        boolean isWallTile = false;
+        if ((tileNumber > 0 && tileNumber % 2 == 1) 
+                || tileNumber == 12 || tileNumber == 14 || tileNumber == 16) {
             createWall(tileX, tileY, tileNumber);
+            isWallTile = true;
         }
         Sprite tile = Sprite.createSprite(tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
         tile.setImage(getTileImage(tileNumber));
-        tiles.add(tile);
+        if (isWallTile) topTiles.add(tile);
+        else bottomTiles.add(tile);
     }
     
     /**
@@ -92,7 +98,7 @@ public class TileGenerator {
      * @param tileNumber
      */
     private void createWall(int tileX, int tileY, int tileNumber) {
-        Wall wall = new Wall(tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
+        Wall wall = new Wall(tileX*gp.tilesize+16,tileY*gp.tilesize+48,48,16);
         wall.setImage(getTileImage(tileNumber));
         walls.add(wall);
     }
@@ -102,8 +108,13 @@ public class TileGenerator {
         return frame;
     }
     // Draw walls
-    public void draw(Graphics2D g2) {
-        for (Sprite tile : tiles) {
+    public void drawBottom(Graphics2D g2) {
+        for (Sprite tile : bottomTiles) {
+            tile.draw(g2);  
+        }
+    }
+    public void drawTop(Graphics2D g2) {
+        for (Sprite tile : topTiles) {
             tile.draw(g2);  
         }
     }
