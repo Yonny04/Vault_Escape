@@ -19,17 +19,35 @@ class Reward extends Sprite {
         setRewardSpritesheet();
         setRewardImage();
     }
+    
     private void setRewardSpritesheet(){
         try {
             spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/reward/spritesheet.png")));
         } catch (Exception e) {e.printStackTrace();}
     }
+
+    /**
+     * Sets the reward image based on the number of points the reward is worth.
+     * Frames range from 0 to 5.
+     */
+    private void setRewardImage() {
+        int frameNum = 0;
+        switch (points) {
+            case 10:
+                frameNum = 2;
+                break;
+            case 20:
+                frameNum = 5;
+                break;
+            default:
+                break;
+        }
+        BufferedImage newImage = spritesheet.getSubimage(frameNum*16, 0, 16, 16);
+        setImage(newImage);
+    }
+
     // Getter for points
     public int getPoints() {
         return points;
-    }
-
-    private void setRewardImage() {
-        setImage(spritesheet.getSubimage(((points/4))*16, 0, 16, 16));
     }
 }
