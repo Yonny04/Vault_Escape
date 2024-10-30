@@ -17,7 +17,7 @@ public class TileGenerator {
     //public ArrayList<Sprite> tiles = new ArrayList<>();  // store all tiles here
     public ArrayList<Sprite> bottomTiles = new ArrayList<>();  // filter bottom tiles
     public ArrayList<Sprite> topTiles = new ArrayList<>();  // filter top tiles
-    public ArrayList<Wall> walls = new ArrayList<>();  // filter wall collision tiles
+    public ArrayList<Sprite> walls = new ArrayList<>();  // filter wall collision tiles
 
     public List<int[]> availableTiles = new ArrayList<>();
 
@@ -28,7 +28,6 @@ public class TileGenerator {
         this.gp = gp;
         setTileSpritesheet();
         loadMap();
-        //generateTiles(); 
     }
 
     public void setTileSpritesheet() {
@@ -36,24 +35,6 @@ public class TileGenerator {
             spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/map/spritesheet.png")));
         } catch (Exception e) {e.printStackTrace();}
     }
-    // Generate tiles with images and positions
-    //public void generateTiles() {
-            // //Generate map borders
-            //for (int i = 0; i <= gp.screenWidth; i += gp.tilesize) {
-                //addWall(new Wall(i, 0, gp.tilesize, gp.tilesize), spritesheet); 
-                //addWall(new Wall(i, gp.screenHeight - gp.tilesize, gp.tilesize, gp.tilesize), spritesheet); 
-            //}
-            //for (int i = 0; i <= gp.screenHeight; i += gp.tilesize) {
-                //addWall(new Wall(0, i, gp.tilesize, gp.tilesize), spritesheet);  
-                //addWall(new Wall(gp.screenWidth - gp.tilesize, i, gp.tilesize, gp.tilesize), spritesheet); 
-            //}
-            // //Generate the walls 
-            //for (int x = gp.tilesize * 5; x < gp.screenWidth - gp.tilesize * 5; x += gp.tilesize * 4) {
-                //for (int y = gp.tilesize * 5; y < gp.screenHeight - gp.tilesize * 5; y += gp.tilesize * 4) {
-                    //addWall(new Wall(x, y, gp.tilesize, gp.tilesize), spritesheet);  
-                //}
-            //}
-    //}
 
     /**
      * Loads and generates tiles from the given resource stream .txt file.
@@ -83,6 +64,11 @@ public class TileGenerator {
         }
     }
 
+    private BufferedImage getTileImage(int tileNumber) {
+        BufferedImage frame = spritesheet.getSubimage(tileNumber*16, 0, 16, 16);
+        return frame;
+    }
+    
     /**
      * Creates and adds new tile to tiles ArrayList. Also adds
      * the tile to walls ArrayList if it is a wall tile.
@@ -91,37 +77,21 @@ public class TileGenerator {
      * @param tileNumber 0 is floor, any other number is a wall (for now)
      */
     private void createTile(int tileX, int tileY, int tileNumber) {
-        boolean isWallTile = false;
-        if ((tileNumber > 0 && tileNumber % 2 == 1) 
-                || tileNumber == 12 || tileNumber == 14 || tileNumber == 16) {
-            createWall(tileX, tileY, tileNumber);
-            isWallTile = true;
-        }
         Sprite tile = Sprite.createSprite(tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
         tile.setImage(getTileImage(tileNumber));
-        if (isWallTile) topTiles.add(tile);
-        else bottomTiles.add(tile);
-    }
-    
-    /**
-     * Creates a wall to the walls ArrayList for collision detections
-     * @param tileX
-     * @param tileY
-     * @param tileNumber
-     */
-    private void createWall(int tileX, int tileY, int tileNumber) {
-        Wall wall;
-        // Top Pillar has different hitbox
-        if (tileNumber == 21) wall = new Wall(tileX*gp.tilesize+8,(tileY+1)*gp.tilesize,48,16);
-        else wall = new Wall(tileX*gp.tilesize+8,tileY*gp.tilesize+48,48,32);
-        wall.setImage(getTileImage(0));
-        walls.add(wall);
+        if ((tileNumber > 0 && tileNumber % 2 == 1) 
+                || tileNumber == 12 || tileNumber == 14 || tileNumber == 16) {
+            tile.setHitbox(52, 40);
+            walls.add(tile);
+            topTiles.add(tile);
+        }
+        else {
+            tile.setHitbox(52, 40);
+            walls.add(tile);
+            bottomTiles.add(tile);
+        }
     }
 
-    private BufferedImage getTileImage(int tileNumber) {
-        BufferedImage frame = spritesheet.getSubimage(tileNumber*16, 0, 16, 16);
-        return frame;
-    }
     // Draw walls
     public void drawBottom(Graphics2D g2) {
         for (Sprite tile : bottomTiles) {
@@ -132,9 +102,5 @@ public class TileGenerator {
         for (Sprite tile : topTiles) {
             tile.draw(g2);  
         }
-        // Uncomment to see debugging wall collisions
-        //for (Wall wall : walls) {
-        //   wall.draw(g2);
-        //}
     }
 }
