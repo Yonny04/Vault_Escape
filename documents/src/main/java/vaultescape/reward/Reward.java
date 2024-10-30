@@ -1,17 +1,35 @@
 package vaultescape.reward;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
-abstract class Reward {
-    int x, y;
-    public abstract void draw(Graphics2D g2);
+import javax.imageio.ImageIO;
 
-    public int getX(){
-        return x;
+import vaultescape.ui.Sprite;
+
+class Reward extends Sprite {
+    protected int points;
+    private BufferedImage spritesheet;
+    
+    public Reward(int x, int y, int points) {
+        this.x = x;
+        this.y = y;
+        this.points = points;
+        this.width = 64;
+        this.height = 64;
+        setRewardSpritesheet();
+        setRewardImage();
     }
-    public int getY(){
-        return y;
+    private void setRewardSpritesheet(){
+        try {
+            spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/reward/spritesheet.png")));
+        } catch (Exception e) {e.printStackTrace();}
     }
-    public abstract Rectangle getBounds();
+    // Getter for points
+    public int getPoints() {
+        return points;
+    }
+
+    private void setRewardImage() {
+        setImage(spritesheet.getSubimage(((points/4))*16, 0, 16, 16));
+    }
 }
