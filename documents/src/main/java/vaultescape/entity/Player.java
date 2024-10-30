@@ -97,9 +97,6 @@ public class Player extends Entity {
                 break;
             }
         }
-
-        gp.getRewardGenerator().checkRewardCollection(this);
-
         // Set player animation frame from the floored spriteCounter
         int spriteNum = (int) Math.floor(spriteCounter);
         BufferedImage currentFrame = spritesheet.getSubimage(spriteNum*16,direction*16,16,16);

@@ -4,35 +4,49 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
+import vaultescape.entity.Enemy;
+import vaultescape.entity.EnemyGenerator;
+import vaultescape.entity.Guard;
 import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
 import vaultescape.ui.Timer;
 
 public class GamePanel extends JPanel implements Runnable {
+    //Tilesize
     final int defaultTileSize = 16; // 16x16 image tile
     final int scale = 4;
 
+    // Screen
     public final int tilesize = defaultTileSize * scale; // 64x64 screen tile
     public final int numCols = 20;
     public final int numRows = 12;
 
+    // Resolution
     public final int screenWidth = tilesize * numCols; // 1280px
     public final int screenHeight = tilesize * numRows; // 768px
     final int fps = 60;
 
+    //Game basic
     private Thread gameThread;
     private KeyDetector keyh = new KeyDetector();
     private TileGenerator tileGenerator = new TileGenerator(this);
     private Player player = new Player(this, keyh);
 
+    // Timer
     private Timer timer;
     public long levelTime = 60;
 
+    // Rewards
     private RewardGenerator rewardGenerator;
     private int regularRewardCount = 7;
+
+    //Enemies
+    private EnemyGenerator enemyGenerator;
 
     public Player getPlayer(){
         return player;
@@ -47,6 +61,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         tileGenerator = new TileGenerator(this);
         rewardGenerator = new RewardGenerator(this, tileGenerator);
+        enemyGenerator = new EnemyGenerator(this);
     }
 
     public TileGenerator getTileGenerator() {
@@ -58,6 +73,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void startGameThread() {
         timer = new Timer(levelTime);
+        enemyGenerator.generateGuards(2);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
@@ -95,9 +111,14 @@ public class GamePanel extends JPanel implements Runnable {
         rewardGenerator.generateRegularRewards(regularRewardCount);
     }
 
+    public Timer getTimer(){
+        return timer;
+    }
+
     public void update() {
-        player.update();  // Update player (with collision handling)
+        player.update();
         rewardGenerator.update(player);
+        enemyGenerator.update(player);
         if(timer.isTimeUp()){
             // gameThread = null;
         }
@@ -110,10 +131,11 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(java.awt.Color.WHITE);
 
         tileGenerator.drawBottom(g2);  // Draw bottom tile
-        player.draw(g2);  // Draw player
         tileGenerator.drawTop(g2); // Draw top tiles
         rewardGenerator.drawRewards(g2);
+        enemyGenerator.drawEnemies(g2);
 
+        player.draw(g2); 
 
         g2.setFont(g2.getFont().deriveFont(20f)); 
         g2.setColor(java.awt.Color.WHITE);
@@ -122,7 +144,7 @@ public class GamePanel extends JPanel implements Runnable {
         String scoreText = "Score: " + String.format("%03d", player.getScore());  
         int scoreX = 80 + g2.getFontMetrics().stringWidth("Time: " + timer.getFormattedTimeLeft()) + 20;  
         g2.drawString(scoreText, scoreX, 680);  
-        
+
         g2.dispose();
     }
 }
