@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import vaultescape.entity.Player;
 import vaultescape.map.GamePanel;
 import vaultescape.map.TileGenerator;
 
@@ -27,6 +28,12 @@ public class RewardGenerator {
         this.bonusRewards = new ArrayList<>();
         this.random = new Random();
         this.bonusSpawnTime = System.currentTimeMillis();
+    }
+
+    public void update(Player player){
+        generateBonusRewards();
+        removeExpiredBonusRewards();
+        checkRewardCollection(player);
     }
 
     public void generateRegularRewards(int n){
@@ -61,6 +68,27 @@ public class RewardGenerator {
         long currentTime = System.currentTimeMillis();
         bonusRewards.removeIf(reward -> (currentTime - ((BonusReward) reward).getSpawnTime()) >= bonusRewardDuration);
     }
+
+    public void checkRewardCollection(Player player) {
+        for (int i = 0; i < regularRewards.size(); i++) {
+            Reward reward = regularRewards.get(i);
+            if (player.getBounds().intersects(reward.getBounds())) {
+                player.addScore(((RegularReward) reward).getPoints());
+                regularRewards.remove(i); 
+                i--;  
+            }
+        }
+    
+        for (int i = 0; i < bonusRewards.size(); i++) {
+            Reward reward = bonusRewards.get(i);
+            if (player.getBounds().intersects(reward.getBounds())) {
+                player.addScore(((BonusReward) reward).getPoints());
+                bonusRewards.remove(i); 
+                i--; 
+            }
+        }
+    }
+
     public void drawRewards(Graphics2D g2) {
         for (Reward reward : regularRewards) {
             reward.draw(g2);

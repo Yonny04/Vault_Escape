@@ -52,6 +52,9 @@ public class GamePanel extends JPanel implements Runnable {
     public TileGenerator getTileGenerator() {
         return tileGenerator;  // Provide access to tile generator
     }
+    public RewardGenerator getRewardGenerator(){
+        return rewardGenerator;
+    }
 
     public void startGameThread() {
         timer = new Timer(levelTime);
@@ -94,8 +97,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();  // Update player (with collision handling)
-        rewardGenerator.generateBonusRewards();
-        rewardGenerator.removeExpiredBonusRewards();
+        rewardGenerator.update(player);
         if(timer.isTimeUp()){
             // gameThread = null;
         }
@@ -117,6 +119,10 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(java.awt.Color.WHITE);
         g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, 680);
 
+        String scoreText = "Score: " + String.format("%03d", player.getScore());  
+        int scoreX = 80 + g2.getFontMetrics().stringWidth("Time: " + timer.getFormattedTimeLeft()) + 20;  
+        g2.drawString(scoreText, scoreX, 680);  
+        
         g2.dispose();
     }
 }

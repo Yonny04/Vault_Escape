@@ -1,5 +1,6 @@
 package vaultescape.entity;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -17,6 +18,8 @@ public class Player extends Entity {
     double spriteCounter;  
     BufferedImage spritesheet;  
 
+    private int score = 0;
+
     // Constructor
     public Player(GamePanel gp, KeyDetector keyh) {
         super(gp);
@@ -25,6 +28,18 @@ public class Player extends Entity {
         this.height -= 3;
         setDefault();  
         setPlayerSpritesheet();  
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);  
+    }
+    
+    public int getScore() {
+        return score;
+    }
+
+    public void addScore(int points) {
+        score += points;
     }
 
     // Sets default values
@@ -82,6 +97,9 @@ public class Player extends Entity {
                 break;
             }
         }
+
+        gp.getRewardGenerator().checkRewardCollection(this);
+
         // Set player animation frame from the floored spriteCounter
         int spriteNum = (int) Math.floor(spriteCounter);
         BufferedImage currentFrame = spritesheet.getSubimage(spriteNum*16,direction*16,16,16);
