@@ -4,14 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JPanel;
 
-import vaultescape.entity.Enemy;
 import vaultescape.entity.EnemyGenerator;
-import vaultescape.entity.Guard;
 import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
 import vaultescape.ui.Timer;
@@ -131,11 +127,12 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(java.awt.Color.WHITE);
 
         tileGenerator.drawBottom(g2);  // Draw bottom tile
-        tileGenerator.drawTop(g2); // Draw top tiles
+        
         rewardGenerator.drawRewards(g2);
         enemyGenerator.drawEnemies(g2);
 
         player.draw(g2); 
+        tileGenerator.drawTop(g2); // Draw top tiles (above player)
 
         g2.setFont(g2.getFont().deriveFont(20f)); 
         g2.setColor(java.awt.Color.WHITE);

@@ -1,7 +1,5 @@
 package vaultescape.entity;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.Random;
 
 import vaultescape.map.GamePanel;
@@ -29,14 +27,4 @@ public class Enemy extends Entity {
         //}
     }
 
-    
-
-
-
-    //draw method for enemy entity
-    @Override
-    public void draw(Graphics2D g2){
-        g2.setColor(Color.red); //color of the character
-        g2.fillRect(x, y, gp.tilesize-3, gp.tilesize-3); //making the "character"
-    }
 }

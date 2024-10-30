@@ -1,20 +1,15 @@
 package vaultescape.entity;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
 
 import vaultescape.map.GamePanel;
 import vaultescape.map.KeyDetector;
-import vaultescape.map.Wall;
+import vaultescape.ui.Sprite;
 
 public class Player extends Entity {
     KeyDetector keyh;
     public boolean alive = true;
-    Wall wall;  
-
-    int direction = 1;  
+  
     double spriteCounter;  
     BufferedImage spritesheet;  
 
@@ -24,14 +19,9 @@ public class Player extends Entity {
     public Player(GamePanel gp, KeyDetector keyh) {
         super(gp);
         this.keyh = keyh;
-        this.width -= 3;
-        this.height -= 3;
-        setDefault();  
-        setPlayerSpritesheet();  
-    }
-
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);  
+        setDefault();
+        setHitbox(48, 32);
+        setSpritesheet("/entity/player/spritesheet.png", 4, 4);  
     }
     
     public int getScore() {
@@ -47,13 +37,6 @@ public class Player extends Entity {
         x = 8 * gp.tilesize;  
         y = 8 * gp.tilesize;
         speed = 5; 
-    }
-
-     //Sets player spritesheet
-    public void setPlayerSpritesheet() {
-        try {
-            spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/entity/player/spritesheet.png")));
-        } catch (Exception e) {e.printStackTrace();}
     }
 
     // Update method for player entity
@@ -83,12 +66,10 @@ public class Player extends Entity {
             // Increment sprite animation counter
             spriteCounter += 0.1;
             if (spriteCounter > 3.9) spriteCounter = 0.0;
-        } else {
-            spriteCounter = 1.0;  // Reset sprite counter when idle
-        }
+        } else spriteCounter = 1.0;  // Reset sprite counter when idle
 
         // Check for collisions with walls
-        for (Wall wall : gp.getTileGenerator().walls) {
+        for (Sprite wall : gp.getTileGenerator().walls) {
             if (isTouching(wall)) {
                 // go back if collided (?)
                 x = oldX;
@@ -98,8 +79,7 @@ public class Player extends Entity {
             }
         }
         // Set player animation frame from the floored spriteCounter
-        int spriteNum = (int) Math.floor(spriteCounter);
-        BufferedImage currentFrame = spritesheet.getSubimage(spriteNum*16,direction*16,16,16);
-        this.setImage(currentFrame);
+        int cycleNum = (int) Math.floor(spriteCounter);
+        setFrame(cycleNum,direction);
     }
 } 

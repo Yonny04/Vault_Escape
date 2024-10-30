@@ -16,6 +16,7 @@ class Reward extends Sprite {
         this.points = points;
         this.width = 64;
         this.height = 64;
+        setHitbox(48, 48);
         setRewardSpritesheet();
         setRewardImage();
     }
