@@ -2,47 +2,78 @@ package vaultescape.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
 import vaultescape.map.GamePanel;
+import vaultescape.map.Wall;
+import java.awt.Rectangle;
 
 public class Guard extends Enemy {
-    private int patrolRange;
-    private boolean movingRight = true;
+    private int x1, y1; 
+    private int x2, y2; 
+    private boolean goingEnd = true; 
+    private boolean horizontal; 
 
-    public Guard(GamePanel gp) {
+    private long lastCollisionTime = 0;  
+    private static final long COOLDOWN = 500;
+
+    public Guard(GamePanel gp, int x1, int y1, int x2, int y2) {
         super(gp);
         setDefault();
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.x = x1;
+        this.y = y1;
+        this.horizontal = (x1 != x2);
     }
 
-    // Sets default values
     @Override
     public void setDefault() {
-        x = 100;
-        y = 100;
-        speed = 2;
-        patrolRange = 100; // Range for patrol
+        speed = 2; 
     }
 
-    // Update method for guard movement
     @Override
     public void update() {
-        if (movingRight) {
-            x += speed;
-            if (x > patrolRange) {
-                movingRight = false; // Change direction
-            }
+        if (horizontal) {
+            if (goingEnd) x += speed;
+            else x -= speed;
+            if (x >= x2 || x <= x1) reverse();
         } else {
-            x -= speed;
-            if (x < 0) {
-                movingRight = true; // Change direction
-            }
+            if (goingEnd) y += speed;
+            else y -= speed;
+            if (y >= y2 || y <= y1) reverse();
+        }
+        if (!canMove(x, y)) {
+            reverse(); 
         }
     }
 
-    // Draw method for guard entity
+    private void reverse() {
+        goingEnd = !goingEnd;
+    }
+
+    private boolean canMove(int x, int y) {
+        for (Wall wall : gp.getTileGenerator().walls) {
+            if (wall.getBounds().intersects(
+                    new Rectangle(x, y, gp.tilesize - 3, gp.tilesize - 3))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canCollide() {
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - lastCollisionTime) >= COOLDOWN;
+    }
+
+    public void recordCollision() {
+        lastCollisionTime = System.currentTimeMillis();
+    }
+
     @Override
     public void draw(Graphics2D g2) {
-        g2.setColor(Color.yellow); // Color of the guard
-        g2.fillRect(x, y, gp.tilesize - 3, gp.tilesize - 3); // Drawing the guard
+        g2.setColor(Color.YELLOW); 
+        g2.fillRect(x, y, gp.tilesize - 3, gp.tilesize - 3); 
     }
 }

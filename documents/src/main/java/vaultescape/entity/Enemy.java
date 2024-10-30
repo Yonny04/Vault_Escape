@@ -29,6 +29,10 @@ public class Enemy extends Entity {
         //}
     }
 
+    
+
+
+
     //draw method for enemy entity
     @Override
     public void draw(Graphics2D g2){

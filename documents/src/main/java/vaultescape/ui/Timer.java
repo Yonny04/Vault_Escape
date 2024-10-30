@@ -3,7 +3,7 @@ package vaultescape.ui;
 public class Timer {
     private long startTime;
     private long countdownTime;
-    
+
     public Timer(long seconds){
         this.countdownTime = seconds * 1000;
         start();
@@ -26,5 +26,9 @@ public class Timer {
 
     public boolean isTimeUp() {
         return getTimeLeft() <= 0;  
+    }
+
+    public void decreaseTime(int seconds){
+        countdownTime = Math.max(countdownTime - seconds*1000, 0);
     }
 }

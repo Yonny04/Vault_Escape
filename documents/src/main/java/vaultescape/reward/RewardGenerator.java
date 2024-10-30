@@ -71,7 +71,7 @@ public class RewardGenerator {
     public void checkRewardCollection(Player player) {
         for (int i = 0; i < regularRewards.size(); i++) {
             Reward reward = regularRewards.get(i);
-            if (player.getBounds().intersects(reward.getBounds())) {
+            if (player.isTouching(reward)) {
                 player.addScore(((RegularReward) reward).getPoints());
                 regularRewards.remove(i); 
                 i--;  
@@ -80,7 +80,7 @@ public class RewardGenerator {
     
         for (int i = 0; i < bonusRewards.size(); i++) {
             Reward reward = bonusRewards.get(i);
-            if (player.getBounds().intersects(reward.getBounds())) {
+            if (player.isTouching(reward)) {
                 player.addScore(((BonusReward) reward).getPoints());
                 bonusRewards.remove(i); 
                 i--; 
