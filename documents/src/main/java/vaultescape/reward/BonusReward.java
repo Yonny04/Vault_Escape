@@ -2,6 +2,7 @@ package vaultescape.reward;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 public class BonusReward extends Reward {
     private int points;
@@ -12,6 +13,10 @@ public class BonusReward extends Reward {
         this.y = y;
         this.points = points;
         this.spawnTime = System.currentTimeMillis();
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 20, 20); 
     }
     
     public long getSpawnTime() {
