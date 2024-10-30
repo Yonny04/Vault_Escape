@@ -44,8 +44,7 @@ public class RewardGenerator {
             int[] position = tg.availableTiles.remove(index);
             int x = position[0];
             int y = position[1];
-
-            regularRewards.add(new RegularReward(x, y, 10));
+            regularRewards.add(new RegularReward(x, y));
         }
     }
 
@@ -59,7 +58,7 @@ public class RewardGenerator {
                 int x = position[0];
                 int y = position[1];
 
-                bonusRewards.add(new BonusReward(x, y, 20));
+                bonusRewards.add(new BonusReward(x, y, 100));
                 bonusSpawnTime = currentTime;  
             }
         }

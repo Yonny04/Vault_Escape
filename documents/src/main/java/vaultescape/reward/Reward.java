@@ -34,13 +34,26 @@ class Reward extends Sprite {
         int frameNum = 0;
         switch (points) {
             case 10:
-                frameNum = 2;
+                frameNum = 0;
                 break;
             case 20:
+                frameNum = 1;
+                break;
+            case 30:
+                frameNum = 2;
+                break;
+            case 40:
+                frameNum = 3;
+                break;
+            case 50:
+                frameNum = 4;
+                break;
+            case 100:
                 frameNum = 5;
                 break;
             default:
                 break;
+            
         }
         BufferedImage newImage = spritesheet.getSubimage(frameNum*16, 0, 16, 16);
         setImage(newImage);
