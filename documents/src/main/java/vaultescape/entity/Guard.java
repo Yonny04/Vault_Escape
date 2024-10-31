@@ -67,8 +67,7 @@ public class Guard extends Enemy {
 
     private boolean canMove(int x, int y) {
         for (Sprite wall : gp.getTileGenerator().walls) {
-            if (wall.getBounds().intersects(
-                    new Rectangle(x, y, gp.tilesize - 3, gp.tilesize - 3))) {
+            if (wall.getBounds().intersects(new Rectangle(x, y, gp.tilesize - 3, gp.tilesize - 3))) {
                 return false;
             }
         }
