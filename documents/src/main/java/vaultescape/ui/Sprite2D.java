@@ -25,11 +25,18 @@ public class Sprite2D extends Sprite {
      */
     @Override
     public void draw(Graphics2D g2) {
-        screenX = x - gp.getPlayer().getX() + gp.getPlayer().getScreenX();
-        screenY = y - gp.getPlayer().getY() + gp.getPlayer().getScreenY();
-        g2.drawImage(image, screenX, screenY, width, height, null);
-        if (_drawCollisions){
-            drawHitbox(g2);
+        int playerX = gp.getPlayer().getX();
+        int playerScreenX = gp.getPlayer().getScreenX();
+        int playerY = gp.getPlayer().getY();
+        int playerScreenY = gp.getPlayer().getScreenY(); 
+        screenX = x - playerX + playerScreenX;
+        screenY = y - playerY + playerScreenY;
+        if (x + gp.tilesize > playerX - playerScreenX && 
+            x - gp.tilesize < playerX + playerScreenX && 
+            y + gp.tilesize > playerY - playerScreenY && 
+            y - gp.tilesize < playerY + playerScreenY) {
+            g2.drawImage(image, screenX, screenY, width, height, null);
+            if (_drawCollisions) drawHitbox(g2);
         }
     }
 
