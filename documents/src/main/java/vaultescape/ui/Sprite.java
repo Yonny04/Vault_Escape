@@ -54,6 +54,11 @@ public abstract class Sprite {
     public void draw(Graphics2D g2) {
         g2.drawImage(image, x, y, width, height, null);
         if (_drawCollisions){
+            drawHitbox(g2);
+        }
+    }
+    public void drawHitbox(Graphics2D g2) {
+        if (_drawCollisions){
             g2.setColor(new Color(0,(float)1.0,(float)1.0,(float)0.5));
             g2.drawRect(x + (width - hitboxWidth)/2, y + (height - hitboxHeight)/2, hitboxWidth, hitboxHeight);
         }

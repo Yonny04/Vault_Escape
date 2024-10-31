@@ -1,16 +1,21 @@
 package vaultescape.ui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 public class MenuPanel extends JPanel{
     private Image background;
+    private Font font;
 
     public MenuPanel(ActionListener startListener, ActionListener bestScoresLestener, ActionListener exitListener){
         this.setLayout(null);
-        background = new ImageIcon(getClass().getClassLoader().getResource("menu/background.png")).getImage();
-        
+        this.loadResources();
+
         JButton buttonStart = new JButton("Start");
         styleButton(buttonStart);
         buttonStart.setBounds(500, 300, 200, 50);  
@@ -30,8 +35,16 @@ public class MenuPanel extends JPanel{
         this.add(buttonBestScores);
         this.add(buttonExit);
     }
+    private void loadResources() {
+        try {
+            InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
+            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background.png");
+            background = ImageIO.read(backgroundStream);
+            font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 16);
+        } catch (Exception e) {e.printStackTrace();}
+    }
     private void styleButton(JButton button){
-        button.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        button.setFont(font);
         button.setBackground(new Color(82, 45, 61));
         button.setForeground(Color.GRAY);
         button.setFocusPainted(false);
