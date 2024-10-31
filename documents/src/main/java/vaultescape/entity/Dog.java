@@ -54,17 +54,13 @@ public class Dog extends Enemy {
     private void chasePlayer() {
         int playerX = gp.getPlayer().getX();
         int playerY = gp.getPlayer().getY();
-        
         int nextX = x;
         int nextY = y;
-
-        // Move towards the player's position
         if (playerX > x) nextX += speed;
         else if (playerX < x) nextX -= speed;
 
         if (playerY > y) nextY += speed;
         else if (playerY < y) nextY -= speed;
-        // Update position only if there's no wall collision
         if (canMove(nextX, nextY)) {
             x = nextX;
             y = nextY;

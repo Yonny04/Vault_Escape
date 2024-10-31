@@ -36,6 +36,10 @@ public class Guard extends Enemy {
 
     @Override
     public void update() {
+        System.out.println(speed);
+        if(speed > 5){
+            speed = 5;
+        }
         if (horizontal) {
             if (goingEnd) {
                 x += speed;

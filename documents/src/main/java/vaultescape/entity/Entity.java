@@ -8,7 +8,7 @@ import vaultescape.map.GamePanel;
 import vaultescape.ui.Sprite;
 
 public class Entity extends Sprite {
-    protected int speed;
+    protected double speed;
     protected GamePanel gp;
     
     int direction = 1; 

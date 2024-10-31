@@ -13,6 +13,8 @@ public class EnemyGenerator {
     private TileGenerator tg;
     private List<Enemy> enemies;
     private Random random;
+    private long lastSpeedBoostTime = 0;
+    private static final long SPEEDUP_COOLDOWN = 5000;
 
     public EnemyGenerator(GamePanel gp) {
         this.gp = gp;
@@ -40,6 +42,8 @@ public class EnemyGenerator {
                     enemy = new Guard(gp, start[0], start[1], x2, y2);
                 } else if (enemyType == Dog.class) {
                     enemy = new Dog(gp, start[0], start[1]);
+                } else if (enemyType == Camera.class) {
+                    enemy = new Camera(gp, start[0], start[1], 100);
                 } else {
                     continue;
                 }
@@ -50,15 +54,25 @@ public class EnemyGenerator {
         }
     }
 
-    public void generateAllEnemies(int guardsCount, int dogsCount) {
-        generateEnemies(Guard.class, 2);  
-        generateEnemies(Dog.class, 1);   
+
+    public void generateAllEnemies(int guardsCount, int dogsCount, int cameraCount) {
+        generateEnemies(Guard.class, guardsCount);  
+        generateEnemies(Dog.class, dogsCount);   
+        generateEnemies(Camera.class, cameraCount);
     }
 
     public void update(Player player) {
         checkEnemyCollision(player);  
         for (Enemy enemy : enemies) {
             enemy.update();  
+        }
+    }
+
+    public void increaseEnemySpeed(double multiplier){
+        for(Enemy enemy : enemies){
+            if(enemy instanceof Guard || enemy instanceof Dog){
+                enemy.setSpeed(enemy.getSpeed() * multiplier);
+            }
         }
     }
 
@@ -73,6 +87,12 @@ public class EnemyGenerator {
             if (enemy instanceof Dog dog) {
                 if (dog.isTouching(player)) {
                     System.out.println("Dog caugth you!");
+                }
+            }
+            if (enemy instanceof Camera camera) {
+                if (camera.isPlayerInRange() && camera.canDetect()) {
+                    increaseEnemySpeed(1.03); 
+                    camera.recordDetection();
                 }
             }
         }
