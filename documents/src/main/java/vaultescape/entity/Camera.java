@@ -16,9 +16,11 @@ public class Camera extends Enemy {
         super(gp);
         this.x = x;
         this.y = y;
-        this.width = 16; 
-        this.height = 16; 
+        this.width = 64; 
+        this.height = 64; 
         setDefault();
+        setSpritesheet("/entity/camera/spritesheet.png", 2, 3);
+        setFrame(0);
     }
 
     // Sets default values
@@ -53,14 +55,8 @@ public class Camera extends Enemy {
     // Draw method for camera entity
     @Override
     public void draw(Graphics2D g2) {
-        if (image == null) {
-            g2.setColor(Color.ORANGE); 
-            g2.fillRect(x, y, width, height); 
-        } else {
-            super.draw(g2);
-        }
-
+        super.draw(g2);
         g2.setColor(Color.red);
-        g2.drawOval(x  + width/2 - detectionRange, y + height/2 - detectionRange, detectionRange * 2, detectionRange * 2);
+        g2.drawOval(screenX  + width/2 - detectionRange, screenY + height/2 - detectionRange, detectionRange * 2, detectionRange * 2);
     }
 }
