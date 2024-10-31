@@ -11,13 +11,14 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import vaultescape.ui.Sprite;
+import vaultescape.ui.Sprite2D;
 
 public class TileGenerator {
     private GamePanel gp;
     //public ArrayList<Sprite> tiles = new ArrayList<>();  // store all tiles here
-    public ArrayList<Sprite> bottomTiles = new ArrayList<>();  // filter bottom tiles
-    public ArrayList<Sprite> topTiles = new ArrayList<>();  // filter top tiles
-    public ArrayList<Sprite> walls = new ArrayList<>();  // filter wall collision tiles
+    public ArrayList<Sprite2D> bottomTiles = new ArrayList<>();  // filter bottom tiles
+    public ArrayList<Sprite2D> topTiles = new ArrayList<>();  // filter top tiles
+    public ArrayList<Sprite2D> walls = new ArrayList<>();  // filter wall collision tiles
 
     public List<int[]> availableTiles = new ArrayList<>();
 
@@ -44,11 +45,11 @@ public class TileGenerator {
             InputStream stream = getClass().getResourceAsStream("/map/testlevel.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     
-            for (int row = 0; row < gp.numRows; row++) {
+            for (int row = 0; row < gp.numMapCols; row++) {
                 String line = reader.readLine();
                 String numberStrings[] = line.split("\t");
     
-                for (int col = 0; col < gp.numCols; col++) {
+                for (int col = 0; col < gp.numMapRows; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
     
                     if (tileNumber > 0) {
@@ -77,7 +78,7 @@ public class TileGenerator {
      * @param tileNumber 0 is floor, any other number is a wall (for now)
      */
     private void createTile(int tileX, int tileY, int tileNumber) {
-        Sprite tile = Sprite.createSprite(tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
+        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
         tile.setImage(getTileImage(tileNumber));
         if ((tileNumber > 0 && tileNumber % 2 == 1) 
                 || tileNumber == 12 || tileNumber == 14 || tileNumber == 16) {

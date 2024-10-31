@@ -4,13 +4,15 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import vaultescape.ui.Sprite;
+import vaultescape.map.GamePanel;
+import vaultescape.ui.Sprite2D;
 
-class Reward extends Sprite {
+class Reward extends Sprite2D {
     protected int points;
     private BufferedImage spritesheet;
     
-    public Reward(int x, int y, int points) {
+    public Reward(GamePanel gp, int x, int y, int points) {
+        super(gp);
         this.x = x;
         this.y = y;
         this.points = points;

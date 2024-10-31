@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import vaultescape.entity.EnemyGenerator;
 import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
+import vaultescape.ui.Sprite;
 import vaultescape.ui.Timer;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -19,12 +20,19 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Screen
     public final int tilesize = defaultTileSize * scale; // 64x64 screen tile
-    public final int numCols = 20;
-    public final int numRows = 12;
+    public final int numScreenCols = 20;
+    public final int numScreenRows = 12;
 
-    // Resolution
-    public final int screenWidth = tilesize * numCols; // 1280px
-    public final int screenHeight = tilesize * numRows; // 768px
+    public final int screenWidth = tilesize * numScreenCols; // 1280px
+    public final int screenHeight = tilesize * numScreenRows; // 768px
+
+    // Map
+    public final int numMapCols = 40;
+    public final int numMapRows = 40;
+    public final int mapWidth = tilesize * numMapCols;
+    public final int mapHeight = tilesize * numMapRows;
+
+    // FPS
     final int fps = 60;
 
     //Game basic
@@ -72,7 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void startGameThread() {
         timer = new Timer(levelTime);
-        enemyGenerator.generateAllEnemies(2, 0, 1);
+        enemyGenerator.generateAllEnemies(2, 1, 1);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
@@ -134,6 +142,9 @@ public class GamePanel extends JPanel implements Runnable {
         rewardGenerator.drawRewards(g2);
         enemyGenerator.drawEnemies(g2);
 
+        for (Sprite tile : tileGenerator.bottomTiles){
+            
+        }
         player.draw(g2); 
         tileGenerator.drawTop(g2); // Draw top tiles over player
 
