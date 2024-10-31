@@ -47,14 +47,7 @@ public class Player extends Entity {
 
         // Handle movement input from the key detector
         if (keyh.w || keyh.a || keyh.s || keyh.d) {
-            if (keyh.w) {
-                y -= speed;
-                direction = 2; 
-            }
-            else if (keyh.s) {
-                y += speed;
-                direction = 3; 
-            }
+            
             if (keyh.a) {
                 x -= speed;
                 direction = 0;  
@@ -63,22 +56,34 @@ public class Player extends Entity {
                 x += speed;
                 direction = 1;
             }
-
+                // Check for collisions with walls
+            for (Sprite2D wall : gp.getTileGenerator().walls) {
+                if (isTouching(wall)) {
+                    // go back if collided (?)
+                    x = oldX;
+                    break;
+                }
+            }
+            if (keyh.w) {
+                y -= speed;
+                direction = 2; 
+            }
+            else if (keyh.s) {
+                y += speed;
+                direction = 3; 
+            }
+            for (Sprite2D wall : gp.getTileGenerator().walls) {
+                if (isTouching(wall)) {
+                    // go back if collided (?)
+                    y = oldY;
+                    break;
+                }
+            }
             // Increment sprite animation counter
             spriteCounter += 0.1f;
             if (spriteCounter > 3.9f) spriteCounter = 0.0f;
         } else spriteCounter = 1.0f;  // Reset sprite counter when idle
-
-        // Check for collisions with walls
-        for (Sprite2D wall : gp.getTileGenerator().walls) {
-            if (isTouching(wall)) {
-                // go back if collided (?)
-                x = oldX;
-                y = oldY;
-                spriteCounter = 1.0f;  // Reset sprite counter when idle
-                break;
-            }
-        }
+        
         // Set player animation frame from the floored spriteCounter
         setFrame((int)Math.floor(spriteCounter),direction);
     }

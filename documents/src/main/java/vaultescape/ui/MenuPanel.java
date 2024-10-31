@@ -38,7 +38,7 @@ public class MenuPanel extends JPanel{
     private void loadResources() {
         try {
             InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
-            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background.png");
+            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background_city.png");
             background = ImageIO.read(backgroundStream);
             font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 16);
         } catch (Exception e) {e.printStackTrace();}

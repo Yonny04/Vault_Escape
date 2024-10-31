@@ -25,6 +25,7 @@ public class Dog extends Enemy {
         isChasing = false;
         setHitbox(32, 32); 
         setSpritesheet("/entity/dog/spritesheet.png", 4, 4);
+        setDefault();
     }
     // Sets default values
     @Override
@@ -32,6 +33,7 @@ public class Dog extends Enemy {
         x = random.nextInt(gp.screenWidth); // Random initial x position
         y = random.nextInt(gp.screenHeight); // Random initial y position
         speed = 3; // Speed of the dog
+        direction = 0;
     }
 
     // Update method for dog chasing the player
@@ -86,13 +88,8 @@ public class Dog extends Enemy {
     // Draw method for dog entity
     @Override
     public void draw(Graphics2D g2) {
-        if (image == null) {
-            g2.setColor(Color.ORANGE); 
-            g2.fillRect(x, y, width, height); 
-        } else {
-            super.draw(g2);
-        }
+        super.draw(g2);
         g2.setColor(new Color(1.0f, 0.5f, 0.0f, 0.2f));
-        g2.drawOval(x + width / 2 - chaseRange, y + height / 2 - chaseRange, chaseRange * 2, chaseRange * 2);
+        g2.drawOval(screenX + width / 2 - chaseRange, screenY + height / 2 - chaseRange, chaseRange * 2, chaseRange * 2);
     }
 }
