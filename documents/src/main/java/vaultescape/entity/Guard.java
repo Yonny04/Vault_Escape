@@ -1,9 +1,7 @@
 package vaultescape.entity;
 
-import java.awt.Rectangle;
-
 import vaultescape.map.GamePanel;
-import vaultescape.ui.Sprite;
+import vaultescape.ui.Sprite2D;
 
 public class Guard extends Enemy {
     private int x1, y1; 
@@ -11,7 +9,6 @@ public class Guard extends Enemy {
     private boolean goingEnd = true; 
     private boolean horizontal; 
 
-    double spriteCounter = 0.0; 
     private long lastCollisionTime = 0;  
     private static final long COOLDOWN = 500;
 
@@ -59,8 +56,8 @@ public class Guard extends Enemy {
             reverse(); 
         }
 
-        spriteCounter += 0.1;
-        if (spriteCounter > 3.9) spriteCounter = 0.0;
+        spriteCounter += 0.1f;
+        if (spriteCounter > 3.9f) spriteCounter = 0.0f;
         setFrame((int)Math.floor(spriteCounter),direction);
 
     }
@@ -70,8 +67,8 @@ public class Guard extends Enemy {
     }
 
     private boolean canMove(int x, int y) {
-        for (Sprite wall : gp.getTileGenerator().walls) {
-            if (wall.getBounds().intersects(new Rectangle(x, y, gp.tilesize - 3, gp.tilesize - 3))) {
+        for (Sprite2D wall : gp.getTileGenerator().walls) {
+            if (isTouching(wall)) {
                 return false;
             }
         }

@@ -5,26 +5,30 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import vaultescape.map.GamePanel;
-import vaultescape.ui.Sprite;
+import vaultescape.ui.Sprite2D;
 
-public class Entity extends Sprite {
+public class Entity extends Sprite2D {
     protected double speed;
-    protected GamePanel gp;
     
-    int direction = 1; 
+    protected int direction = 1;
+    protected float spriteCounter = 0.0f;
     protected BufferedImage spritesheet;
     protected int[] spritesheetDim = {0,0}; // Dimensions tiles on the sprite sheet
 
     // Constructor
     public Entity(GamePanel gp) {
-        this.gp = gp;
+        super(gp);
         this.width = gp.tilesize;
         this.height = gp.tilesize;
         setHitbox(width, height);
     }
 
-    // Abstract adapter method for collision detection
-    public boolean isTouching(Sprite sprite) {
+    /**
+     * Checks whether this sprite is touching the given sprite.
+     * @param sprite
+     * @return true if they are intersecting
+     */
+    public boolean isTouching(Sprite2D sprite) {
         return (sprite.getBounds().intersects(this.getBounds()));
     }
 

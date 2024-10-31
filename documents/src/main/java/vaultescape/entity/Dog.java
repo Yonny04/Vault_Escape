@@ -18,12 +18,13 @@ public class Dog extends Enemy {
         super(gp);
         this.x = startX;
         this.y = startY;
-        this.width = 32; 
-        this.height = 32; 
+        this.width = 64; 
+        this.height = 64; 
         this.chaseRange = 250;
         this.speed = 2;
         isChasing = false;
         setHitbox(32, 32); 
+        setSpritesheet("/entity/dog/spritesheet.png", 4, 4);
     }
     // Sets default values
     @Override
@@ -56,15 +57,22 @@ public class Dog extends Enemy {
         int playerY = gp.getPlayer().getY();
         int nextX = x;
         int nextY = y;
-        if (playerX > x) nextX += speed;
-        else if (playerX < x) nextX -= speed;
+        if (playerY > y) {nextY += speed; direction = 3;}
+        else if (playerY < y) {nextY -= speed; direction = 2;}
 
-        if (playerY > y) nextY += speed;
-        else if (playerY < y) nextY -= speed;
+        if (playerX > x) {nextX += speed; direction = 1;}
+        else if (playerX < x) {nextX -= speed; direction = 0;}
+        
         if (canMove(nextX, nextY)) {
             x = nextX;
             y = nextY;
-        }
+            // Increment sprite animation counter
+            spriteCounter += 0.1f;
+            if (spriteCounter > 3.9f) spriteCounter = 0.0f;
+        } else spriteCounter = 1.0f;
+        setFrame((int)Math.floor(spriteCounter),direction);
+
+
     }
     private boolean canMove(int x, int y) {
         for (Sprite wall : gp.getTileGenerator().walls) {

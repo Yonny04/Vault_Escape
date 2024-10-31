@@ -1,16 +1,15 @@
 package vaultescape.entity;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import vaultescape.map.GamePanel;
 import vaultescape.map.KeyDetector;
-import vaultescape.ui.Sprite;
+import vaultescape.ui.Sprite2D;
 
 public class Player extends Entity {
     KeyDetector keyh;
     public boolean alive = true;
-  
-    double spriteCounter;  
     BufferedImage spritesheet;  
 
     private int score = 0;
@@ -36,6 +35,8 @@ public class Player extends Entity {
     public void setDefault() {
         x = 8 * gp.tilesize;  
         y = 8 * gp.tilesize;
+        screenX = gp.numScreenCols*gp.tilesize/2 - (gp.tilesize / 2);
+        screenY = gp.numScreenRows*gp.tilesize/2 - (gp.tilesize / 2);
         speed = 5; 
     }
 
@@ -64,22 +65,26 @@ public class Player extends Entity {
             }
 
             // Increment sprite animation counter
-            spriteCounter += 0.1;
-            if (spriteCounter > 3.9) spriteCounter = 0.0;
-        } else spriteCounter = 1.0;  // Reset sprite counter when idle
+            spriteCounter += 0.1f;
+            if (spriteCounter > 3.9f) spriteCounter = 0.0f;
+        } else spriteCounter = 1.0f;  // Reset sprite counter when idle
 
         // Check for collisions with walls
-        for (Sprite wall : gp.getTileGenerator().walls) {
+        for (Sprite2D wall : gp.getTileGenerator().walls) {
             if (isTouching(wall)) {
                 // go back if collided (?)
                 x = oldX;
                 y = oldY;
-                spriteCounter = 1.0;  // Reset sprite counter when idle
+                spriteCounter = 1.0f;  // Reset sprite counter when idle
                 break;
             }
         }
         // Set player animation frame from the floored spriteCounter
-        int cycleNum = (int) Math.floor(spriteCounter);
-        setFrame(cycleNum,direction);
+        setFrame((int)Math.floor(spriteCounter),direction);
+    }
+    @Override
+    public void draw(Graphics2D g2) {
+        g2.drawImage(image, screenX, screenY, width, height, null);
+        super.drawHitbox(g2);
     }
 } 

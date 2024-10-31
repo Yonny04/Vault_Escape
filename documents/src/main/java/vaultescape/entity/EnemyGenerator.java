@@ -37,8 +37,8 @@ public class EnemyGenerator {
                     boolean isHorizontal = random.nextBoolean();
                     int x2 = isHorizontal ? start[0] + range : start[0];
                     int y2 = isHorizontal ? start[1] : start[1] + range;
-                    x2 = Math.min(x2, gp.screenWidth - gp.tilesize);
-                    y2 = Math.min(y2, gp.screenHeight - gp.tilesize);
+                    x2 = Math.min(x2, gp.mapWidth - gp.tilesize);
+                    y2 = Math.min(y2, gp.mapHeight - gp.tilesize);
                     enemy = new Guard(gp, start[0], start[1], x2, y2);
                 } else if (enemyType == Dog.class) {
                     enemy = new Dog(gp, start[0], start[1]);
@@ -86,7 +86,7 @@ public class EnemyGenerator {
             }
             if (enemy instanceof Dog dog) {
                 if (dog.isTouching(player)) {
-                    System.out.println("Dog caugth you!");
+                    System.out.println("Dog caught you!");
                 }
             }
             if (enemy instanceof Camera camera) {

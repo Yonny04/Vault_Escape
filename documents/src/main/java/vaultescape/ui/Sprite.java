@@ -1,6 +1,5 @@
 package vaultescape.ui;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -10,8 +9,6 @@ import java.awt.image.BufferedImage;
 public abstract class Sprite {
     protected int x, y, width, height;
     protected int hitboxWidth = 0, hitboxHeight = 0;
-
-    private boolean _drawCollisions = true;
     public BufferedImage image;
 
     public int getX(){
@@ -53,23 +50,5 @@ public abstract class Sprite {
      */
     public void draw(Graphics2D g2) {
         g2.drawImage(image, x, y, width, height, null);
-        if (_drawCollisions){
-            drawHitbox(g2);
-        }
-    }
-    public void drawHitbox(Graphics2D g2) {
-        if (_drawCollisions){
-            g2.setColor(new Color(0,(float)1.0,(float)1.0,(float)0.5));
-            g2.drawRect(x + (width - hitboxWidth)/2, y + (height - hitboxHeight)/2, hitboxWidth, hitboxHeight);
-        }
-    }
-
-    static public Sprite createSprite(int x, int y, int width, int height) {
-        Sprite newSprite = new Sprite(){};
-        newSprite.x = x;
-        newSprite.y = y;
-        newSprite.width = width;
-        newSprite.height = height;
-        return newSprite;
     }
 }
