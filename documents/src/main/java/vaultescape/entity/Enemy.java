@@ -20,6 +20,12 @@ public class Enemy extends Entity {
         speed = 5;
     }
 
+    public double getSpeed(){
+        return speed;
+    }
+    public void setSpeed(double value){
+        this.speed = value;
+    }
     // Update method for enemy entity
     public void update(){
         //while(alive == true){

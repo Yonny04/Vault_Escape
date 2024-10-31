@@ -70,10 +70,13 @@ public class GamePanel extends JPanel implements Runnable {
     public RewardGenerator getRewardGenerator(){
         return rewardGenerator;
     }
+    public EnemyGenerator getEnemyGenerator(){
+        return enemyGenerator;
+    }
 
     public void startGameThread() {
         timer = new Timer(levelTime);
-        enemyGenerator.generateAllEnemies(2, 2);
+        enemyGenerator.generateAllEnemies(2, 0, 1);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
