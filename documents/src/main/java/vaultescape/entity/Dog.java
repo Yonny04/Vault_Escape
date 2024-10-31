@@ -2,21 +2,29 @@ package vaultescape.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.Random;
 
 import vaultescape.map.GamePanel;
+import vaultescape.ui.Sprite;
 
 public class Dog extends Enemy {
-    private int chaseRange; // The range within which the dog will chase the player
+
+    private int chaseRange;      
+    private boolean isChasing;   
     private Random random;
 
-    public Dog(GamePanel gp) {
+    public Dog(GamePanel gp, int startX, int startY) {
         super(gp);
-        this.chaseRange = 100; // Set the chase range
-        this.random = new Random();
-        setDefault();
+        this.x = startX;
+        this.y = startY;
+        this.width = 32; 
+        this.height = 32; 
+        this.chaseRange = 250;
+        this.speed = 2;
+        isChasing = false;
+        setHitbox(32, 32); 
     }
-
     // Sets default values
     @Override
     public void setDefault() {
@@ -30,7 +38,9 @@ public class Dog extends Enemy {
     public void update() {
         if (isPlayerInRange()) {
             chasePlayer();
+            isChasing = true;
         }
+        else isChasing = false;
     }
 
     // Check if the player is within chase range
@@ -42,13 +52,43 @@ public class Dog extends Enemy {
 
     // Logic for chasing the player
     private void chasePlayer() {
-        //
+        int playerX = gp.getPlayer().getX();
+        int playerY = gp.getPlayer().getY();
+        
+        int nextX = x;
+        int nextY = y;
+
+        // Move towards the player's position
+        if (playerX > x) nextX += speed;
+        else if (playerX < x) nextX -= speed;
+
+        if (playerY > y) nextY += speed;
+        else if (playerY < y) nextY -= speed;
+        // Update position only if there's no wall collision
+        if (canMove(nextX, nextY)) {
+            x = nextX;
+            y = nextY;
+        }
+    }
+    private boolean canMove(int x, int y) {
+        for (Sprite wall : gp.getTileGenerator().walls) {
+            if (wall.getBounds().intersects(new Rectangle(x, y, gp.tilesize - 3, gp.tilesize - 3))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // Draw method for dog entity
     @Override
     public void draw(Graphics2D g2) {
-        g2.setColor(Color.orange); // Color of the dog
-        g2.fillRect(x, y, gp.tilesize - 3, gp.tilesize - 3); // Drawing the dog
+        if (image == null) {
+            g2.setColor(Color.ORANGE); 
+            g2.fillRect(x, y, width, height); 
+        } else {
+            super.draw(g2);
+        }
+        g2.setColor(new Color(1.0f, 0.5f, 0.0f, 0.2f));
+        g2.drawOval(x + width / 2 - chaseRange, y + height / 2 - chaseRange, chaseRange * 2, chaseRange * 2);
     }
 }

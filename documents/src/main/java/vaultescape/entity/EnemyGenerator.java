@@ -21,24 +21,38 @@ public class EnemyGenerator {
         this.random = new Random();
     }
 
-    public void generateGuards(int count) {
-        enemies.clear(); 
+    private void generateEnemies(Class<? extends Enemy> enemyType, int count) {
         List<int[]> availableTiles = new ArrayList<>(tg.availableTiles);
 
         for (int i = 0; i < count && !availableTiles.isEmpty(); i++) {
             int index = random.nextInt(availableTiles.size());
-            int[] start = availableTiles.remove(index); 
-            int range = 200 + random.nextInt(251);
-            boolean isHorizontal = random.nextBoolean();
-            int x1 = start[0];
-            int y1 = start[1];
-            int x2 = isHorizontal ? x1 + range : x1;
-            int y2 = isHorizontal ? y1 : y1 + range;
-            x2 = Math.min(x2, gp.screenWidth - gp.tilesize);
-            y2 = Math.min(y2, gp.screenHeight - gp.tilesize);
-            Guard guard = new Guard(gp, x1, y1, x2, y2);
-            enemies.add(guard);
+            int[] start = availableTiles.remove(index);
+
+            try {
+                Enemy enemy;
+                if (enemyType == Guard.class) {
+                    int range = 200 + random.nextInt(251);
+                    boolean isHorizontal = random.nextBoolean();
+                    int x2 = isHorizontal ? start[0] + range : start[0];
+                    int y2 = isHorizontal ? start[1] : start[1] + range;
+                    x2 = Math.min(x2, gp.screenWidth - gp.tilesize);
+                    y2 = Math.min(y2, gp.screenHeight - gp.tilesize);
+                    enemy = new Guard(gp, start[0], start[1], x2, y2);
+                } else if (enemyType == Dog.class) {
+                    enemy = new Dog(gp, start[0], start[1]);
+                } else {
+                    continue;
+                }
+                enemies.add(enemy);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public void generateAllEnemies(int guardsCount, int dogsCount) {
+        generateEnemies(Guard.class, 2);  
+        generateEnemies(Dog.class, 1);   
     }
 
     public void update(Player player) {
@@ -54,6 +68,11 @@ public class EnemyGenerator {
                 if (guard.isTouching(player) && guard.canCollide()) {
                     gp.getTimer().decreaseTime(5); 
                     guard.recordCollision();  
+                }
+            }
+            if (enemy instanceof Dog dog) {
+                if (dog.isTouching(player)) {
+                    System.out.println("Dog caugth you!");
                 }
             }
         }
