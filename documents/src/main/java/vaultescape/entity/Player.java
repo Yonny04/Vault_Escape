@@ -90,6 +90,6 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(image, screenX, screenY, width, height, null);
-        super.drawHitbox(g2);
+        super.draw(g2);
     }
 } 

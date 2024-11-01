@@ -1,15 +1,10 @@
 package vaultescape.reward;
 
-import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
-
+import vaultescape.entity.Entity;
 import vaultescape.map.GamePanel;
-import vaultescape.ui.Sprite2D;
 
-class Reward extends Sprite2D {
+class Reward extends Entity {
     protected int points;
-    private BufferedImage spritesheet;
     
     public Reward(GamePanel gp, int x, int y, int points) {
         super(gp);
@@ -19,14 +14,8 @@ class Reward extends Sprite2D {
         this.width = 64;
         this.height = 64;
         setHitbox(48, 48);
-        setRewardSpritesheet();
+        setSpritesheet("/reward/spritesheet.png",6,1);
         setRewardImage();
-    }
-    
-    private void setRewardSpritesheet(){
-        try {
-            spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/reward/spritesheet.png")));
-        } catch (Exception e) {e.printStackTrace();}
     }
 
     /**
@@ -58,8 +47,7 @@ class Reward extends Sprite2D {
                 break;
             
         }
-        BufferedImage newImage = spritesheet.getSubimage(frameNum*16, 0, 16, 16);
-        setImage(newImage);
+        setFrame(frameNum,0);
     }
 
     // Getter for points

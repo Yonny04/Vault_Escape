@@ -1,5 +1,6 @@
 package vaultescape.entity;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -10,6 +11,7 @@ import vaultescape.ui.Sprite2D;
 public class Entity extends Sprite2D {
     protected double speed;
     
+    private Sprite2D _shadow; 
     protected int direction = 1;
     protected float spriteCounter = 0.0f;
     protected BufferedImage spritesheet;
@@ -21,6 +23,10 @@ public class Entity extends Sprite2D {
         this.width = gp.tilesize;
         this.height = gp.tilesize;
         setHitbox(width, height);
+        _shadow = Sprite2D.createSprite2D(gp, x, y, 14*4, 6*4);
+        try {
+            _shadow.setImage(ImageIO.read(getClass().getResourceAsStream("/entity/shadow.png")));
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     /**
@@ -68,5 +74,12 @@ public class Entity extends Sprite2D {
         int spriteRow = spriteNum / spritesheetDim[1];
         BufferedImage currentFrame = spritesheet.getSubimage(spriteCol*16,spriteRow*16,16,16);
         setImage(currentFrame);
+    }
+    @Override
+    public void draw(Graphics2D g2) {
+        _shadow.setX(x+4);
+        _shadow.setY(y+16*3);
+        _shadow.draw(g2);
+        super.draw(g2);
     }
 }
