@@ -12,7 +12,7 @@ public class Dog extends Enemy {
 
     private int chaseRange;      
     private boolean isChasing;   
-    private Random random;
+    private Random random = new Random();
 
     public Dog(GamePanel gp, int startX, int startY) {
         super(gp);

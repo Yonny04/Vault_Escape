@@ -8,7 +8,7 @@ import vaultescape.map.GamePanel;
 public class Sprite2D extends Sprite {
     protected GamePanel gp;
     protected int screenX, screenY;
-    private boolean _drawCollisions = true;
+    private boolean _drawCollisions = false;
 
     public Sprite2D(GamePanel gp) {
         this.gp = gp;

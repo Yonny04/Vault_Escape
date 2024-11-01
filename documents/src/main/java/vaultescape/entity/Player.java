@@ -33,7 +33,7 @@ public class Player extends Entity {
 
     // Sets default values
     public void setDefault() {
-        x = 8 * gp.tilesize;  
+        x = 14 * gp.tilesize;  
         y = 8 * gp.tilesize;
         screenX = gp.numScreenCols*gp.tilesize/2 - (gp.tilesize / 2);
         screenY = gp.numScreenRows*gp.tilesize/2 - (gp.tilesize / 2);
@@ -90,6 +90,5 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(image, screenX, screenY, width, height, null);
-        super.draw(g2);
     }
 } 
