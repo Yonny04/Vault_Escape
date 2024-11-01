@@ -33,7 +33,7 @@ public class TileGenerator {
 
     public void setTileSpritesheet() {
         try {
-            spritesheet = ImageIO.read(getClass().getResourceAsStream(String.format("/map/spritesheet.png")));
+            spritesheet = ImageIO.read(getClass().getResourceAsStream("/map/wall_spritesheet.png"));
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -42,12 +42,12 @@ public class TileGenerator {
      */
     public void loadMap() {
         try {
-            InputStream stream = getClass().getResourceAsStream("/map/testlevel.txt");
+            InputStream stream = getClass().getResourceAsStream("/map/level3.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     
             for (int row = 0; row < gp.numMapCols; row++) {
                 String line = reader.readLine();
-                String numberStrings[] = line.split("\t");
+                String numberStrings[] = line.split(";");
     
                 for (int col = 0; col < gp.numMapRows; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
@@ -66,7 +66,7 @@ public class TileGenerator {
     }
 
     private BufferedImage getTileImage(int tileNumber) {
-        BufferedImage frame = spritesheet.getSubimage(tileNumber*16, 0, 16, 16);
+        BufferedImage frame = spritesheet.getSubimage((int)tileNumber%9*16, (int)Math.floor(tileNumber/9.0)*16, 16, 16);
         return frame;
     }
     
@@ -80,16 +80,30 @@ public class TileGenerator {
     private void createTile(int tileX, int tileY, int tileNumber) {
         Sprite2D tile = Sprite2D.createSprite2D(gp, tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
         tile.setImage(getTileImage(tileNumber));
-        if ((tileNumber > 0 && tileNumber % 2 == 1) 
-                || tileNumber == 12 || tileNumber == 14 || tileNumber == 16) {
-            tile.setHitbox(52, 40);
-            walls.add(tile);
-            topTiles.add(tile);
+
+        // Non-Doors and Upper Walls
+        if (!(tileNumber == 24 || tileNumber == 25 || 
+            (tileNumber >= 43 && tileNumber <= 46) || tileNumber == 47 || tileNumber == 34 || tileNumber == 35))
+        {
+            if (tileNumber == 4 || tileNumber == 10 || tileNumber == 11 || 
+                    tileNumber == 14 || tileNumber == 15 || (tileNumber >= 28 && tileNumber <= 33) ||
+                    tileNumber == 36){
+                bottomTiles.add(tile);
+                walls.add(tile);
+                tile.setHitbox(32, 32);
+            }
+            else {
+                walls.add(tile);
+                tile.setHitbox(40, 36);
+                if (tileNumber != 48) topTiles.add(tile);
+                else bottomTiles.add(tile);
+                
+            }
+            
         }
         else {
-            tile.setHitbox(52, 40);
-            walls.add(tile);
-            bottomTiles.add(tile);
+            if (tileNumber == 34 || tileNumber == 35) bottomTiles.add(tile);
+            else topTiles.add(tile);
         }
     }
 

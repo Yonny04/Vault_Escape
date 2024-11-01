@@ -77,9 +77,16 @@ public class Entity extends Sprite2D {
     }
     @Override
     public void draw(Graphics2D g2) {
-        _shadow.setX(x+4);
-        _shadow.setY(y+16*3);
-        _shadow.draw(g2);
+        drawShadow(g2);
         super.draw(g2);
+    }
+    /**
+     * Draw the shadow below the entity (call before the main call!)
+     * @param g2
+     */
+    public void drawShadow(Graphics2D g2) {
+        _shadow.setX(x+4);
+        _shadow.setY(y+48);
+        _shadow.draw(g2);
     }
 }
