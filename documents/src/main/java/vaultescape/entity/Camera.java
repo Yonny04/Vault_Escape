@@ -7,7 +7,6 @@ import vaultescape.map.GamePanel;
 
 public class Camera extends Enemy {
     private int detectionRange;
-    private boolean isPlayerInRange;
     private long lastDetectionTime = 0;
     private static final long SPEEDUP_COOLDOWN = 3000;
     
@@ -18,8 +17,7 @@ public class Camera extends Enemy {
         this.y = y;
         this.width = 64; 
         this.height = 64; 
-        detectionRange = 100;
-        isPlayerInRange = false;
+        this.detectionRange = detectionRange;
         setHitbox(16, 16);
         setSpritesheet("/entity/camera/spritesheet.png", 2, 3);
         setFrame(0);

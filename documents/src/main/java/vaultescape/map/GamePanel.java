@@ -7,12 +7,15 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import vaultescape.App;
 import vaultescape.entity.EnemyGenerator;
 import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
 import vaultescape.ui.Timer;
 
 public class GamePanel extends JPanel implements Runnable {
+    public App app;
+
     //Tilesize
     final int defaultTileSize = 16; // 16x16 image tile
     final int scale = 4;
@@ -55,7 +58,8 @@ public class GamePanel extends JPanel implements Runnable {
         return player;
     }
     // Constructor
-    public GamePanel() {
+    public GamePanel(App app) {
+        this.app = app;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(new Color(82,45,61));
         this.setDoubleBuffered(true);
@@ -96,6 +100,7 @@ public class GamePanel extends JPanel implements Runnable {
             if(timer.isTimeUp()){
                 System.out.println("Time is up! Exit is closed!");
                 gameThread = null;
+                app.backToMenu();
                 return;
             }
             try {
