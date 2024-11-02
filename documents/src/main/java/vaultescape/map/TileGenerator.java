@@ -54,7 +54,7 @@ public class TileGenerator {
     
                     if (tileNumber > 0) {
                         createTile(col, row, tileNumber);
-                    } else {
+                    } else if (tileNumber == 0) {
                         availableTiles.add(new int[]{col * gp.tilesize, row * gp.tilesize});
                     }
                 }
