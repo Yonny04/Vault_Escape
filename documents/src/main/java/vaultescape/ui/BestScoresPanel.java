@@ -1,12 +1,12 @@
 package vaultescape.ui;
 
+import java.awt.*;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class BestScoresPanel extends JPanel {
     public BestScoresPanel(ActionListener backListener) {
@@ -22,11 +22,11 @@ public class BestScoresPanel extends JPanel {
 
         String[] columnNames = {"Rank", "Score"};
         Object[][] data = {
-            {"1", "SCORE1"},
-            {"2", "SCORE2"},
-            {"3", "SCORE3"},
-            {"4", "SCORE4"},
-            {"5", "SCORE5"}
+            {"1", "000"},
+            {"2", "000"},
+            {"3", "000"},
+            {"4", "000"},
+            {"5", "000"}
         };
 
         JTable scoresTable = new JTable(data, columnNames);
