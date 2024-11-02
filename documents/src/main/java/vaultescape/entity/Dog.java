@@ -7,8 +7,10 @@ import vaultescape.map.GamePanel;
 
 public class Dog extends Enemy {
 
-    private int chaseRange;      
-    private boolean isChasing;   
+    private int chaseRange;
+    int timer = 0;
+    int vectorX;
+    int vectorY;
 
     public Dog(GamePanel gp, int startX, int startY) {
         super(gp);
@@ -16,9 +18,10 @@ public class Dog extends Enemy {
         this.y = startY;
         this.width = 64; 
         this.height = 64; 
-        this.chaseRange = 300;
+        this.chaseRange = 250;
+        vectorX = 0;
+        vectorY = 0;
         this.speed = 3;
-        isChasing = false;
         setHitbox(40, 32); 
         setSpritesheet("/entity/dog/spritesheet.png", 4, 4);
     }
@@ -28,19 +31,37 @@ public class Dog extends Enemy {
     public void update() {
         if (isPlayerInRange()) {
             chasePlayer();
-            isChasing = true;
+            timer = 81;
             // Increment sprite animation counter
-            spriteCounter += 0.1f;
-            if (spriteCounter > 3.9f) spriteCounter = 0.0f;
         }
         else {
-            isChasing = false;
-            // Set idle frame
-            spriteCounter = 1.0f;
+            wander();
+            timer++;
         }
         setFrame((int)Math.floor(spriteCounter),direction);
     }
 
+    private void wander() {
+        if (timer > 180) {
+            vectorX = r.nextInt(3) - 1; 
+            vectorY = r.nextInt(3) - 1; 
+            timer = 0;
+        }
+        if (timer < 80)
+        {
+            int oldX = x;
+            int oldY = y;
+            if (vectorY > 0) {y += speed*vectorY; direction = 3;}
+            else if (vectorY < 0) {y += speed*vectorY; direction = 2;}
+            if (!canMove()) {y = oldY;timer = 100;}
+            if (vectorX > 0) {x += speed*vectorX; direction = 1;}
+            else if (vectorX < 0) {x += speed*vectorX; direction = 0;}
+            if (!canMove()) {x = oldX;timer = 100;}
+            spriteCounter += 0.1f;
+            if (spriteCounter > 3.9f) spriteCounter = 0.0f;
+        }
+        
+    }
     // Check if the player is within chase range
     private boolean isPlayerInRange() {
         int playerX = gp.getPlayer().getX(); // Assuming player has public access to x and y
@@ -61,6 +82,8 @@ public class Dog extends Enemy {
         else if (playerX < x) {x -= speed; direction = 0;}
         
         if (!canMove()) x = oldX;
+        spriteCounter += 0.1f;
+        if (spriteCounter > 3.9f) spriteCounter = 0.0f;
 
 
     }
