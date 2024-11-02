@@ -1,9 +1,7 @@
 package vaultescape.map;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.io.InputStream;
 
 import javax.swing.JPanel;
 
@@ -14,7 +12,6 @@ import vaultescape.reward.RewardGenerator;
 import vaultescape.ui.Timer;
 
 public class GamePanel extends JPanel implements Runnable {
-    public App app;
 
     //Tilesize
     final int defaultTileSize = 16; // 16x16 image tile
@@ -57,6 +54,9 @@ public class GamePanel extends JPanel implements Runnable {
     public Player getPlayer(){
         return player;
     }
+
+    public App app;
+    private Font font;
     // Constructor
     public GamePanel(App app) {
         this.app = app;
@@ -65,10 +65,21 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
-
+        this.loadResources();
         tileGenerator = new TileGenerator(this);
         rewardGenerator = new RewardGenerator(this, tileGenerator);
         enemyGenerator = new EnemyGenerator(this);
+    }
+
+    /**
+     * Loads the font resource (and any other future
+     * global resource for the Game UI)
+     */
+    private void loadResources() {
+        try {
+            InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
+            font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 32);
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     public TileGenerator getTileGenerator() {
@@ -149,12 +160,17 @@ public class GamePanel extends JPanel implements Runnable {
         player.draw(g2); 
         tileGenerator.drawTop(g2); // Draw top tiles over player
 
-        g2.setFont(g2.getFont().deriveFont(20f)); 
-        g2.setColor(java.awt.Color.WHITE);
+        g2.setFont(font);
+        g2.setColor(new Color(0.0f,0.0f,0.0f,0.5f));
+        g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, 686);
+        g2.setColor(new Color(229,255,184));
         g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, 680);
-
+        
+        g2.setColor(new Color(0.0f,0.0f,0.0f,0.5f));
         String scoreText = "Score: " + String.format("%03d", player.getScore());  
         int scoreX = 80 + g2.getFontMetrics().stringWidth("Time: " + timer.getFormattedTimeLeft()) + 20;  
+        g2.drawString(scoreText, scoreX, 686);  
+        g2.setColor(new Color(255,216,133));
         g2.drawString(scoreText, scoreX, 680);  
 
         g2.dispose();

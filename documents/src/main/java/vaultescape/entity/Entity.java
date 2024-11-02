@@ -89,6 +89,16 @@ public class Entity extends Sprite2D {
         BufferedImage currentFrame = spritesheet.getSubimage(spriteCol*16,spriteRow*16,16,16);
         setImage(currentFrame);
     }
+
+    /**
+     * Sets the position of the enemy from a given 2D vector.
+     * Does not check if vector is 2-dimensional.
+     * @param vector int[] where [x, y] are the values
+     */
+    public void setPosition(int[] vector) {
+        x = vector[0];
+        y = vector[1];
+    }
     @Override
     public void draw(Graphics2D g2) {
         drawShadow(g2);

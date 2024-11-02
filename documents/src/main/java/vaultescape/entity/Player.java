@@ -16,9 +16,8 @@ public class Player extends Entity {
     // Constructor
     public Player(GamePanel gp, KeyDetector keyh) {
         super(gp);
+        setPosition(gp.getTileGenerator().getRandomAvailableTile());
         this.keyh = keyh;
-        x = 14 * gp.tilesize;  
-        y = 8 * gp.tilesize;
         screenX = gp.numScreenCols*gp.tilesize/2 - (gp.tilesize / 2);
         screenY = gp.numScreenRows*gp.tilesize/2 - (gp.tilesize / 2);
         speed = 5;

@@ -52,8 +52,14 @@ public class MenuPanel extends JPanel{
 
     @Override
     protected void paintComponent(Graphics g) {
-    super.paintComponent(g);  
-    Graphics2D g2 = (Graphics2D) g;
-    g2.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+        super.paintComponent(g);  
+        Graphics2D g2 = (Graphics2D) g;
+        g2.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+        g2.setFont(font.deriveFont(Font.PLAIN, 64));
+        g2.setColor(new Color(0.0f, 0.0f, 0.0f,0.5f));
+        g2.drawString("Vault Escape",420, 210);
+        GradientPaint gradient = new GradientPaint(100, 0, new Color(220, 180, 60), 50, 400, new Color(154,145,169));
+        g2.setPaint(gradient);
+        g2.drawString("Vault Escape",420, 200);
 }
 }

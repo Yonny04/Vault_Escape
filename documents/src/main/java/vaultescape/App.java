@@ -17,8 +17,7 @@ public class App extends JFrame{
         setSize(1280, 768); 
         setResizable(false);
         setTitle("VaultEscape");
-        setLocationRelativeTo(null);  
-        gp = new GamePanel(this);
+        setLocationRelativeTo(null);
         mp = new MenuPanel(
             e -> startGame(),  
             e -> showBestScores(),
@@ -30,6 +29,7 @@ public class App extends JFrame{
     }
 
     private void startGame(){
+        gp = new GamePanel(this);
         setContentPane(gp);
         revalidate();
         repaint();

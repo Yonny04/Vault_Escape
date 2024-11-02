@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -70,6 +71,16 @@ public class TileGenerator {
         return frame;
     }
     
+    /**
+     * Gets a random available tile in the map. Does not remove this tile,
+     * so do not use this if you want to spawn entities.
+     * @return
+     */
+    public int[] getRandomAvailableTile() {
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(0,availableTiles.size());
+        return availableTiles.get(randomIndex);
+    }
     /**
      * Creates and adds new tile to tiles ArrayList. Also adds
      * the tile to walls ArrayList if it is a wall tile.
