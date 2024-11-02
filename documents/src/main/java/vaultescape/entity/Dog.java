@@ -59,7 +59,7 @@ public class Dog extends Enemy {
             if (!canMove()) {x = oldX;timer = 100;}
             spriteCounter += 0.1f;
             if (spriteCounter > 3.9f) spriteCounter = 0.0f;
-        }
+        } else spriteCounter = 1.0f;
         
     }
     // Check if the player is within chase range
@@ -78,14 +78,12 @@ public class Dog extends Enemy {
         if (playerY > y) {y += speed; direction = 3;}
         else if (playerY < y) {y -= speed; direction = 2;}
         if (!canMove()) y = oldY;
-        if (playerX > x) {x += speed; direction = 1;}
-        else if (playerX < x) {x -= speed; direction = 0;}
-        
+        if (playerX > x && Math.abs(playerY - y) > 8) {x += speed; direction = 1;}
+        else if (playerX < x && Math.abs(playerY - y) > 8) {x -= speed; direction = 0;}
         if (!canMove()) x = oldX;
+
         spriteCounter += 0.1f;
         if (spriteCounter > 3.9f) spriteCounter = 0.0f;
-
-
     }
 
     // Draw method for dog entity
