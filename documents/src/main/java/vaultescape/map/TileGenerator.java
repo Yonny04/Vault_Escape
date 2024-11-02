@@ -42,7 +42,7 @@ public class TileGenerator {
      */
     public void loadMap() {
         try {
-            InputStream stream = getClass().getResourceAsStream("/map/level3.txt");
+            InputStream stream = getClass().getResourceAsStream("/map/level1.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     
             for (int row = 0; row < gp.numMapCols; row++) {
