@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 
 import vaultescape.map.GamePanel;
 import vaultescape.map.KeyDetector;
-import vaultescape.ui.Sprite2D;
 
 public class Player extends Entity {
     KeyDetector keyh;
@@ -18,7 +17,11 @@ public class Player extends Entity {
     public Player(GamePanel gp, KeyDetector keyh) {
         super(gp);
         this.keyh = keyh;
-        setDefault();
+        x = 14 * gp.tilesize;  
+        y = 8 * gp.tilesize;
+        screenX = gp.numScreenCols*gp.tilesize/2 - (gp.tilesize / 2);
+        screenY = gp.numScreenRows*gp.tilesize/2 - (gp.tilesize / 2);
+        speed = 5;
         setHitbox(48, 32);
         setSpritesheet("/entity/player/spritesheet.png", 4, 4);  
     }
@@ -29,15 +32,6 @@ public class Player extends Entity {
 
     public void addScore(int points) {
         score += points;
-    }
-
-    // Sets default values
-    public void setDefault() {
-        x = 14 * gp.tilesize;  
-        y = 8 * gp.tilesize;
-        screenX = gp.numScreenCols*gp.tilesize/2 - (gp.tilesize / 2);
-        screenY = gp.numScreenRows*gp.tilesize/2 - (gp.tilesize / 2);
-        speed = 5; 
     }
 
     // Update method for player entity
@@ -56,14 +50,9 @@ public class Player extends Entity {
                 x += speed;
                 direction = 1;
             }
-                // Check for collisions with walls
-            for (Sprite2D wall : gp.getTileGenerator().walls) {
-                if (isTouching(wall)) {
-                    // go back if collided (?)
-                    x = oldX;
-                    break;
-                }
-            }
+            // Check for collisions with walls on x-axis
+            if (!canMove()) x = oldX;
+
             if (keyh.w) {
                 y -= speed;
                 direction = 2; 
@@ -72,16 +61,14 @@ public class Player extends Entity {
                 y += speed;
                 direction = 3; 
             }
-            for (Sprite2D wall : gp.getTileGenerator().walls) {
-                if (isTouching(wall)) {
-                    // go back if collided (?)
-                    y = oldY;
-                    break;
-                }
-            }
+            
+            // Second check for collisions with walls on y-axis
+            if (!canMove()) y = oldY;
+
             // Increment sprite animation counter
             spriteCounter += 0.1f;
             if (spriteCounter > 3.9f) spriteCounter = 0.0f;
+
         } else spriteCounter = 1.0f;  // Reset sprite counter when idle
         
         // Set player animation frame from the floored spriteCounter

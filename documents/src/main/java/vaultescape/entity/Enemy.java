@@ -13,13 +13,6 @@ public class Enemy extends Entity {
         super(gp);
     }
 
-    //Sets default values
-    public void setDefault(){
-        x = 100; 
-        y = 100;
-        speed = 5;
-    }
-
     public double getSpeed(){
         return speed;
     }

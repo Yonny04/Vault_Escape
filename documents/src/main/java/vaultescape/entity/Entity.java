@@ -39,6 +39,20 @@ public class Entity extends Sprite2D {
     }
 
     /**
+     * Checks if the entity can move, only as long as it is
+     * not touching any wall.
+     * @return true if this sprite is not touching any walls
+     */
+    public boolean canMove() {
+        for (Sprite2D wall : gp.getTileGenerator().walls) {
+            if (isTouching(wall)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Sets the sprite image to get subimages from. (16x16 = 1 tile).
      * NOTE: First tile index is 0, last tile is n-1 if n is the total amount of tiles.
      * @param pathString the resource stream path (e.x. "/map/spritesheet.png")

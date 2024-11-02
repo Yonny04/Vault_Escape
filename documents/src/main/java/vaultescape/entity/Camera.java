@@ -18,23 +18,19 @@ public class Camera extends Enemy {
         this.y = y;
         this.width = 64; 
         this.height = 64; 
-        setDefault();
-        setSpritesheet("/entity/camera/spritesheet.png", 2, 3);
-        setFrame(0);
-    }
-
-    // Sets default values
-    @Override
-    public void setDefault() {
         detectionRange = 100;
         isPlayerInRange = false;
         setHitbox(16, 16);
+        setSpritesheet("/entity/camera/spritesheet.png", 2, 3);
+        setFrame(0);
     }
 
     // Update method for camera logic
     @Override
     public void update() {
-        // Should the logic be here instead ?
+        spriteCounter += 0.02f;
+        if (spriteCounter > 5.98) spriteCounter = 0.0f;
+        setFrame((int)spriteCounter);
     }
 
     public boolean isPlayerInRange() {
