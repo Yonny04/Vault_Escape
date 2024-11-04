@@ -17,7 +17,7 @@ public class RewardGenerator {
     private Random random;
     private TileGenerator tg;
 
-    private long bonusRewardSpawnInterval = 10000;
+    private long bonusRewardSpawnInterval = 5000;
     private long bonusRewardDuration = 7000;
     private long bonusSpawnTime;
 
@@ -72,7 +72,6 @@ public class RewardGenerator {
         for (int i = 0; i < regularRewards.size(); i++) {
             Reward reward = regularRewards.get(i);
             if (player.isTouching(reward)) {
-                player.addScore(((RegularReward) reward).getPoints());
                 regularRewards.remove(i); 
                 i--;  
             }
@@ -101,5 +100,11 @@ public class RewardGenerator {
     }
     public List<Reward> getBonusRewards() {
         return bonusRewards;
+    }
+    public int getRegularRewardsSize() {
+        return regularRewards.size();
+    }
+    public int getBonusRewardsSize() {
+        return bonusRewards.size();
     }
 }
