@@ -17,13 +17,15 @@ import vaultescape.ui.Sprite2D;
 public class TileGenerator {
     private GamePanel gp;
     //public ArrayList<Sprite> tiles = new ArrayList<>();  // store all tiles here
-    public ArrayList<Sprite2D> bottomTiles = new ArrayList<>();  // filter bottom tiles
-    public ArrayList<Sprite2D> topTiles = new ArrayList<>();  // filter top tiles
+    public ArrayList<Sprite2D> floorTiles = new ArrayList<>();
+    public ArrayList<Sprite2D> bottomTiles = new ArrayList<>();  // filter bottom tiles (walls)
+    public ArrayList<Sprite2D> topTiles = new ArrayList<>();  // filter top tiles (walls)
     public ArrayList<Sprite2D> walls = new ArrayList<>();  // filter wall collision tiles
-
     public List<int[]> availableTiles = new ArrayList<>();
 
-    protected BufferedImage spritesheet;
+    protected BufferedImage floorSpritesheet;
+    protected BufferedImage wallSpritesheet;
+    private final static int[] _bottomWallNums = {2,4,6,8,9,10,12,14,16,26,34,36,38,40,74,76,78,80};
 
     // Constructor
     public TileGenerator(GamePanel gp) {
@@ -34,7 +36,8 @@ public class TileGenerator {
 
     public void setTileSpritesheet() {
         try {
-            spritesheet = ImageIO.read(getClass().getResourceAsStream("/map/wall_spritesheet.png"));
+            wallSpritesheet = ImageIO.read(getClass().getResourceAsStream("/map/wall_spritesheet.png"));
+            floorSpritesheet = ImageIO.read(getClass().getResourceAsStream("/map/floor_spritesheet.png"));
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -43,7 +46,7 @@ public class TileGenerator {
      */
     public void loadMap() {
         try {
-            InputStream stream = getClass().getResourceAsStream("/map/level1.txt");
+            InputStream stream = getClass().getResourceAsStream("/map/floor1.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     
             for (int row = 0; row < gp.numMapCols; row++) {
@@ -54,7 +57,27 @@ public class TileGenerator {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
     
                     if (tileNumber > 0) {
-                        createTile(col, row, tileNumber);
+                        createFloorTile(col, row, tileNumber);
+                }
+                }
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            InputStream stream = getClass().getResourceAsStream("/map/wall1.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+    
+            for (int row = 0; row < gp.numMapCols; row++) {
+                String line = reader.readLine();
+                String numberStrings[] = line.split(";");
+    
+                for (int col = 0; col < gp.numMapRows; col++) {
+                    int tileNumber = Integer.parseInt(numberStrings[col]);
+    
+                    if (tileNumber > 0) {
+                        createWallTile(col, row, tileNumber);
                     } else if (tileNumber == 0) {
                         availableTiles.add(new int[]{col * gp.tilesize, row * gp.tilesize});
                     }
@@ -66,8 +89,13 @@ public class TileGenerator {
         }
     }
 
-    private BufferedImage getTileImage(int tileNumber) {
-        BufferedImage frame = spritesheet.getSubimage((int)tileNumber%9*16, (int)Math.floor(tileNumber/9.0)*16, 16, 16);
+    private BufferedImage getFloorTileImage(int tileNumber) {
+        BufferedImage frame = floorSpritesheet.getSubimage((int)tileNumber%6*16, (int)Math.floor(tileNumber/6.0)*16, 16, 16);
+        return frame;
+    }
+
+    private BufferedImage getWallTileImage(int tileNumber) {
+        BufferedImage frame = wallSpritesheet.getSubimage((int)tileNumber%10*16, (int)Math.floor(tileNumber/10.0)*16, 16, 16);
         return frame;
     }
     
@@ -81,6 +109,12 @@ public class TileGenerator {
         int randomIndex = rand.nextInt(0,availableTiles.size());
         return availableTiles.get(randomIndex);
     }
+
+    private void createFloorTile(int tileX, int tileY, int tileNumber) {
+        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
+        tile.setImage(getFloorTileImage(tileNumber));
+        floorTiles.add(tile);
+    }
     /**
      * Creates and adds new tile to tiles ArrayList. Also adds
      * the tile to walls ArrayList if it is a wall tile.
@@ -88,36 +122,44 @@ public class TileGenerator {
      * @param tileY multiply by gp.tilesize to get the global y
      * @param tileNumber 0 is floor, any other number is a wall (for now)
      */
-    private void createTile(int tileX, int tileY, int tileNumber) {
+    private void createWallTile(int tileX, int tileY, int tileNumber) {
         Sprite2D tile = Sprite2D.createSprite2D(gp, tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
-        tile.setImage(getTileImage(tileNumber));
+        tile.setImage(getWallTileImage(tileNumber));
 
-        // Non-Doors and Upper Walls
-        if (!(tileNumber == 24 || tileNumber == 25 || 
-            (tileNumber >= 43 && tileNumber <= 46) || tileNumber == 47 || tileNumber == 34 || tileNumber == 35))
+        // Doors and Upper Pillar (no collision)
+        if (tileNumber >= 17 && tileNumber <= 25)
         {
-            if (tileNumber == 4 || tileNumber == 10 || tileNumber == 11 || 
-                    tileNumber == 14 || tileNumber == 15 || (tileNumber >= 28 && tileNumber <= 33) ||
-                    tileNumber == 36){
+            // Lower Door
+            if (tileNumber == 18 || tileNumber == 20) bottomTiles.add(tile);
+            else topTiles.add(tile); // Side doors and top part of front-facing door
+            return;
+        }
+        
+        boolean isBottomTile = false;
+        for (int num : _bottomWallNums) {
+            if (tileNumber == num) {
+                isBottomTile = true;
+                break;
+            }
+        }
+        // Bottom Tile
+        if (isBottomTile) {
                 bottomTiles.add(tile);
                 walls.add(tile);
-                tile.setHitbox(32, 32);
-            }
-            else {
-                walls.add(tile);
-                tile.setHitbox(40, 36);
-                if (tileNumber != 48) topTiles.add(tile);
-                else bottomTiles.add(tile);
-                
-            }
-            
-        }
-        else {
-            if (tileNumber == 34 || tileNumber == 35) bottomTiles.add(tile);
-            else topTiles.add(tile);
+                tile.setHitbox(32, 36);
+                return; }
+        // Top Tile
+        walls.add(tile);
+        tile.setHitbox(40, 36);
+        if (tileNumber != 48) topTiles.add(tile);
+        else bottomTiles.add(tile);
+    }
+    // Draw floors
+    public void drawFloor(Graphics2D g2) {
+        for (Sprite tile : floorTiles) {
+            tile.draw(g2);  
         }
     }
-
     // Draw walls
     public void drawBottom(Graphics2D g2) {
         for (Sprite tile : bottomTiles) {

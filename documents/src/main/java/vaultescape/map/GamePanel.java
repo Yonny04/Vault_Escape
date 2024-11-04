@@ -1,6 +1,10 @@
 package vaultescape.map;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.InputStream;
 
 import javax.swing.JPanel;
@@ -31,25 +35,29 @@ public class GamePanel extends JPanel implements Runnable {
     public final int mapWidth = tilesize * numMapCols;
     public final int mapHeight = tilesize * numMapRows;
 
+    // Camera Detection 
+    private boolean playerDetected = false;
+
     // FPS
     final int fps = 60;
 
     //Game basic
-    private Thread gameThread;
-    private KeyDetector keyh = new KeyDetector();
+    private final KeyDetector keyh = new KeyDetector();
     private TileGenerator tileGenerator = new TileGenerator(this);
-    private Player player = new Player(this, keyh);
+    private final Player player = new Player(this, keyh);
+    // private BGM bgm = new BGM();
+    private Thread gameThread;
 
     // Timer
     private Timer timer;
     public long levelTime = 60;
 
     // Rewards
-    private RewardGenerator rewardGenerator;
-    private int regularRewardCount = 7;
+    private final RewardGenerator rewardGenerator;
+    private final  int regularRewardCount = 7;
 
     //Enemies
-    private EnemyGenerator enemyGenerator;
+    private final EnemyGenerator enemyGenerator;
 
     public Player getPlayer(){
         return player;
@@ -61,7 +69,7 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel(App app) {
         this.app = app;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(new Color(82,45,61));
+        this.setBackground(new Color(89,81,120));
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
@@ -91,10 +99,16 @@ public class GamePanel extends JPanel implements Runnable {
     public EnemyGenerator getEnemyGenerator(){
         return enemyGenerator;
     }
+    public boolean isPlayerDetected() {
+        return playerDetected;
+    }
+    public void setPlayerDetected(boolean detected) {
+        this.playerDetected = detected;
+    }
 
     public void startGameThread() {
         timer = new Timer(levelTime);
-        enemyGenerator.generateAllEnemies(2, 1, 1);
+        enemyGenerator.generateAllEnemies(10, 2, 1);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
@@ -126,6 +140,21 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+
+
+    //for music
+    // public void playMusic(int i){
+    //     bgm.setFile();
+    //     bgm.play();
+    //     bgm.loop();
+    // }
+
+    // public void stopMusic(){
+    //     bgm.stop();
+    // }
+
+
+
     public void resetGame() {
         timer = new Timer(levelTime);  
         player.setX(8 * tilesize);
@@ -152,7 +181,8 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(java.awt.Color.WHITE);
 
-        player.drawShadow(g2); // Draw shadow first
+        tileGenerator.drawFloor(g2); // Draw floor
+        player.drawShadow(g2); // Draw shadow on floor
         tileGenerator.drawBottom(g2);  // Draw bottom tile
         rewardGenerator.drawRewards(g2);
         enemyGenerator.drawEnemies(g2);

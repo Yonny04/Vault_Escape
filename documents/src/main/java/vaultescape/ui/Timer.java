@@ -1,6 +1,6 @@
 package vaultescape.ui;
 
-public class Timer {
+public final class Timer {
     private long startTime;
     private long countdownTime;
 
@@ -8,7 +8,7 @@ public class Timer {
         this.countdownTime = seconds * 1000;
         start();
     }
-
+    
     public void start(){
         startTime = System.currentTimeMillis();
     }
