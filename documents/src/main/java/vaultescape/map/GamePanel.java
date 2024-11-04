@@ -1,10 +1,6 @@
 package vaultescape.map;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.io.InputStream;
 
 import javax.swing.JPanel;
@@ -68,7 +64,7 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel(App app) {
         this.app = app;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(new Color(82,45,61));
+        this.setBackground(new Color(89,81,120));
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
@@ -165,7 +161,8 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(java.awt.Color.WHITE);
 
-        player.drawShadow(g2); // Draw shadow first
+        tileGenerator.drawFloor(g2); // Draw floor
+        player.drawShadow(g2); // Draw shadow on floor
         tileGenerator.drawBottom(g2);  // Draw bottom tile
         rewardGenerator.drawRewards(g2);
         enemyGenerator.drawEnemies(g2);
