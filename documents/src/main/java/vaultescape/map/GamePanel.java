@@ -44,6 +44,9 @@ public class GamePanel extends JPanel implements Runnable {
     private final Player player = new Player(this, keyh);
     private Thread gameThread;
 
+    //Music Components
+    BGM bgm = new BGM();
+
     // Timer
     private Timer timer;
     public long levelTime = 60;
@@ -77,6 +80,29 @@ public class GamePanel extends JPanel implements Runnable {
         rewardGenerator = new RewardGenerator(this, tileGenerator);
         enemyGenerator = new EnemyGenerator(this);
     }
+
+    public void setUpMusic() {
+        playMusic(0);
+    }
+
+    public void playMusic(int i){
+        bgm.setFile(i);
+        bgm.play();
+        bgm.loop();
+
+
+        try {
+            Thread.sleep(10000); // Play for 10 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void stopMusic() {
+        bgm.stop();
+    }
+
 
     /**
      * Loads the font resource and any other future global resources needed for the game UI.
