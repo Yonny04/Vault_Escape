@@ -15,61 +15,61 @@ import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
 import vaultescape.ui.Timer;
 
+/**
+ * Represents the main game panel where all game elements are drawn and updated, such as the player, enemies,
+ * rewards, and timer. Manages the game loop, input, and screen dimensions.
+ */
 public class GamePanel extends JPanel implements Runnable {
 
-    //Tilesize
-    final int defaultTileSize = 16; // 16x16 image tile
-    final int scale = 4;
-
-    // Screen
-    public final int tilesize = defaultTileSize * scale; // 64x64 screen tile
+    // Tile and screen properties
+    final int defaultTileSize = 16; // Base size of a tile
+    final int scale = 4; // Scale factor for tile size
+    public final int tilesize = defaultTileSize * scale; // 64x64 scaled tile size
     public final int numScreenCols = 20;
     public final int numScreenRows = 12;
+    public final int screenWidth = tilesize * numScreenCols; // Screen width in pixels
+    public final int screenHeight = tilesize * numScreenRows; // Screen height in pixels
 
-    public final int screenWidth = tilesize * numScreenCols; // 1280px
-    public final int screenHeight = tilesize * numScreenRows; // 768px
-
-    // Map
+    // Map properties
     public final int numMapCols = 40;
     public final int numMapRows = 40;
     public final int mapWidth = tilesize * numMapCols;
     public final int mapHeight = tilesize * numMapRows;
 
-    // Camera Detection 
+    // Camera detection flag
     private boolean playerDetected = false;
 
-    // FPS
+    // Frames per second for game loop
     final int fps = 60;
 
-    //Game basic
+    // Game components
     private final KeyDetector keyh = new KeyDetector();
     private TileGenerator tileGenerator = new TileGenerator(this);
     private final Player player = new Player(this, keyh);
-    // private BGM bgm = new BGM();
     private Thread gameThread;
 
     // Timer
     private Timer timer;
     public long levelTime = 60;
 
-    // Rewards
+    // Reward and Enemy generators
     private final RewardGenerator rewardGenerator;
-    private final  int regularRewardCount = 7;
-
-    //Enemies
+    private final int regularRewardCount = 7;
     private final EnemyGenerator enemyGenerator;
 
-    public Player getPlayer(){
-        return player;
-    }
-
+    // App reference and font resource
     public App app;
     private Font font;
-    // Constructor
+
+    /**
+     * Constructs the GamePanel, setting up game dimensions, components, resources, and input listeners.
+     *
+     * @param app the main application instance
+     */
     public GamePanel(App app) {
         this.app = app;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(new Color(89,81,120));
+        this.setBackground(new Color(89, 81, 120));
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
@@ -80,32 +80,65 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
-     * Loads the font resource (and any other future
-     * global resource for the Game UI)
+     * Loads the font resource and any other future global resources needed for the game UI.
      */
     private void loadResources() {
         try {
             InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
             font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 32);
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Retrieves the tile generator instance.
+     *
+     * @return the tile generator for managing game map tiles
+     */
     public TileGenerator getTileGenerator() {
-        return tileGenerator;  // Provide access to tile generator
+        return tileGenerator;
     }
-    public RewardGenerator getRewardGenerator(){
+
+    /**
+     * Retrieves the reward generator instance.
+     *
+     * @return the reward generator for managing game rewards
+     */
+    public RewardGenerator getRewardGenerator() {
         return rewardGenerator;
     }
-    public EnemyGenerator getEnemyGenerator(){
+
+    /**
+     * Retrieves the enemy generator instance.
+     *
+     * @return the enemy generator for managing game enemies
+     */
+    public EnemyGenerator getEnemyGenerator() {
         return enemyGenerator;
     }
+
+    /**
+     * Checks if the player has been detected by any camera.
+     *
+     * @return true if the player is detected, false otherwise
+     */
     public boolean isPlayerDetected() {
         return playerDetected;
     }
+
+    /**
+     * Sets the player detection status.
+     *
+     * @param detected true to indicate the player is detected, false otherwise
+     */
     public void setPlayerDetected(boolean detected) {
         this.playerDetected = detected;
     }
 
+    /**
+     * Starts the game thread, initializing the timer and generating enemies and rewards.
+     */
     public void startGameThread() {
         timer = new Timer(levelTime);
         enemyGenerator.generateAllEnemies(10, 2, 1);
@@ -114,6 +147,9 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start();
     }
 
+    /**
+     * Runs the game loop, updating and repainting the game at a fixed frame rate.
+     */
     @Override
     public void run() {
         double drawInterval = 1000000000 / fps;
@@ -122,12 +158,14 @@ public class GamePanel extends JPanel implements Runnable {
         while (gameThread != null) {
             update();
             repaint();
-            if(timer.isTimeUp()){
+
+            if (timer.isTimeUp()) {
                 System.out.println("Time is up! Exit is closed!");
                 gameThread = null;
                 app.backToMenu();
                 return;
             }
+
             try {
                 double remainingTime = nextDrawTime - System.nanoTime();
                 remainingTime /= 1000000;
@@ -140,59 +178,67 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-
-
-    //for music
-    // public void playMusic(int i){
-    //     bgm.setFile();
-    //     bgm.play();
-    //     bgm.loop();
-    // }
-
-    // public void stopMusic(){
-    //     bgm.stop();
-    // }
-
-
-
+    /**
+     * Resets the game state, including timer and player position, and regenerates rewards.
+     */
     public void resetGame() {
-        timer = new Timer(levelTime);  
+        timer = new Timer(levelTime);
         player.setX(8 * tilesize);
         player.setY(8 * tilesize);
         rewardGenerator.generateRegularRewards(regularRewardCount);
     }
 
-    public Timer getTimer(){
+    /**
+     * Retrieves the timer instance.
+     *
+     * @return the timer managing the game's countdown
+     */
+    public Timer getTimer() {
         return timer;
     }
 
+    /**
+     * Retrieves the player instance.
+     *
+     * @return the player entity
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Updates the state of the player, rewards, and enemies. Checks if the timer has expired.
+     */
     public void update() {
         player.update();
         rewardGenerator.update(player);
         enemyGenerator.update(player);
-        if(timer.isTimeUp()){
-            // gameThread = null;
-        }
     }
 
+    /**
+     * Paints all game elements onto the screen, including the background, player, enemies, rewards, and UI elements.
+     *
+     * @param g the Graphics object for rendering
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(java.awt.Color.WHITE);
+        g2.setColor(Color.WHITE);
 
-        tileGenerator.drawFloor(g2); // Draw floor
-        player.drawShadow(g2); // Draw shadow on floor
-        tileGenerator.drawBottom(g2);  // Draw bottom tile
-        rewardGenerator.drawRewards(g2);
-        enemyGenerator.drawEnemies(g2);
+        tileGenerator.drawFloor(g2); // Draw floor tiles
+        player.drawShadow(g2); // Draw player shadow on the floor
+        tileGenerator.drawBottom(g2); // Draw bottom layer tiles
+        rewardGenerator.drawRewards(g2); // Draw rewards
+        enemyGenerator.drawEnemies(g2); // Draw enemies
 
-        player.draw(g2); 
-        tileGenerator.drawTop(g2); // Draw top tiles over player
+        player.draw(g2); // Draw player
+        tileGenerator.drawTop(g2); // Draw top layer tiles
 
+        // Draw timer and score UI
         g2.setFont(font);
-        
         int textY = 620;
+        
         g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, textY + 6);
         g2.setColor(Color.WHITE);
@@ -201,16 +247,14 @@ public class GamePanel extends JPanel implements Runnable {
         String rewardsText = "Basic Rewards Left: " + rewardGenerator.getRegularRewardsSize();
         g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         g2.drawString(rewardsText, 80, textY + 46);
-        g2.setColor(new Color(255, 255, 0)); 
+        g2.setColor(new Color(255, 255, 0));
         g2.drawString(rewardsText, 80, textY + 40);
 
         String scoreText = "Score: " + String.format("%03d", player.getScore());
         g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         g2.drawString(scoreText, 80, textY + 86);
-        g2.setColor(new Color(0, 128, 255)); 
+        g2.setColor(new Color(0, 128, 255));
         g2.drawString(scoreText, 80, textY + 80);
-
-        g2.dispose();
 
         g2.dispose();
     }

@@ -14,35 +14,47 @@ import javax.imageio.ImageIO;
 import vaultescape.ui.Sprite;
 import vaultescape.ui.Sprite2D;
 
+/**
+ * Responsible for generating and managing the tiles in the game, including floors, walls, and available tiles for spawning.
+ * Loads map data from resources and separates tiles based on their types and properties.
+ */
 public class TileGenerator {
     private GamePanel gp;
-    //public ArrayList<Sprite> tiles = new ArrayList<>();  // store all tiles here
     public ArrayList<Sprite2D> floorTiles = new ArrayList<>();
-    public ArrayList<Sprite2D> bottomTiles = new ArrayList<>();  // filter bottom tiles (walls)
-    public ArrayList<Sprite2D> topTiles = new ArrayList<>();  // filter top tiles (walls)
-    public ArrayList<Sprite2D> walls = new ArrayList<>();  // filter wall collision tiles
-    public List<int[]> availableTiles = new ArrayList<>();
+    public ArrayList<Sprite2D> bottomTiles = new ArrayList<>(); // Bottom wall tiles
+    public ArrayList<Sprite2D> topTiles = new ArrayList<>(); // Top wall tiles
+    public ArrayList<Sprite2D> walls = new ArrayList<>(); // Collision wall tiles
+    public List<int[]> availableTiles = new ArrayList<>(); // Available tiles for entity spawning
 
     protected BufferedImage floorSpritesheet;
     protected BufferedImage wallSpritesheet;
-    private final static int[] _bottomWallNums = {2,4,6,8,9,10,12,14,16,26,34,36,38,40,74,76,78,80};
+    private final static int[] _bottomWallNums = {2, 4, 6, 8, 9, 10, 12, 14, 16, 26, 34, 36, 38, 40, 74, 76, 78, 80};
 
-    // Constructor
+    /**
+     * Constructs the TileGenerator, loading the spritesheets and map data from resources.
+     *
+     * @param gp the game panel associated with this tile generator
+     */
     public TileGenerator(GamePanel gp) {
         this.gp = gp;
         setTileSpritesheet();
         loadMap();
     }
 
+    /**
+     * Loads the spritesheets for floor and wall tiles from resources.
+     */
     public void setTileSpritesheet() {
         try {
             wallSpritesheet = ImageIO.read(getClass().getResourceAsStream("/map/wall_spritesheet.png"));
             floorSpritesheet = ImageIO.read(getClass().getResourceAsStream("/map/floor_spritesheet.png"));
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Loads and generates tiles from the given resource stream .txt file.
+     * Loads the map data from text files and generates floor and wall tiles based on the map layout.
      */
     public void loadMap() {
         try {
@@ -51,31 +63,30 @@ public class TileGenerator {
     
             for (int row = 0; row < gp.numMapCols; row++) {
                 String line = reader.readLine();
-                String numberStrings[] = line.split(";");
+                String[] numberStrings = line.split(";");
     
                 for (int col = 0; col < gp.numMapRows; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
-    
                     if (tileNumber > 0) {
                         createFloorTile(col, row, tileNumber);
-                }
+                    }
                 }
             }
             reader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         try {
             InputStream stream = getClass().getResourceAsStream("/map/wall1.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     
             for (int row = 0; row < gp.numMapCols; row++) {
                 String line = reader.readLine();
-                String numberStrings[] = line.split(";");
+                String[] numberStrings = line.split(";");
     
                 for (int col = 0; col < gp.numMapRows; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
-    
                     if (tileNumber > 0) {
                         createWallTile(col, row, tileNumber);
                     } else if (tileNumber == 0) {
@@ -89,52 +100,69 @@ public class TileGenerator {
         }
     }
 
+    /**
+     * Retrieves a subimage for a floor tile based on the tile number.
+     *
+     * @param tileNumber the index of the tile in the spritesheet
+     * @return the BufferedImage of the specified tile
+     */
     private BufferedImage getFloorTileImage(int tileNumber) {
-        BufferedImage frame = floorSpritesheet.getSubimage((int)tileNumber%6*16, (int)Math.floor(tileNumber/6.0)*16, 16, 16);
-        return frame;
+        return floorSpritesheet.getSubimage(tileNumber % 6 * 16, (int) Math.floor(tileNumber / 6.0) * 16, 16, 16);
     }
 
-    private BufferedImage getWallTileImage(int tileNumber) {
-        BufferedImage frame = wallSpritesheet.getSubimage((int)tileNumber%10*16, (int)Math.floor(tileNumber/10.0)*16, 16, 16);
-        return frame;
-    }
-    
     /**
-     * Gets a random available tile in the map. Does not remove this tile,
-     * so do not use this if you want to spawn entities.
-     * @return
+     * Retrieves a subimage for a wall tile based on the tile number.
+     *
+     * @param tileNumber the index of the tile in the spritesheet
+     * @return the BufferedImage of the specified wall tile
+     */
+    private BufferedImage getWallTileImage(int tileNumber) {
+        return wallSpritesheet.getSubimage(tileNumber % 10 * 16, (int) Math.floor(tileNumber / 10.0) * 16, 16, 16);
+    }
+
+    /**
+     * Gets a random available tile in the map for entity spawning. 
+     * This method does not remove the selected tile from available tiles.
+     *
+     * @return an int array representing the x and y coordinates of the available tile
      */
     public int[] getRandomAvailableTile() {
         Random rand = new Random();
-        int randomIndex = rand.nextInt(0,availableTiles.size());
+        int randomIndex = rand.nextInt(availableTiles.size());
         return availableTiles.get(randomIndex);
     }
 
+    /**
+     * Creates a floor tile and adds it to the floor tiles list.
+     *
+     * @param tileX the x-coordinate of the tile in tile units
+     * @param tileY the y-coordinate of the tile in tile units
+     * @param tileNumber the index of the tile in the spritesheet
+     */
     private void createFloorTile(int tileX, int tileY, int tileNumber) {
-        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
+        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX * gp.tilesize, tileY * gp.tilesize, gp.tilesize, gp.tilesize);
         tile.setImage(getFloorTileImage(tileNumber));
         floorTiles.add(tile);
     }
+
     /**
-     * Creates and adds new tile to tiles ArrayList. Also adds
-     * the tile to walls ArrayList if it is a wall tile.
-     * @param tileX multiply by gp.tilesize to get the global x
-     * @param tileY multiply by gp.tilesize to get the global y
-     * @param tileNumber 0 is floor, any other number is a wall (for now)
+     * Creates a wall tile and categorizes it into bottom, top, or collision tiles based on tile properties.
+     *
+     * @param tileX the x-coordinate of the tile in tile units
+     * @param tileY the y-coordinate of the tile in tile units
+     * @param tileNumber the index of the tile in the spritesheet
      */
     private void createWallTile(int tileX, int tileY, int tileNumber) {
-        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX*gp.tilesize,tileY*gp.tilesize,gp.tilesize,gp.tilesize);
+        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX * gp.tilesize, tileY * gp.tilesize, gp.tilesize, gp.tilesize);
         tile.setImage(getWallTileImage(tileNumber));
 
         // Doors and Upper Pillar (no collision)
-        if (tileNumber >= 17 && tileNumber <= 25)
-        {
-            // Lower Door
+        if (tileNumber >= 17 && tileNumber <= 25) {
             if (tileNumber == 18 || tileNumber == 20) bottomTiles.add(tile);
-            else topTiles.add(tile); // Side doors and top part of front-facing door
+            else topTiles.add(tile);
             return;
         }
-        
+
         boolean isBottomTile = false;
         for (int num : _bottomWallNums) {
             if (tileNumber == num) {
@@ -142,33 +170,49 @@ public class TileGenerator {
                 break;
             }
         }
-        // Bottom Tile
+
         if (isBottomTile) {
-                bottomTiles.add(tile);
-                walls.add(tile);
-                tile.setHitbox(32, 36);
-                return; }
-        // Top Tile
-        walls.add(tile);
-        tile.setHitbox(40, 36);
-        if (tileNumber != 48) topTiles.add(tile);
-        else bottomTiles.add(tile);
+            bottomTiles.add(tile);
+            walls.add(tile);
+            tile.setHitbox(32, 36);
+        } else {
+            walls.add(tile);
+            tile.setHitbox(40, 36);
+            if (tileNumber != 48) topTiles.add(tile);
+            else bottomTiles.add(tile);
+        }
     }
-    // Draw floors
+
+    /**
+     * Draws all floor tiles on the screen.
+     *
+     * @param g2 the Graphics2D object used for rendering
+     */
     public void drawFloor(Graphics2D g2) {
         for (Sprite tile : floorTiles) {
-            tile.draw(g2);  
+            tile.draw(g2);
         }
     }
-    // Draw walls
+
+    /**
+     * Draws all bottom wall tiles on the screen.
+     *
+     * @param g2 the Graphics2D object used for rendering
+     */
     public void drawBottom(Graphics2D g2) {
         for (Sprite tile : bottomTiles) {
-            tile.draw(g2);  
+            tile.draw(g2);
         }
     }
+
+    /**
+     * Draws all top wall tiles on the screen.
+     *
+     * @param g2 the Graphics2D object used for rendering
+     */
     public void drawTop(Graphics2D g2) {
         for (Sprite tile : topTiles) {
-            tile.draw(g2);  
+            tile.draw(g2);
         }
     }
 }

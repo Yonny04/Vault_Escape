@@ -2,13 +2,23 @@ package vaultescape.ui;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
+/**
+ * A custom JPanel that displays a table of best scores. This panel includes a title, a table of scores,
+ * and a back button to return to the previous screen. The panel is styled with a gradient background
+ * and custom fonts and colors.
+ */
 public class BestScoresPanel extends JPanel {
+
+    /**
+     * Constructs the BestScoresPanel with a specified action listener for the back button.
+     *
+     * @param backListener the ActionListener to handle the back button action
+     */
     public BestScoresPanel(ActionListener backListener) {
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(50, 100, 50, 100));
@@ -16,9 +26,9 @@ public class BestScoresPanel extends JPanel {
 
         JLabel title = new JLabel("Best Scores", SwingConstants.CENTER);
         title.setFont(new Font("Times New Roman", Font.BOLD, 30));
-        title.setForeground(new Color(210, 170, 50)); 
-        title.setBackground(new Color(210, 170, 50));  
-        title.setOpaque(true);  
+        title.setForeground(new Color(210, 170, 50));
+        title.setBackground(new Color(210, 170, 50));
+        title.setOpaque(true);
 
         String[] columnNames = {"Rank", "Score"};
         Object[][] data = {
@@ -43,7 +53,12 @@ public class BestScoresPanel extends JPanel {
         add(backButton, BorderLayout.SOUTH);
     }
 
-    private void styleTable(JTable table){
+    /**
+     * Applies custom styling to the JTable, including font, alignment, header style, and grid settings.
+     *
+     * @param table the JTable to style
+     */
+    private void styleTable(JTable table) {
         table.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         table.setRowHeight(40);
 
@@ -61,6 +76,11 @@ public class BestScoresPanel extends JPanel {
         table.setIntercellSpacing(new Dimension(0, 0));
     }
 
+    /**
+     * Applies custom styling to the JButton, including font, background color, border, and size.
+     *
+     * @param button the JButton to style
+     */
     private void styleButton(JButton button) {
         button.setFont(new Font("Times New Roman", Font.BOLD, 20));
         button.setBackground(Color.BLACK);
@@ -71,6 +91,11 @@ public class BestScoresPanel extends JPanel {
         button.setPreferredSize(new Dimension(100, 50));
     }
 
+    /**
+     * Paints the background of the panel with a vertical gradient effect.
+     *
+     * @param g the Graphics object used to paint the component
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

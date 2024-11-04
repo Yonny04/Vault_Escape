@@ -1,54 +1,78 @@
 package vaultescape;
-import javax.swing.JFrame;
 
+import javax.swing.JFrame;
 import vaultescape.map.GamePanel;
 import vaultescape.ui.BestScoresPanel;
 import vaultescape.ui.MenuPanel;
 
-public class App extends JFrame{
+/**
+ * Main application class for VaultEscape, handling the primary game window and
+ * navigation between different panels 
+ * (menu, game, best scores)
+ */
+public class App extends JFrame {
 
-    private GamePanel gp;
-    private MenuPanel mp;
-    private BestScoresPanel bsp;
+    private GamePanel gp; // The main game panel
+    private MenuPanel mp; // The main menu panel
+    private BestScoresPanel bsp; // The best scores panel
 
+    /**
+     * Constructs the main application window, initializing the menu panel and setting
+     * up the JFrame properties.
+     */
     public App() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1280, 768); 
+        setSize(1280, 768);
         setResizable(false);
         setTitle("VaultEscape");
         setLocationRelativeTo(null);
+        
         mp = new MenuPanel(
-            e -> startGame(),  
-            e -> showBestScores(),
-            e -> System.exit(0)
+            e -> startGame(),  // Start game action listener
+            e -> showBestScores(), // Show best scores action listener
+            e -> System.exit(0) // Exit action listener
         );
         bsp = new BestScoresPanel(e -> backToMenu());
         setContentPane(mp);
         setVisible(true);
     }
 
-    private void startGame(){
-
+    /**
+     * Starts the game by initializing the game panel, setting it as the content pane,
+     * and starting the game thread.
+     */
+    private void startGame() {
         gp = new GamePanel(this);
         setContentPane(gp);
         revalidate();
         repaint();
         gp.requestFocus();
         gp.startGameThread();
-        
     }
 
-    private void showBestScores(){
+    /**
+     * Displays the best scores panel.
+     */
+    private void showBestScores() {
         setContentPane(bsp);
         revalidate();
         repaint();
     }
 
+    /**
+     * Returns to the main menu by setting the menu panel as the content pane.
+     */
     public void backToMenu() {
         setContentPane(mp);
         revalidate();
         repaint();
     }
+
+    /**
+     * Main method to launch the application.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         new App();
     }
