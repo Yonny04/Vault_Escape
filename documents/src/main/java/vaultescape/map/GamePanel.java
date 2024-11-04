@@ -161,17 +161,26 @@ public class GamePanel extends JPanel implements Runnable {
         tileGenerator.drawTop(g2); // Draw top tiles over player
 
         g2.setFont(font);
-        g2.setColor(new Color(0.0f,0.0f,0.0f,0.5f));
-        g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, 686);
-        g2.setColor(new Color(229,255,184));
-        g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, 680);
         
-        g2.setColor(new Color(0.0f,0.0f,0.0f,0.5f));
-        String scoreText = "Score: " + String.format("%03d", player.getScore());  
-        int scoreX = 80 + g2.getFontMetrics().stringWidth("Time: " + timer.getFormattedTimeLeft()) + 20;  
-        g2.drawString(scoreText, scoreX, 686);  
-        g2.setColor(new Color(255,216,133));
-        g2.drawString(scoreText, scoreX, 680);  
+        int textY = 620;
+        g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
+        g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, textY + 6);
+        g2.setColor(Color.WHITE);
+        g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, textY);
+
+        String rewardsText = "Basic Rewards Left: " + rewardGenerator.getRegularRewardsSize();
+        g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
+        g2.drawString(rewardsText, 80, textY + 46);
+        g2.setColor(new Color(255, 255, 0)); 
+        g2.drawString(rewardsText, 80, textY + 40);
+
+        String scoreText = "Score: " + String.format("%03d", player.getScore());
+        g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
+        g2.drawString(scoreText, 80, textY + 86);
+        g2.setColor(new Color(0, 128, 255)); 
+        g2.drawString(scoreText, 80, textY + 80);
+
+        g2.dispose();
 
         g2.dispose();
     }
