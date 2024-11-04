@@ -91,6 +91,7 @@ public class Dog extends Enemy{
         return (currentTime - lastCollisionTime) >= COOLDOWN;
     }
 
+    // Records the number of collision for the dog
     public void recordCollision() {
         lastCollisionTime = System.currentTimeMillis();
     }

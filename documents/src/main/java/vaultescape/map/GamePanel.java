@@ -42,10 +42,11 @@ public class GamePanel extends JPanel implements Runnable {
     final int fps = 60;
 
     //Game basic
-    private Thread gameThread;
     private final KeyDetector keyh = new KeyDetector();
     private TileGenerator tileGenerator = new TileGenerator(this);
     private final Player player = new Player(this, keyh);
+    // private BGM bgm = new BGM();
+    private Thread gameThread;
 
     // Timer
     private Timer timer;
@@ -107,7 +108,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void startGameThread() {
         timer = new Timer(levelTime);
-        enemyGenerator.generateAllEnemies(30, 2, 1);
+        enemyGenerator.generateAllEnemies(10, 2, 1);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
@@ -138,6 +139,21 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+
+
+
+    //for music
+    // public void playMusic(int i){
+    //     bgm.setFile();
+    //     bgm.play();
+    //     bgm.loop();
+    // }
+
+    // public void stopMusic(){
+    //     bgm.stop();
+    // }
+
+
 
     public void resetGame() {
         timer = new Timer(levelTime);  
@@ -185,7 +201,6 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawString(scoreText, scoreX, 686);  
         g2.setColor(new Color(255,216,133));
         g2.drawString(scoreText, scoreX, 680);  
-
         g2.dispose();
     }
 }
