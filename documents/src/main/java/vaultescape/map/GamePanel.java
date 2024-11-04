@@ -1,6 +1,10 @@
 package vaultescape.map;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.InputStream;
 
 import javax.swing.JPanel;
@@ -31,25 +35,28 @@ public class GamePanel extends JPanel implements Runnable {
     public final int mapWidth = tilesize * numMapCols;
     public final int mapHeight = tilesize * numMapRows;
 
+    // Camera Detection 
+    private boolean playerDetected = false;
+
     // FPS
-    final int fps = 60;
+    final int fps = 80;
 
     //Game basic
     private Thread gameThread;
-    private KeyDetector keyh = new KeyDetector();
+    private final KeyDetector keyh = new KeyDetector();
     private TileGenerator tileGenerator = new TileGenerator(this);
-    private Player player = new Player(this, keyh);
+    private final Player player = new Player(this, keyh);
 
     // Timer
     private Timer timer;
     public long levelTime = 60;
 
     // Rewards
-    private RewardGenerator rewardGenerator;
-    private int regularRewardCount = 7;
+    private final RewardGenerator rewardGenerator;
+    private final  int regularRewardCount = 7;
 
     //Enemies
-    private EnemyGenerator enemyGenerator;
+    private final EnemyGenerator enemyGenerator;
 
     public Player getPlayer(){
         return player;
@@ -90,6 +97,12 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public EnemyGenerator getEnemyGenerator(){
         return enemyGenerator;
+    }
+    public boolean isPlayerDetected() {
+        return playerDetected;
+    }
+    public void setPlayerDetected(boolean detected) {
+        this.playerDetected = detected;
     }
 
     public void startGameThread() {
