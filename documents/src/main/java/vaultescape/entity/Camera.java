@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import vaultescape.map.GamePanel;
 
 public class Camera extends Enemy {
-    private int detectionRange;
+    private final int detectionRange;
     private long lastDetectionTime = 0;
     private static final long SPEEDUP_COOLDOWN = 3000;
     
@@ -28,6 +28,12 @@ public class Camera extends Enemy {
     public void update() {
         spriteCounter += 0.02f;
         if (spriteCounter > 5.98) spriteCounter = 0.0f;
+
+        if (isPlayerInRange() && camDetect()) {
+            gp.setPlayerDetected(true);  // Set the flag in GamePanel
+            recordDetection();           // Update last detection time
+        }
+
         setFrame((int)spriteCounter);
     }
 
@@ -37,8 +43,9 @@ public class Camera extends Enemy {
         return Math.sqrt(Math.pow(playerX - x, 2) + Math.pow(playerY - y, 2)) <= detectionRange;
     }
 
-    public boolean canDetect() {
+    public boolean camDetect() {
         long currentTime = System.currentTimeMillis();
+        System.out.println("Player detected");
         return (currentTime - lastDetectionTime) >= SPEEDUP_COOLDOWN;
     }
 

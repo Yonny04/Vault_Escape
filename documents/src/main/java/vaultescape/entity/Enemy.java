@@ -5,6 +5,10 @@ import java.util.Random;
 import vaultescape.map.GamePanel;
 
 public class Enemy extends Entity {
+
+    public long lastCollisionTime = 0;  
+    public static final long COOLDOWN = 500;
+
     Random r = new Random();
 
     //private int enemyMove = r.nextInt(4);
