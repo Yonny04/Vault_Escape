@@ -18,10 +18,10 @@ public class Player extends Entity {
         super(gp);
         setPosition(gp.getTileGenerator().getRandomAvailableTile());
         this.keyh = keyh;
-        screenX = gp.numScreenCols*gp.tilesize/2 - (gp.tilesize / 2);
-        screenY = gp.numScreenRows*gp.tilesize/2 - (gp.tilesize / 2);
+        screenX = gp.screenWidth/2 - (gp.tilesize / 2);
+        screenY = gp.screenHeight/2 - (gp.tilesize / 2);
         speed = 5;
-        setHitbox(48, 32);
+        setHitbox(42, 36);
         setSpritesheet("/entity/player/spritesheet.png", 4, 4);  
     }
     
@@ -76,5 +76,6 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(image, screenX, screenY, width, height, null);
+        super.drawHitbox(g2);
     }
 } 
