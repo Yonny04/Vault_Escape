@@ -8,7 +8,7 @@ import vaultescape.map.GamePanel;
 public class Sprite2D extends Sprite {
     protected GamePanel gp;
     protected int screenX, screenY;
-    private boolean _drawCollisions = false;
+    private final boolean _drawCollisions = false;
 
     public Sprite2D(GamePanel gp) {
         this.gp = gp;
@@ -19,6 +19,7 @@ public class Sprite2D extends Sprite {
     public int getScreenY(){
         return screenY;
     }
+    
     /**
      * Draw the sprite at the screen location with the given image
      * @param g2

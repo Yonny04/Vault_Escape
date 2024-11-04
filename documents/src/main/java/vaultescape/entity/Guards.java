@@ -48,7 +48,7 @@ public class Guards extends Enemy {
     }
 
     private void reverse() {
-        goingEnd = !goingEnd;
+        goingEnd = !goingEnd;      
     }
 
     public boolean canCollide() {

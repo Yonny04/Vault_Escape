@@ -39,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean playerDetected = false;
 
     // FPS
-    final int fps = 80;
+    final int fps = 60;
 
     //Game basic
     private Thread gameThread;
@@ -107,7 +107,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void startGameThread() {
         timer = new Timer(levelTime);
-        enemyGenerator.generateAllEnemies(2, 1, 1);
+        enemyGenerator.generateAllEnemies(30, 2, 1);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();

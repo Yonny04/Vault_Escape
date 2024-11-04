@@ -13,8 +13,9 @@ public class EnemyGenerator {
     private final TileGenerator tg;
     private final List<Enemy> enemies;
     private final Random random;
-    private long lastSpeedBoostTime = 0;
-    private static final long SPEEDUP_COOLDOWN = 5000;
+    
+    // private long lastSpeedBoostTime = 0;
+    // private static final long SPEEDUP_COOLDOWN = 5000;
 
     public EnemyGenerator(GamePanel gp) {
         this.gp = gp;

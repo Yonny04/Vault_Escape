@@ -20,7 +20,6 @@ public class TileGenerator {
     public ArrayList<Sprite2D> bottomTiles = new ArrayList<>();  // filter bottom tiles
     public ArrayList<Sprite2D> topTiles = new ArrayList<>();  // filter top tiles
     public ArrayList<Sprite2D> walls = new ArrayList<>();  // filter wall collision tiles
-
     public List<int[]> availableTiles = new ArrayList<>();
 
     protected BufferedImage spritesheet;
