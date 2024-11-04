@@ -91,10 +91,7 @@ public class EnemyGenerator {
                     dog.freezeDog(1);
                     // Penalty for touching the dog 
                     gp.getTimer().decreaseTime(4);
-
                     dog.recordCollision();
-
-
                 }
             }
             if (enemy instanceof Camera camera) {

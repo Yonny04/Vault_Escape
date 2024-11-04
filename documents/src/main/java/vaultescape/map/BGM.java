@@ -1,39 +1,36 @@
 // package vaultescape.map;
 
-// import java.io.File;
+// import java.net.URL;
 
 // import javax.sound.sampled.AudioInputStream;
 // import javax.sound.sampled.AudioSystem;
 // import javax.sound.sampled.Clip;
 
 // public class BGM {
-//     private Clip clip;
+//     Clip clip;
+//     URL musicURL[] = new URL[30];
 
-//     // Load music from a file
-//     public void loadMusic(File musicFile) {
+//     public BGM() {
+//         musicURL[0] = getClass().getResource("/map/bgm.mp3");
+//     }
+
+//     public void setFile(){
 //         try {
-//             if (clip != null && clip.isRunning()) {
-//                 clip.stop(); // Stop the previous clip if it's running
-//             }
-//             AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicFile);
+//             AudioInputStream ais = AudioSystem.getAudioInputStream(musicURL[i]);
 //             clip = AudioSystem.getClip();
-//             clip.open(audioInput);
+//             clip.open(ais);
+
 //         } catch (Exception ex) {
-//             ex.printStackTrace();
 //         }
+        
 //     }
-
-//     public void playMusic() {
-//         if (clip != null) {
-//             clip.start();
-//             clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop continuously
-//         }
+//     public void loop(){
+//         clip.loop(Clip.LOOP_CONTINUOUSLY);
 //     }
-
-//     public void stopMusic() {
-//         if (clip != null && clip.isRunning()) {
-//             clip.stop();
-//             clip.close();
-//         }
+//     public void play(){
+//         clip.start();
+//     }
+//     public void stop(){
+//         clip.stop();
 //     }
 // }
