@@ -9,12 +9,13 @@ import vaultescape.map.GamePanel;
 import vaultescape.map.TileGenerator;
 
 public class EnemyGenerator {
-    private GamePanel gp;
-    private TileGenerator tg;
-    private List<Enemy> enemies;
-    private Random random;
-    private long lastSpeedBoostTime = 0;
-    private static final long SPEEDUP_COOLDOWN = 5000;
+    private final GamePanel gp;
+    private final TileGenerator tg;
+    private final List<Enemy> enemies;
+    private final Random random;
+    
+    // private long lastSpeedBoostTime = 0;
+    // private static final long SPEEDUP_COOLDOWN = 5000;
 
     public EnemyGenerator(GamePanel gp) {
         this.gp = gp;
@@ -32,14 +33,14 @@ public class EnemyGenerator {
 
             try {
                 Enemy enemy;
-                if (enemyType == Guard.class) {
+                if (enemyType == Guards.class) {
                     int range = 200 + random.nextInt(251);
                     boolean isHorizontal = random.nextBoolean();
                     int x2 = isHorizontal ? start[0] + range : start[0];
                     int y2 = isHorizontal ? start[1] : start[1] + range;
                     x2 = Math.min(x2, gp.mapWidth - gp.tilesize);
                     y2 = Math.min(y2, gp.mapHeight - gp.tilesize);
-                    enemy = new Guard(gp, start[0], start[1], x2, y2);
+                    enemy = new Guards(gp, start[0], start[1], x2, y2);
                 } else if (enemyType == Dog.class) {
                     enemy = new Dog(gp, start[0], start[1]);
                 } else if (enemyType == Camera.class) {
@@ -56,7 +57,7 @@ public class EnemyGenerator {
 
 
     public void generateAllEnemies(int guardsCount, int dogsCount, int cameraCount) {
-        generateEnemies(Guard.class, guardsCount);  
+        generateEnemies(Guards.class, guardsCount);  
         generateEnemies(Dog.class, dogsCount);   
         generateEnemies(Camera.class, cameraCount);
     }
@@ -70,7 +71,7 @@ public class EnemyGenerator {
 
     public void increaseEnemySpeed(double multiplier){
         for(Enemy enemy : enemies){
-            if(enemy instanceof Guard || enemy instanceof Dog){
+            if(enemy instanceof Guards || enemy instanceof Dog){
                 enemy.setSpeed(enemy.getSpeed() * multiplier);
             }
         }
@@ -78,19 +79,23 @@ public class EnemyGenerator {
 
     public void checkEnemyCollision(Player player) {
         for (Enemy enemy : enemies) {
-            if (enemy instanceof Guard guard) {
+            if (enemy instanceof Guards guard) {
                 if (guard.isTouching(player) && guard.canCollide()) {
-                    gp.getTimer().decreaseTime(5); 
+                    gp.getTimer().decreaseTime(6); 
                     guard.recordCollision();  
                 }
             }
             if (enemy instanceof Dog dog) {
-                if (dog.isTouching(player)) {
-                    System.out.println("Dog caught you!");
+                if (dog.isTouching(player) && dog.canCollide()) {
+                    //Dog freezes for a brief second
+                    dog.freezeDog(1);
+                    // Penalty for touching the dog 
+                    gp.getTimer().decreaseTime(4);
+                    dog.recordCollision();
                 }
             }
             if (enemy instanceof Camera camera) {
-                if (camera.isPlayerInRange() && camera.canDetect()) {
+                if (camera.isPlayerInRange() && camera.camDetect()) {
                     increaseEnemySpeed(1.03); 
                     camera.recordDetection();
                 }
