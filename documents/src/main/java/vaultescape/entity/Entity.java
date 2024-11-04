@@ -2,7 +2,9 @@ package vaultescape.entity;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
 import javax.imageio.ImageIO;
+
 import vaultescape.map.GamePanel;
 import vaultescape.ui.Sprite2D;
 
@@ -18,6 +20,7 @@ public class Entity extends Sprite2D {
     protected float spriteCounter = 0.0f;
     protected BufferedImage spritesheet;
     protected int[] spritesheetDim = {0, 0}; // Dimensions of tiles on the sprite sheet
+    protected int spritesheetTileSize = 16; // size of the tile
 
     /**
      * Constructs an Entity with a specified game panel, setting up basic
@@ -86,7 +89,8 @@ public class Entity extends Sprite2D {
      */
     public void setFrame(int coordX, int coordY) {
         if (spritesheetDim[1] == 0) return;
-        BufferedImage currentFrame = spritesheet.getSubimage(coordX * 16, coordY * 16, 16, 16);
+        BufferedImage currentFrame = spritesheet.getSubimage(coordX * spritesheetTileSize, 
+            coordY * spritesheetTileSize, spritesheetTileSize, spritesheetTileSize);
         setImage(currentFrame);
     }
 
@@ -99,7 +103,8 @@ public class Entity extends Sprite2D {
         if (spritesheetDim[1] == 0) return;
         int spriteCol = spriteNum % spritesheetDim[0];
         int spriteRow = spriteNum / spritesheetDim[0];
-        BufferedImage currentFrame = spritesheet.getSubimage(spriteCol * 16, spriteRow * 16, 16, 16);
+        BufferedImage currentFrame = spritesheet.getSubimage(spriteCol * spritesheetTileSize, 
+            spriteRow * spritesheetTileSize, spritesheetTileSize, spritesheetTileSize);
         setImage(currentFrame);
     }
 

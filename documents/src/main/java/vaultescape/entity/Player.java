@@ -2,8 +2,10 @@ package vaultescape.entity;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
 import vaultescape.map.GamePanel;
 import vaultescape.map.KeyDetector;
+import vaultescape.ui.Sprite2D;
 
 /**
  * Represents the player character in the game, allowing for movement, scoring, and interaction with the game environment.
@@ -51,6 +53,17 @@ public class Player extends Entity {
         score += points;
     }
 
+    public boolean isTouchingExit() {
+        for (Sprite2D wall : gp.getTileGenerator().walls) {
+            if (isTouching(wall)) {
+                if (wall instanceof Exit) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Updates the player's state, including position based on input, collision detection, and animation frame updates.
      * Handles movement along both x and y axes, resetting position if collisions are detected.
@@ -69,6 +82,8 @@ public class Player extends Entity {
                 x += speed;
                 direction = 1;
             }
+            // Win Condition (no more rewards)
+            if (isTouchingExit() && gp.getRewardGenerator().getRegularRewardsSize() == 0) gp.completeGame();
             // Check for collisions with walls on the x-axis
             if (!canMove()) x = oldX;
 
@@ -79,7 +94,8 @@ public class Player extends Entity {
                 y += speed;
                 direction = 3;
             }
-
+            // Win Condition (no more rewards)
+            if (isTouchingExit() && gp.getRewardGenerator().getRegularRewardsSize() == 0) gp.completeGame();
             // Second check for collisions with walls on the y-axis
             if (!canMove()) y = oldY;
 
@@ -91,6 +107,7 @@ public class Player extends Entity {
 
         // Set player animation frame from the floored spriteCounter
         setFrame((int) Math.floor(spriteCounter), direction);
+
     }
 
     /**

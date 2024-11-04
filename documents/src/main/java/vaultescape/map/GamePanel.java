@@ -1,10 +1,6 @@
 package vaultescape.map;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.io.InputStream;
 
 import javax.swing.JPanel;
@@ -54,8 +50,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Reward and Enemy generators
     private final RewardGenerator rewardGenerator;
-    private final int regularRewardCount = 7;
+    private final int regularRewardCount = 5;
     private final EnemyGenerator enemyGenerator;
+    private final int guardsCount = 8;
+    private final int dogsCount = 2;
+    private final int cameraCount = 1;
 
     // App reference and font resource
     public App app;
@@ -137,11 +136,28 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
+     * Stops the game upon escaping the vault
+     */
+    public void completeGame() {
+        gameThread = null;
+        System.out.println("VICTORY: You escaped!");
+        app.backToMenu(); // Return back to menu after game ends
+    }
+
+    /**
+     * Stops the game upon running out of time
+     */
+    public void gameOver() {
+        gameThread = null;
+        System.out.println("GAME OVER: Time is up! Exit is closed!");
+        app.backToMenu(); // Return back to menu after game ends
+    }
+    /**
      * Starts the game thread, initializing the timer and generating enemies and rewards.
      */
     public void startGameThread() {
         timer = new Timer(levelTime);
-        enemyGenerator.generateAllEnemies(10, 2, 1);
+        enemyGenerator.generateAllEnemies(guardsCount, dogsCount, cameraCount);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
@@ -160,9 +176,7 @@ public class GamePanel extends JPanel implements Runnable {
             repaint();
 
             if (timer.isTimeUp()) {
-                System.out.println("Time is up! Exit is closed!");
-                gameThread = null;
-                app.backToMenu();
+                gameOver();
                 return;
             }
 
@@ -176,16 +190,6 @@ public class GamePanel extends JPanel implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Resets the game state, including timer and player position, and regenerates rewards.
-     */
-    public void resetGame() {
-        timer = new Timer(levelTime);
-        player.setX(8 * tilesize);
-        player.setY(8 * tilesize);
-        rewardGenerator.generateRegularRewards(regularRewardCount);
     }
 
     /**

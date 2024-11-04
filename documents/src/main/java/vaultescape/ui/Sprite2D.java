@@ -2,6 +2,7 @@ package vaultescape.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
 import vaultescape.map.GamePanel;
 
 /**
@@ -54,10 +55,10 @@ public class Sprite2D extends Sprite {
         int playerScreenY = gp.getPlayer().getScreenY();
         screenX = x - playerX + playerScreenX;
         screenY = y - playerY + playerScreenY;
-        if (x + gp.tilesize > playerX - playerScreenX && 
-            x - gp.tilesize < playerX + playerScreenX && 
-            y + gp.tilesize > playerY - playerScreenY && 
-            y - gp.tilesize < playerY + playerScreenY) {
+        if (x + 2*gp.tilesize > playerX - playerScreenX && 
+            x - 2*gp.tilesize < playerX + playerScreenX && 
+            y + 2*gp.tilesize > playerY - playerScreenY && 
+            y - 2*gp.tilesize < playerY + playerScreenY) {
             g2.drawImage(image, screenX, screenY, width, height, null);
             if (_drawCollisions) drawHitbox(g2);
         }

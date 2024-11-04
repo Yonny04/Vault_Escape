@@ -11,6 +11,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import vaultescape.entity.Exit;
 import vaultescape.ui.Sprite;
 import vaultescape.ui.Sprite2D;
 
@@ -25,6 +26,7 @@ public class TileGenerator {
     public ArrayList<Sprite2D> topTiles = new ArrayList<>(); // Top wall tiles
     public ArrayList<Sprite2D> walls = new ArrayList<>(); // Collision wall tiles
     public List<int[]> availableTiles = new ArrayList<>(); // Available tiles for entity spawning
+    public Exit exit; // Exit door
 
     protected BufferedImage floorSpritesheet;
     protected BufferedImage wallSpritesheet;
@@ -117,7 +119,7 @@ public class TileGenerator {
      * @return the BufferedImage of the specified wall tile
      */
     private BufferedImage getWallTileImage(int tileNumber) {
-        return wallSpritesheet.getSubimage(tileNumber % 10 * 16, (int) Math.floor(tileNumber / 10.0) * 16, 16, 16);
+        return wallSpritesheet.getSubimage(tileNumber % 9 * 16, (int) Math.floor(tileNumber / 9.0) * 16, 16, 16);
     }
 
     /**
@@ -156,6 +158,15 @@ public class TileGenerator {
         Sprite2D tile = Sprite2D.createSprite2D(gp, tileX * gp.tilesize, tileY * gp.tilesize, gp.tilesize, gp.tilesize);
         tile.setImage(getWallTileImage(tileNumber));
 
+        // Vault Door
+        if (tileNumber == 75) {
+            if (exit == null){
+                exit = new Exit(gp,tileX * gp.tilesize, tileY * gp.tilesize);
+                bottomTiles.add(exit);
+                walls.add(exit);
+            }
+            return;
+        }
         // Doors and Upper Pillar (no collision)
         if (tileNumber >= 17 && tileNumber <= 25) {
             if (tileNumber == 18 || tileNumber == 20) bottomTiles.add(tile);
