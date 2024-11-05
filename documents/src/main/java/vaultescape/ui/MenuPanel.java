@@ -22,7 +22,7 @@ public class MenuPanel extends JPanel {
      * @param bestScoresListener the ActionListener for the best scores button
      * @param exitListener the ActionListener for the exit button
      */
-    public MenuPanel(ActionListener startListener, ActionListener bestScoresListener, ActionListener exitListener) {
+    public MenuPanel(ActionListener startListener, ActionListener bestScoresListener, ActionListener instructionListener, ActionListener exitListener) {
         this.setLayout(null);
         this.loadResources();
 
@@ -36,13 +36,19 @@ public class MenuPanel extends JPanel {
         buttonBestScores.setBounds(500, 370, 200, 50);
         buttonBestScores.addActionListener(bestScoresListener);
 
+        JButton buttonInstructions = new JButton("Instructions");
+        styleButton(buttonInstructions);
+        buttonInstructions.setBounds(500, 440, 200, 50);
+        buttonInstructions.addActionListener(instructionListener);
+
         JButton buttonExit = new JButton("Exit");
         styleButton(buttonExit);
-        buttonExit.setBounds(500, 440, 200, 50);
+        buttonExit.setBounds(500, 510, 200, 50);
         buttonExit.addActionListener(exitListener);
 
         this.add(buttonStart);
         this.add(buttonBestScores);
+        this.add(buttonInstructions);
         this.add(buttonExit);
     }
 

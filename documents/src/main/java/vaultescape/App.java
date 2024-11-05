@@ -3,6 +3,7 @@ package vaultescape;
 import javax.swing.JFrame;
 import vaultescape.map.GamePanel;
 import vaultescape.ui.BestScoresPanel;
+import vaultescape.ui.InstructionsPanel;
 import vaultescape.ui.MenuPanel;
 
 /**
@@ -14,6 +15,7 @@ public class App extends JFrame {
 
     private GamePanel gp; // The main game panel
     private MenuPanel mp; // The main menu panel
+    private InstructionsPanel ip; // The instructions panel
     private BestScoresPanel bsp; // The best scores panel
 
     /**
@@ -30,9 +32,12 @@ public class App extends JFrame {
         mp = new MenuPanel(
             e -> startGame(),  // Start game action listener
             e -> showBestScores(), // Show best scores action listener
+            e -> showInstructions(), // Show instructions action listener
             e -> System.exit(0) // Exit action listener
         );
         bsp = new BestScoresPanel(e -> backToMenu());
+        ip = new InstructionsPanel(e -> backToMenu());
+
         setContentPane(mp);
         setVisible(true);
     }
@@ -65,6 +70,12 @@ public class App extends JFrame {
     private void showBestScores() {
         bsp.updateTable();
         setContentPane(bsp);
+        revalidate();
+        repaint();
+    }
+
+    private void showInstructions() {
+        setContentPane(ip);
         revalidate();
         repaint();
     }
