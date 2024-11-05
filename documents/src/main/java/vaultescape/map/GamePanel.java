@@ -1,18 +1,15 @@
 package vaultescape.map;
 
-import java.awt.*;
-import java.io.InputStream;
+import vaultescape.App;
+import vaultescape.audio.*;
+import vaultescape.entity.*;
+import vaultescape.reward.RewardGenerator;
+import vaultescape.ui.*;
 
 import javax.swing.JPanel;
 
-import vaultescape.App;
-import vaultescape.audio.BGM;
-import vaultescape.audio.SFX;
-import vaultescape.entity.EnemyGenerator;
-import vaultescape.entity.Player;
-import vaultescape.reward.RewardGenerator;
-import vaultescape.ui.GameOverOverlay;
-import vaultescape.ui.Timer;
+import java.awt.*;
+import java.io.InputStream;
 
 /**
  * Represents the main game panel where all game elements are drawn and updated, such as the player, enemies,
@@ -166,7 +163,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void completeGame(boolean isWin) {
         gameThread = null;
         bgm.stop();
-        sfx.play(3);
+        if (isWin) sfx.play(3);
+        else sfx.play(4);
         updateGameOverScreen(isWin);
     }
 
