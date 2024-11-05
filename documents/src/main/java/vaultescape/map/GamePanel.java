@@ -186,11 +186,8 @@ public class GamePanel extends JPanel implements Runnable {
                 player,
                 isWin,
                 (int)timer.getTimeLeft(),
-                e -> app.startGame(),
-                e -> {
-                    hideGameOverScreen();
-                    app.backToMenu();
-                },
+                e -> {hideGameOverScreen();app.startGame();},
+                e -> {hideGameOverScreen();app.backToMenu();},
                 e -> System.exit(0)
         );
 
