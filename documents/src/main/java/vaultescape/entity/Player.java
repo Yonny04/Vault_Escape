@@ -44,6 +44,7 @@ public class Player extends Entity {
         return score;
     }
 
+
     /**
      * Adds a specified number of points to the player's score.
      *
@@ -82,7 +83,7 @@ public class Player extends Entity {
                 direction = 1;
             }
             // Win Condition (no more rewards)
-            if (isTouchingExit() && gp.getRewardGenerator().getRegularRewardsSize() == 0) gp.completeGame();
+            if (isTouchingExit() && gp.getRewardGenerator().getRegularRewardsSize() == 0) gp.completeGame(true);
             // Check for collisions with walls on the x-axis
             if (!canMove()) x = oldX;
 
@@ -94,7 +95,7 @@ public class Player extends Entity {
                 direction = 3;
             }
             // Win Condition (no more rewards)
-            if (isTouchingExit() && gp.getRewardGenerator().getRegularRewardsSize() == 0) gp.completeGame();
+            if (isTouchingExit() && gp.getRewardGenerator().getRegularRewardsSize() == 0) gp.completeGame(true);
             // Second check for collisions with walls on the y-axis
             if (!canMove()) y = oldY;
 
