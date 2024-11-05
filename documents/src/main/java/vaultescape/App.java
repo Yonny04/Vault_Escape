@@ -42,7 +42,7 @@ public class App extends JFrame {
      * and starting the game thread.
      */
     public void startGame() {
-        gp = new GamePanel(this);
+        gp = new GamePanel(this, bsp);
         setContentPane(gp);
         revalidate();
         repaint();
@@ -54,6 +54,7 @@ public class App extends JFrame {
      * Displays the best scores panel.
      */
     private void showBestScores() {
+        bsp.updateTable();
         setContentPane(bsp);
         revalidate();
         repaint();

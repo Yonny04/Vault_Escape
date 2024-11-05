@@ -11,6 +11,7 @@ import vaultescape.audio.SFX;
 import vaultescape.entity.EnemyGenerator;
 import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
+import vaultescape.ui.BestScoresPanel;
 import vaultescape.ui.GameOverOverlay;
 import vaultescape.ui.Timer;
 
@@ -64,17 +65,20 @@ public class GamePanel extends JPanel implements Runnable {
     private final int dogsCount = 2;
     private final int cameraCount = 1;
 
+
     // App reference and font resource
     public App app;
     private Font font;
-
+    private BestScoresPanel bsp;
     /**
      * Constructs the GamePanel, setting up game dimensions, components, resources, and input listeners.
      *
      * @param app the main application instance
+     * @param bsp the BestScoresPanel instance to manage top scores afrer game completion
      */
-    public GamePanel(App app) {
+    public GamePanel(App app, BestScoresPanel bsp) {
         this.app = app;
+        this.bsp = bsp;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(new Color(89, 81, 120));
         this.setDoubleBuffered(true);
@@ -168,7 +172,9 @@ public class GamePanel extends JPanel implements Runnable {
         bgm.stop();
         sfx.play(3);
         updateGameOverScreen(isWin);
+        showGameOverScreen();
     }
+
 
     /**
      * Updates the Game Over screen by creating a new instance of the GameOverOverlay with player's end score.
@@ -188,6 +194,7 @@ public class GamePanel extends JPanel implements Runnable {
                 player,
                 isWin,
                 (int)timer.getTimeLeft(),
+                bsp,
                 e -> app.startGame(),
                 e -> {
                     hideGameOverScreen();
@@ -211,10 +218,6 @@ public class GamePanel extends JPanel implements Runnable {
      * This method also updates the component order to ensure the overlay is rendered on top.
      */
     private void showGameOverScreen() {
-        gameThread = null;
-        bgm.stop();
-        sfx.play(4);
-        //System.out.println("Time is up! Exit is closed!");
         gameOverOverlay.setVisible(true);
     }
 
@@ -282,6 +285,10 @@ public class GamePanel extends JPanel implements Runnable {
     public Player getPlayer() {
         return player;
     }
+
+
+
+
     
     /**
      * Updates the state of the player, rewards, and enemies. Checks if the timer has expired.

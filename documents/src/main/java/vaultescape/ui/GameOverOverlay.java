@@ -13,6 +13,7 @@ import java.io.InputStream;
  */
 public class GameOverOverlay extends JPanel {
     private Font font;
+    private BestScoresPanel bsp;
 
     /**
      * Constructs a GameOverOverlay with specified action listeners for buttons.
@@ -22,11 +23,12 @@ public class GameOverOverlay extends JPanel {
      * @param menuListener the ActionListener for the main menu button
      * @param exitListener the ActionListener for the exit button
      */
-    public GameOverOverlay(Player player, boolean isWin, int timeLeft, ActionListener restartListener, ActionListener menuListener, ActionListener exitListener) {
+    public GameOverOverlay(Player player, boolean isWin, int timeLeft, BestScoresPanel bsp, ActionListener restartListener, ActionListener menuListener, ActionListener exitListener) {
         this.setLayout(null);
         loadResources();
+        this.bsp = bsp;
 
-        String title= isWin ? "Victory!" : "Time is up!";
+        String title = isWin ? "Victory!" : "Time is up!";
 
         JLabel gameOverLabel = new JLabel(title);
         styleLabel(gameOverLabel);
@@ -50,6 +52,8 @@ public class GameOverOverlay extends JPanel {
         totalScoreLabel.setBounds(410, 350, 400, 100);
         this.add(totalScoreLabel);
 
+        bsp.addNewScore(totalScore);
+
         JButton restartButton = new JButton("Restart");
         styleButton(restartButton);
         restartButton.setBounds(500, 500, 200, 50);
@@ -68,6 +72,7 @@ public class GameOverOverlay extends JPanel {
         exitButton.addActionListener(exitListener);
         this.add(exitButton);
     }
+
 
     /**
      * Loads the custom font for the overlay from resources.
