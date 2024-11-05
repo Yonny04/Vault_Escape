@@ -322,7 +322,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(Color.WHITE);
         g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, textY);
 
-        String rewardsText = "Basic Rewards Left: " + rewardGenerator.getRegularRewardsSize();
+        String rewardsText = "Valuables Left: " + rewardGenerator.getRegularRewardsSize();
         g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         g2.drawString(rewardsText, 80, textY + 46);
         g2.setColor(new Color(255, 255, 0));
