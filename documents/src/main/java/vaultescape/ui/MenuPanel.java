@@ -3,7 +3,6 @@ package vaultescape.ui;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
-
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JPanel;
