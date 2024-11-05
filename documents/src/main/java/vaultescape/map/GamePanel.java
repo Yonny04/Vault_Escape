@@ -179,6 +179,12 @@ public class GamePanel extends JPanel implements Runnable {
      * @see GameOverOverlay
      */
     private void updateGameOverScreen() {
+        // If there is an existing overlay, remove it from the App's content pane
+        if (gameOverOverlay != null) {
+            app.remove(gameOverOverlay);
+        }
+
+        // Create a new GameOverOverlay instance
         gameOverOverlay = new GameOverOverlay(
                 player,
                 e -> app.startGame(),
@@ -188,6 +194,13 @@ public class GamePanel extends JPanel implements Runnable {
                 },
                 e -> System.exit(0)
         );
+
+        gameOverOverlay.setBounds(0, 0, app.getWidth(), app.getHeight());
+        gameOverOverlay.setBackground(new Color(0, 0, 0, 0));
+        app.add(gameOverOverlay);
+        app.setComponentZOrder(gameOverOverlay, 0);
+        app.revalidate();
+        app.repaint();
     }
 
     /**
@@ -201,13 +214,7 @@ public class GamePanel extends JPanel implements Runnable {
         bgm.stop();
         sfx.play(4);
         System.out.println("Time is up! Exit is closed!");
-        gameOverOverlay.setBounds(0, 0, this.getWidth(), this.getHeight());
         gameOverOverlay.setVisible(true);
-        gameOverOverlay.setBackground(new Color(0, 0, 0, 0));
-        app.add(gameOverOverlay);
-        app.setComponentZOrder(gameOverOverlay, 0);
-        app.revalidate();
-        app.repaint();
     }
 
     /**
