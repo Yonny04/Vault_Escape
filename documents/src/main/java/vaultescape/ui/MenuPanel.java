@@ -3,6 +3,7 @@ package vaultescape.ui;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -22,7 +23,7 @@ public class MenuPanel extends JPanel {
      * @param bestScoresListener the ActionListener for the best scores button
      * @param exitListener the ActionListener for the exit button
      */
-    public MenuPanel(ActionListener startListener, ActionListener bestScoresLestener, ActionListener exitListener) {
+    public MenuPanel(ActionListener startListener, ActionListener bestScoresListener, ActionListener exitListener) {
         this.setLayout(null);
         this.loadResources();
 
@@ -34,7 +35,7 @@ public class MenuPanel extends JPanel {
         JButton buttonBestScores = new JButton("Best Scores");
         styleButton(buttonBestScores);
         buttonBestScores.setBounds(500, 370, 200, 50);
-        buttonBestScores.addActionListener(bestScoresLestener);
+        buttonBestScores.addActionListener(bestScoresListener);
 
         JButton buttonExit = new JButton("Exit");
         styleButton(buttonExit);
