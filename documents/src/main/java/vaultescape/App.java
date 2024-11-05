@@ -41,7 +41,7 @@ public class App extends JFrame {
      * Starts the game by initializing the game panel, setting it as the content pane,
      * and starting the game thread.
      */
-    private void startGame() {
+    public void startGame() {
         gp = new GamePanel(this);
         setContentPane(gp);
         revalidate();
