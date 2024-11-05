@@ -1,5 +1,13 @@
 package vaultescape.map;
 
+import vaultescape.App;
+import vaultescape.audio.*;
+import vaultescape.entity.*;
+import vaultescape.reward.RewardGenerator;
+import vaultescape.ui.*;
+
+import javax.swing.JPanel;
+
 import java.awt.*;
 import java.io.InputStream;
 
@@ -170,7 +178,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void completeGame(boolean isWin) {
         gameThread = null;
         bgm.stop();
-        sfx.play(3);
+        if (isWin) sfx.play(3);
+        else sfx.play(4);
         updateGameOverScreen(isWin);
         showGameOverScreen();
     }
@@ -195,11 +204,8 @@ public class GamePanel extends JPanel implements Runnable {
                 isWin,
                 (int)timer.getTimeLeft(),
                 bsp,
-                e -> app.startGame(),
-                e -> {
-                    hideGameOverScreen();
-                    app.backToMenu();
-                },
+                e -> {hideGameOverScreen();app.startGame();},
+                e -> {hideGameOverScreen();app.backToMenu();},
                 e -> System.exit(0)
         );
 

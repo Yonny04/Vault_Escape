@@ -1,11 +1,9 @@
 package vaultescape.entity;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import vaultescape.map.GamePanel;
-import vaultescape.map.KeyDetector;
+import vaultescape.map.*;
 import vaultescape.ui.Sprite2D;
+
+import java.awt.Graphics2D;
 
 /**
  * Represents the player character in the game, allowing for movement, scoring, and interaction with the game environment.
@@ -13,8 +11,6 @@ import vaultescape.ui.Sprite2D;
  */
 public class Player extends Entity {
     KeyDetector keyh; // Key detector to manage player input
-    public boolean alive = true;
-    BufferedImage spritesheet;
 
     private int score = 0; // Player's current score
 
@@ -26,11 +22,12 @@ public class Player extends Entity {
      */
     public Player(GamePanel gp, KeyDetector keyh) {
         super(gp);
-        setPosition(gp.getTileGenerator().getRandomAvailableTile());
+        setPosition(new int[]{2112,192});
         this.keyh = keyh;
-        screenX = gp.screenWidth / 2 - (gp.tilesize / 2);
-        screenY = gp.screenHeight / 2 - (gp.tilesize / 2);
-        speed = 5;
+        this.screenX = gp.screenWidth / 2 - (gp.tilesize / 2);
+        this.screenY = gp.screenHeight / 2 - (gp.tilesize / 2);
+        this.speed = 5;
+        this.direction = 3;
         setHitbox(42, 36);
         setSpritesheet("/entity/player/spritesheet.png", 4, 4);
     }
@@ -43,7 +40,6 @@ public class Player extends Entity {
     public int getScore() {
         return score;
     }
-
 
     /**
      * Adds a specified number of points to the player's score.
@@ -74,11 +70,11 @@ public class Player extends Entity {
         int oldY = y;
 
         // Handle movement input from the key detector
-        if (keyh.w || keyh.a || keyh.s || keyh.d) {
-            if (keyh.a) {
+        if (keyh.up || keyh.left || keyh.down || keyh.right) {
+            if (keyh.left) {
                 x -= speed;
                 direction = 0;
-            } else if (keyh.d) {
+            } else if (keyh.right) {
                 x += speed;
                 direction = 1;
             }
@@ -87,10 +83,10 @@ public class Player extends Entity {
             // Check for collisions with walls on the x-axis
             if (!canMove()) x = oldX;
 
-            if (keyh.w) {
+            if (keyh.up) {
                 y -= speed;
                 direction = 2;
-            } else if (keyh.s) {
+            } else if (keyh.down) {
                 y += speed;
                 direction = 3;
             }
@@ -108,23 +104,6 @@ public class Player extends Entity {
         // Set player animation frame from the floored spriteCounter
         setFrame((int) Math.floor(spriteCounter), direction);
 
-    }
-
-    /**
-     * Return the x coordinate of the player
-     *
-     * @return x coordinate
-     */
-    public int getX(){
-        return x;
-    }
-    /**
-     * Return the y coordinate of the player
-     *
-     * @return y coordinate
-     */
-    public int getY(){
-        return y;
     }
 
     /**
