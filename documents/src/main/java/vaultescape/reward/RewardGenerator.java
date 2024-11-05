@@ -1,13 +1,10 @@
 package vaultescape.reward;
 
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import vaultescape.entity.Player;
-import vaultescape.map.GamePanel;
-import vaultescape.map.TileGenerator;
+import vaultescape.map.*;
+
+import java.awt.Graphics2D;
+import java.util.*;
 
 /**
  * Generates and manages regular and bonus rewards in the game, including spawning, updating,
@@ -106,6 +103,7 @@ public class RewardGenerator {
         for (int i = 0; i < regularRewards.size(); i++) {
             Reward reward = regularRewards.get(i);
             if (player.isTouching(reward)) {
+                player.addScore(20);
                 regularRewards.remove(i);
                 gp.getSFX().play(0);
                 i--;

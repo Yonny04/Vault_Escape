@@ -11,18 +11,6 @@ import javax.swing.JPanel;
 import java.awt.*;
 import java.io.InputStream;
 
-import javax.swing.JPanel;
-
-import vaultescape.App;
-import vaultescape.audio.BGM;
-import vaultescape.audio.SFX;
-import vaultescape.entity.EnemyGenerator;
-import vaultescape.entity.Player;
-import vaultescape.reward.RewardGenerator;
-import vaultescape.ui.BestScoresPanel;
-import vaultescape.ui.GameOverOverlay;
-import vaultescape.ui.Timer;
-
 /**
  * Represents the main game panel where all game elements are drawn and updated, such as the player, enemies,
  * rewards, and timer. Manages the game loop, input, and screen dimensions.
@@ -276,7 +264,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public int getFinalScore(){
-        return (int)getTimer().getTimeLeft() / 100 + player.getScore();
+        return (int)getTimer().getTimeLeft() / 50 + player.getScore();
     }
 
     /**
@@ -297,10 +285,6 @@ public class GamePanel extends JPanel implements Runnable {
         return player;
     }
 
-
-
-
-    
     /**
      * Updates the state of the player, rewards, and enemies. Checks if the timer has expired.
      */

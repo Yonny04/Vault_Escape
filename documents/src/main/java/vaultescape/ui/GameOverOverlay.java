@@ -3,6 +3,7 @@ package vaultescape.ui;
 import vaultescape.entity.Player;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
@@ -37,8 +38,8 @@ public class GameOverOverlay extends JPanel {
         scoreLabel.setBounds(410, 150, 400, 100);
         this.add(scoreLabel);
 
-        int bonusScore = isWin ? (timeLeft / 100) : 0;
-        JLabel bonusScoreLabel = new JLabel("Bonus score from time: " + bonusScore);
+        int bonusScore = isWin ? (timeLeft / 50) : 0;
+        JLabel bonusScoreLabel = new JLabel("Time Bonus: " + bonusScore);
         styleLabel(bonusScoreLabel);
         bonusScoreLabel.setBounds(310, 250, 600, 100);
         this.add(bonusScoreLabel);
