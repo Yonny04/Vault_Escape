@@ -178,7 +178,10 @@ public class GamePanel extends JPanel implements Runnable {
     public void completeGame(boolean isWin) {
         gameThread = null;
         bgm.stop();
-        if (isWin) sfx.play(3);
+        if (isWin) {
+            sfx.play(3);
+            bsp.addNewScore(getFinalScore());
+        }
         else sfx.play(4);
         updateGameOverScreen(isWin);
         showGameOverScreen();
@@ -203,7 +206,7 @@ public class GamePanel extends JPanel implements Runnable {
                 player,
                 isWin,
                 (int)timer.getTimeLeft(),
-                bsp,
+                getFinalScore(),
                 e -> {hideGameOverScreen();app.startGame();},
                 e -> {hideGameOverScreen();app.backToMenu();},
                 e -> System.exit(0)
@@ -272,6 +275,10 @@ public class GamePanel extends JPanel implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int getFinalScore(){
+        return (int)getTimer().getTimeLeft() / 100 + player.getScore();
     }
 
     /**
