@@ -1,10 +1,19 @@
 package vaultescape.ui;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class InstructionsPanel extends JPanel{
     private Image background;
@@ -18,15 +27,20 @@ public class InstructionsPanel extends JPanel{
         this.setLayout(null);
         loadResources();
 
-        JLabel instructionsLabel = new JLabel("Use WASD to move!");
+        JLabel instructionsLabel = new JLabel("1. Use WASD to move!");
         styleLabel(instructionsLabel);
-        instructionsLabel.setBounds(410, 250, 400, 100);
+        instructionsLabel.setBounds(120, 250, 500, 100);
         this.add(instructionsLabel);
 
-        JLabel goalsLabel = new JLabel("Collect 5 rewards and head to exit to win!");
+        JLabel goalsLabel = new JLabel("2. Collect 5 rewards and head to exit to win!");
         styleLabel(goalsLabel);
-        goalsLabel.setBounds(150, 300, 1000, 100);
+        goalsLabel.setBounds(120, 300, 1000, 100);
         this.add(goalsLabel);
+
+        JLabel enemyLabel = new JLabel("3. Be aware of guards and avoid them at all cost!");
+        styleLabel(enemyLabel);
+        enemyLabel.setBounds(120, 355, 1100, 100);
+        this.add(enemyLabel);
 
         JButton backButton = new JButton("Back");
         styleButton(backButton);
