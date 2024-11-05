@@ -163,12 +163,11 @@ public class GamePanel extends JPanel implements Runnable {
     /**
      * Stops the game upon escaping the vault
      */
-    public void completeGame() {
+    public void completeGame(boolean isWin) {
         gameThread = null;
         bgm.stop();
         sfx.play(3);
-        System.out.println("VICTORY: You escaped!");
-        app.backToMenu(); // Return back to menu after game ends
+        updateGameOverScreen(isWin);
     }
 
     /**
@@ -178,7 +177,7 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @see GameOverOverlay
      */
-    private void updateGameOverScreen() {
+    private void updateGameOverScreen(boolean isWin) {
         // If there is an existing overlay, remove it from the App's content pane
         if (gameOverOverlay != null) {
             app.remove(gameOverOverlay);
@@ -187,6 +186,8 @@ public class GamePanel extends JPanel implements Runnable {
         // Create a new GameOverOverlay instance
         gameOverOverlay = new GameOverOverlay(
                 player,
+                isWin,
+                (int)timer.getTimeLeft(),
                 e -> app.startGame(),
                 e -> {
                     hideGameOverScreen();
@@ -213,7 +214,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread = null;
         bgm.stop();
         sfx.play(4);
-        System.out.println("Time is up! Exit is closed!");
+        //System.out.println("Time is up! Exit is closed!");
         gameOverOverlay.setVisible(true);
     }
 
@@ -249,9 +250,7 @@ public class GamePanel extends JPanel implements Runnable {
             repaint();
 
             if (timer.isTimeUp()) {
-                updateGameOverScreen();
-                showGameOverScreen();
-                return;
+                completeGame(false);
             }
 
             try {
@@ -283,7 +282,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Player getPlayer() {
         return player;
     }
-
+    
     /**
      * Updates the state of the player, rewards, and enemies. Checks if the timer has expired.
      */

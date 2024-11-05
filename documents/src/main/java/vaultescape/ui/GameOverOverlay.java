@@ -22,35 +22,49 @@ public class GameOverOverlay extends JPanel {
      * @param menuListener the ActionListener for the main menu button
      * @param exitListener the ActionListener for the exit button
      */
-    public GameOverOverlay(Player player, ActionListener restartListener, ActionListener menuListener, ActionListener exitListener) {
+    public GameOverOverlay(Player player, boolean isWin, int timeLeft, ActionListener restartListener, ActionListener menuListener, ActionListener exitListener) {
         this.setLayout(null);
         loadResources();
 
-        JLabel gameOverLabel = new JLabel("Game Over");
+        String title= isWin ? "Victory!" : "Time is up!";
+
+        JLabel gameOverLabel = new JLabel(title);
         styleLabel(gameOverLabel);
-        gameOverLabel.setBounds(450, 150, 300, 100);
+        gameOverLabel.setBounds(450, 50, 300, 100);
         this.add(gameOverLabel);
 
-        JLabel scoreLabel = new JLabel("Your score: " + player.getScore());
+        JLabel scoreLabel = new JLabel("Your score: " + player.getScore() );
         styleLabel(scoreLabel);
-        scoreLabel.setBounds(410, 250, 400, 100);
+        scoreLabel.setBounds(410, 150, 400, 100);
         this.add(scoreLabel);
+
+        int bonusScore = isWin ? (timeLeft / 100) : 0;
+        JLabel bonusScoreLabel = new JLabel("Bonus score from time: " + bonusScore);
+        styleLabel(bonusScoreLabel);
+        bonusScoreLabel.setBounds(310, 250, 600, 100);
+        this.add(bonusScoreLabel);
+
+        int totalScore = player.getScore() + bonusScore;
+        JLabel totalScoreLabel = new JLabel("Total score: " + totalScore);
+        styleLabel(totalScoreLabel);
+        totalScoreLabel.setBounds(410, 350, 400, 100);
+        this.add(totalScoreLabel);
 
         JButton restartButton = new JButton("Restart");
         styleButton(restartButton);
-        restartButton.setBounds(500, 350, 200, 50);
+        restartButton.setBounds(500, 500, 200, 50);
         restartButton.addActionListener(restartListener);
         this.add(restartButton);
 
         JButton menuButton = new JButton("Main Menu");
         styleButton(menuButton);
-        menuButton.setBounds(500, 420, 200, 50);
+        menuButton.setBounds(500, 550, 200, 50);
         menuButton.addActionListener(menuListener);
         this.add(menuButton);
 
         JButton exitButton = new JButton("Exit");
         styleButton(exitButton);
-        exitButton.setBounds(500, 490, 200, 50);
+        exitButton.setBounds(500, 600, 200, 50);
         exitButton.addActionListener(exitListener);
         this.add(exitButton);
     }
