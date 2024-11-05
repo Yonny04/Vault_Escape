@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
  */
 public class KeyDetector implements KeyListener {
 
-    public boolean w, a, s, d; // Movement flags for 'W', 'A', 'S', and 'D' keys
+    public boolean up, left, down, right; // Movement flags for 'W', 'A', 'S', and 'D' keys
 
     /**
      * This method is required by the KeyListener interface but is not used in this implementation.
@@ -30,24 +30,34 @@ public class KeyDetector implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_W) w = true;
-        if (key == KeyEvent.VK_A) a = true;
-        if (key == KeyEvent.VK_S) s = true;
-        if (key == KeyEvent.VK_D) d = true;
+        if (key == KeyEvent.VK_UP) up = true;
+        if (key == KeyEvent.VK_LEFT) left = true;
+        if (key == KeyEvent.VK_DOWN) down = true;
+        if (key == KeyEvent.VK_RIGHT) right = true;
+
+        if (key == KeyEvent.VK_W) up = true;
+        if (key == KeyEvent.VK_A) left = true;
+        if (key == KeyEvent.VK_S) down = true;
+        if (key == KeyEvent.VK_D) right = true;
     }
 
     /**
      * Updates the movement flags when a key is released. Sets the corresponding flag to false
-     * if the released key is 'W', 'A', 'S', or 'D'.
+     * if the released key is 'up', 'left', 'down', or 'right'.
      *
      * @param e the key event triggered when a key is released
      */
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_W) w = false;
-        if (key == KeyEvent.VK_A) a = false;
-        if (key == KeyEvent.VK_S) s = false;
-        if (key == KeyEvent.VK_D) d = false;
+        if (key == KeyEvent.VK_UP) up = false;
+        if (key == KeyEvent.VK_LEFT) left = false;
+        if (key == KeyEvent.VK_DOWN) down = false;
+        if (key == KeyEvent.VK_RIGHT) right = false;
+
+        if (key == KeyEvent.VK_W) up = false;
+        if (key == KeyEvent.VK_A) left = false;
+        if (key == KeyEvent.VK_S) down = false;
+        if (key == KeyEvent.VK_D) right = false;
     }
 }

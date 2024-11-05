@@ -73,11 +73,11 @@ public class Player extends Entity {
         int oldY = y;
 
         // Handle movement input from the key detector
-        if (keyh.w || keyh.a || keyh.s || keyh.d) {
-            if (keyh.a) {
+        if (keyh.up || keyh.left || keyh.down || keyh.right) {
+            if (keyh.left) {
                 x -= speed;
                 direction = 0;
-            } else if (keyh.d) {
+            } else if (keyh.right) {
                 x += speed;
                 direction = 1;
             }
@@ -86,10 +86,10 @@ public class Player extends Entity {
             // Check for collisions with walls on the x-axis
             if (!canMove()) x = oldX;
 
-            if (keyh.w) {
+            if (keyh.up) {
                 y -= speed;
                 direction = 2;
-            } else if (keyh.s) {
+            } else if (keyh.down) {
                 y += speed;
                 direction = 3;
             }
