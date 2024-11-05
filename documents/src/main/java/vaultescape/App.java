@@ -42,12 +42,21 @@ public class App extends JFrame {
      * and starting the game thread.
      */
     public void startGame() {
-        gp = new GamePanel(this, bsp);
+        gp = new GamePanel(this);
         setContentPane(gp);
         revalidate();
         repaint();
         gp.requestFocus();
         gp.startGameThread();
+    }
+
+    /**
+     * Method to notify the App of game completion and update the best scores.
+     *
+     * @param score the final score to add to BestScoresPanel
+     */
+    public void updateBestScoreAfterGame(int score) {
+        bsp.addNewScore(score);     
     }
 
     /**

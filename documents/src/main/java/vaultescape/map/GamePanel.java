@@ -77,16 +77,14 @@ public class GamePanel extends JPanel implements Runnable {
     // App reference and font resource
     public App app;
     private Font font;
-    private BestScoresPanel bsp;
     /**
      * Constructs the GamePanel, setting up game dimensions, components, resources, and input listeners.
      *
      * @param app the main application instance
      * @param bsp the BestScoresPanel instance to manage top scores afrer game completion
      */
-    public GamePanel(App app, BestScoresPanel bsp) {
+    public GamePanel(App app) {
         this.app = app;
-        this.bsp = bsp;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(new Color(89, 81, 120));
         this.setDoubleBuffered(true);
@@ -180,7 +178,7 @@ public class GamePanel extends JPanel implements Runnable {
         bgm.stop();
         if (isWin) {
             sfx.play(3);
-            bsp.addNewScore(getFinalScore());
+            app.updateBestScoreAfterGame(getFinalScore());
         }
         else sfx.play(4);
         updateGameOverScreen(isWin);
