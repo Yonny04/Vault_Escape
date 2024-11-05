@@ -9,9 +9,10 @@ import javax.sound.sampled.Clip;
 public class BGM {
     Clip clip;
     URL musicURL[] = new URL[5];
+    public boolean is_playing = false; 
 
     public BGM() {
-        musicURL[0] = getClass().getResource("/map/BlueBoyAdventure.wav");
+        musicURL[0] = getClass().getClassLoader().getResource("/audio/music.wav");
     }
 
     public void setFile(int i){
@@ -20,9 +21,7 @@ public class BGM {
             clip = AudioSystem.getClip();
             clip.open(ais);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        } catch (Exception ex) {}
         
     }
 
@@ -32,6 +31,7 @@ public class BGM {
 
     public void play(){
         clip.start();
+        is_playing = true;
     }
 
     public void stop(){
