@@ -6,6 +6,8 @@ import java.io.InputStream;
 import javax.swing.JPanel;
 
 import vaultescape.App;
+import vaultescape.audio.BGM;
+import vaultescape.audio.SFX;
 import vaultescape.entity.EnemyGenerator;
 import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
@@ -47,7 +49,8 @@ public class GamePanel extends JPanel implements Runnable {
     private GameOverOverlay gameOverOverlay;
 
     //Music Components
-    BGM bgm = new BGM();
+    private BGM bgm = new BGM();
+    private SFX sfx = new SFX();
 
     // Timer
     private Timer timer;
@@ -81,28 +84,6 @@ public class GamePanel extends JPanel implements Runnable {
         tileGenerator = new TileGenerator(this);
         rewardGenerator = new RewardGenerator(this, tileGenerator);
         enemyGenerator = new EnemyGenerator(this);
-    }
-
-    public void setUpMusic() {
-        playMusic(0);
-    }
-
-    public void playMusic(int i){
-        bgm.setFile(i);
-        bgm.play();
-        bgm.loop();
-
-
-        try {
-            Thread.sleep(10000); // Play for 10 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void stopMusic() {
-        bgm.stop();
     }
 
 
@@ -146,6 +127,22 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
+     * Gets the background music (BGM) object.
+     * @return the BGM object
+     */
+    public BGM getBGM() {
+        return bgm;
+    }
+
+    /**
+     * Gets the sound effects (SFX) object.
+     * @return the SFX object
+     */
+    public SFX getSFX() {
+        return sfx;
+    }
+
+    /**
      * Checks if the player has been detected by any camera.
      *
      * @return true if the player is detected, false otherwise
@@ -168,6 +165,8 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void completeGame() {
         gameThread = null;
+        bgm.stop();
+        sfx.play(3);
         System.out.println("VICTORY: You escaped!");
         app.backToMenu(); // Return back to menu after game ends
     }
@@ -199,6 +198,8 @@ public class GamePanel extends JPanel implements Runnable {
      */
     private void showGameOverScreen() {
         gameThread = null;
+        bgm.stop();
+        sfx.play(4);
         System.out.println("Time is up! Exit is closed!");
         gameOverOverlay.setBounds(0, 0, this.getWidth(), this.getHeight());
         gameOverOverlay.setVisible(true);

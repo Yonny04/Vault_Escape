@@ -74,7 +74,6 @@ public class Player extends Entity {
 
         // Handle movement input from the key detector
         if (keyh.w || keyh.a || keyh.s || keyh.d) {
-
             if (keyh.a) {
                 x -= speed;
                 direction = 0;

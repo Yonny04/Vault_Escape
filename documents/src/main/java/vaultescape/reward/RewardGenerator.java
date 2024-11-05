@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import vaultescape.entity.Player;
 import vaultescape.map.GamePanel;
 import vaultescape.map.TileGenerator;
@@ -106,6 +107,7 @@ public class RewardGenerator {
             Reward reward = regularRewards.get(i);
             if (player.isTouching(reward)) {
                 regularRewards.remove(i);
+                gp.getSFX().play(0);
                 i--;
             }
         }
@@ -115,6 +117,7 @@ public class RewardGenerator {
             if (player.isTouching(reward)) {
                 player.addScore(((BonusReward) reward).getPoints());
                 bonusRewards.remove(i);
+                gp.getSFX().play(1);
                 i--;
             }
         }

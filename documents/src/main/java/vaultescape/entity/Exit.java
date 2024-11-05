@@ -9,7 +9,7 @@ import vaultescape.map.GamePanel;
  * collecting all the regular rewards.
  */
 public class Exit extends Entity {
-
+    private boolean _open = false; 
     /**
      * Constructor for Exit Door, and starting position (top-left)
      * @param gp
@@ -41,9 +41,11 @@ public class Exit extends Entity {
      */
     @Override
     public void draw(Graphics2D g2) {
-        if (gp.getRewardGenerator().getRegularRewardsSize() == 0) {
+        if (gp.getRewardGenerator().getRegularRewardsSize() == 0 && !_open) {
             setFrame(1);
             setHitbox(64, 64);
+            gp.getSFX().play(2);
+            _open = true;
         }
         super.draw(g2);
     }

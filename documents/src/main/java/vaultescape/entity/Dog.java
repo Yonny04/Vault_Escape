@@ -2,6 +2,7 @@ package vaultescape.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
 import vaultescape.map.GamePanel;
 
 /**
@@ -188,7 +189,9 @@ public class Dog extends Enemy {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        g2.setColor(new Color(1.0f, 0.5f, 0.0f, 0.2f));
-        g2.drawOval(screenX + width / 2 - chaseRange, screenY + height / 2 - chaseRange, chaseRange * 2, chaseRange * 2);
+        if (_drawCollisions) {
+            g2.setColor(new Color(1.0f, 0.5f, 0.0f, 0.2f));
+            g2.drawOval(screenX + width / 2 - chaseRange, screenY + height / 2 - chaseRange, chaseRange * 2, chaseRange * 2);
+        }
     }
 }
