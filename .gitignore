@@ -3,6 +3,7 @@
 
 # Java target ignores
 documents/target/*
+target/*
 
 # MacOS specific ignores
 .DS_Store
