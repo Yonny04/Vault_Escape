@@ -12,7 +12,7 @@ import vaultescape.map.GamePanel;
 public class Sprite2D extends Sprite {
     protected GamePanel gp; // Reference to the game panel for player positioning
     protected int screenX, screenY; // Screen coordinates for rendering
-    private final boolean _drawCollisions = false; // Flag to toggle collision hitbox rendering
+    protected boolean _drawCollisions = false; // Flag to toggle collision hitbox rendering
 
     /**
      * Constructs a Sprite2D associated with a specified game panel.

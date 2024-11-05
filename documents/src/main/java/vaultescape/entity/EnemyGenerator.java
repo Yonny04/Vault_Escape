@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import vaultescape.map.GamePanel;
 import vaultescape.map.TileGenerator;
 
@@ -114,6 +115,7 @@ public class EnemyGenerator {
             if (enemy instanceof Guards guard) {
                 if (guard.isTouching(player) && guard.canCollide()) {
                     gp.getTimer().decreaseTime(6);
+                    gp.getSFX().play(5);
                     guard.recordCollision();
                 }
             }
@@ -121,12 +123,14 @@ public class EnemyGenerator {
                 if (dog.isTouching(player) && dog.canCollide()) {
                     dog.freezeDog(1);
                     gp.getTimer().decreaseTime(4);
+                    gp.getSFX().play(5);
                     dog.recordCollision();
                 }
             }
             if (enemy instanceof Camera camera) {
                 if (camera.isPlayerInRange() && camera.camDetect()) {
                     increaseEnemySpeed(1.03);
+                    gp.getSFX().play(5);
                     camera.recordDetection();
                 }
             }

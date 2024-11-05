@@ -14,7 +14,6 @@ public class SFX {
 
     private Clip clip;
     URL sfxURL[] = new URL[8];
-    public boolean is_playing = false;
     /**
      * Constructor for the SFX class.
      * Initializes the URL paths for different sound effects.
@@ -49,7 +48,6 @@ public class SFX {
     public void play(int i) {
         setFile(i);
         clip.start();
-        is_playing = true;
     }
 
     /**
@@ -57,6 +55,5 @@ public class SFX {
      */
     public void stop() {
         clip.stop();
-        is_playing = false;
     }
 }

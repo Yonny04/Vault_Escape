@@ -2,6 +2,7 @@ package vaultescape.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
 import vaultescape.map.GamePanel;
 
 /**
@@ -89,7 +90,9 @@ public class Camera extends Enemy {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        g2.setColor(Color.red);
-        g2.drawOval(screenX + width / 2 - detectionRange, screenY + height / 2 - detectionRange, detectionRange * 2, detectionRange * 2);
+        if (_drawCollisions) {
+            g2.setColor(Color.red);
+            g2.drawOval(screenX + width / 2 - detectionRange, screenY + height / 2 - detectionRange, detectionRange * 2, detectionRange * 2);
+        }
     }
 }
