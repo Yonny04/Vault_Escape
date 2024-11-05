@@ -9,6 +9,7 @@ import vaultescape.App;
 import vaultescape.entity.EnemyGenerator;
 import vaultescape.entity.Player;
 import vaultescape.reward.RewardGenerator;
+import vaultescape.ui.GameOverOverlay;
 import vaultescape.ui.Timer;
 
 /**
@@ -43,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     private TileGenerator tileGenerator = new TileGenerator(this);
     private final Player player = new Player(this, keyh);
     private Thread gameThread;
+    private GameOverOverlay gameOverOverlay;
 
     //Music Components
     BGM bgm = new BGM();
@@ -171,12 +173,49 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
-     * Stops the game upon running out of time
+     * Updates the Game Over screen by creating a new instance of the GameOverOverlay with player's end score.
+     * This overlay displays the game over information and provides options to restart the game,
+     * go back to the main menu, or exit the application.
+     *
+     * @see GameOverOverlay
      */
-    public void gameOver() {
+    private void updateGameOverScreen() {
+        gameOverOverlay = new GameOverOverlay(
+                player,
+                e -> app.startGame(),
+                e -> {
+                    hideGameOverScreen();
+                    app.backToMenu();
+                },
+                e -> System.exit(0)
+        );
+    }
+
+    /**
+     * Displays the Game Over screen overlay by setting its bounds to match the
+     * dimensions of the current panel. It makes the overlay visible, sets its
+     * background color to transparent, and adds it to the main application frame.
+     * This method also updates the component order to ensure the overlay is rendered on top.
+     */
+    private void showGameOverScreen() {
         gameThread = null;
-        System.out.println("GAME OVER: Time is up! Exit is closed!");
-        app.backToMenu(); // Return back to menu after game ends
+        System.out.println("Time is up! Exit is closed!");
+        gameOverOverlay.setBounds(0, 0, this.getWidth(), this.getHeight());
+        gameOverOverlay.setVisible(true);
+        gameOverOverlay.setBackground(new Color(0, 0, 0, 0));
+        app.add(gameOverOverlay);
+        app.setComponentZOrder(gameOverOverlay, 0);
+        app.revalidate();
+        app.repaint();
+    }
+
+    /**
+     * Hides the Game Over screen overlay by setting its visibility to false.
+     * This effectively removes the overlay from view without removing it from
+     * the application frame, allowing it to be shown again later if needed.
+     */
+    private void hideGameOverScreen() {
+        gameOverOverlay.setVisible(false);
     }
     /**
      * Starts the game thread, initializing the timer and generating enemies and rewards.
@@ -202,7 +241,8 @@ public class GamePanel extends JPanel implements Runnable {
             repaint();
 
             if (timer.isTimeUp()) {
-                gameOver();
+                updateGameOverScreen();
+                showGameOverScreen();
                 return;
             }
 
