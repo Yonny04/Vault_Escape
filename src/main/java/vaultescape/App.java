@@ -1,10 +1,8 @@
 package vaultescape;
 
+import vaultescape.ui.*;
+
 import javax.swing.JFrame;
-import vaultescape.map.GamePanel;
-import vaultescape.ui.BestScoresPanel;
-import vaultescape.ui.InstructionsPanel;
-import vaultescape.ui.MenuPanel;
 
 /**
  * Main application class for VaultEscape, handling the primary game window and

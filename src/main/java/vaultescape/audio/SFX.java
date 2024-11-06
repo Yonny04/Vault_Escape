@@ -1,52 +1,55 @@
 package vaultescape.audio;
 
-import java.net.URL;
+import javax.sound.sampled.*;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import java.net.URL;
 
 /**
  * The SFX class handles sound effects for an application.
- * It can load, play, and stop audio clips specified by their URL paths.
+ * It can load, play, and stop audio clips specified by their names.
  */
 public class SFX {
+    
+    private Clip clip; // Clip currently loaded
 
-    private Clip clip;
-    URL sfxURL[] = new URL[8];
     /**
-     * Constructor for the SFX class.
-     * Initializes the URL paths for different sound effects.
+     * Default constructor for the SFX class.
      */
-    public SFX() {
-        sfxURL[0] = getClass().getClassLoader().getResource("audio/basic_collect.wav");
-        sfxURL[1] = getClass().getClassLoader().getResource("audio/bonus_collect.wav");
-        sfxURL[2] = getClass().getClassLoader().getResource("audio/exit_open.wav");
-        sfxURL[3] = getClass().getClassLoader().getResource("audio/game_complete.wav");
-        sfxURL[4] = getClass().getClassLoader().getResource("audio/game_over.wav");
-        sfxURL[5] = getClass().getClassLoader().getResource("audio/hit.wav");
-        sfxURL[6] = getClass().getClassLoader().getResource("audio/new_record.wav");
-        sfxURL[7] = getClass().getClassLoader().getResource("audio/music.wav");
+    public SFX() {}
+
+    /**
+     * Retrieves the URL for the specified sound effect name.
+     * 
+     * @param sfxName the name of the sound effect file (without extension)
+     * @return the URL of the sound effect file
+     */
+    private URL getURL(String sfxName) {
+        String path = String.format("audio/%s.wav", sfxName);
+        return getClass().getClassLoader().getResource(path);
     }
 
     /**
-     * Sets the audio file to be played.
-     * @param i index of the sound effect to be set
+     * Loads the sound effect specified by its name.
+     * 
+     * @param sfxName the name of the sound effect file (without extension)
      */
-    public void setFile(int i) {
+    public void loadSFX(String sfxName) {
         try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(sfxURL[i]);
+            AudioInputStream ais = AudioSystem.getAudioInputStream(getURL(sfxName));
             clip = AudioSystem.getClip();
             clip.open(ais);
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            // Handle exception
+        }
     }
 
     /**
-     * Plays the audio file corresponding to the given index.
-     * @param i index of the sound effect to be played
+     * Plays the sound effect specified by its name.
+     * 
+     * @param sfxName the name of the sound effect file (without extension)
      */
-    public void play(int i) {
-        setFile(i);
+    public void play(String sfxName) {
+        loadSFX(sfxName);
         clip.start();
     }
 

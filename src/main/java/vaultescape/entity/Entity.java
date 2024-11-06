@@ -1,12 +1,12 @@
 package vaultescape.entity;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import vaultescape.ui.GamePanel;
+import vaultescape.utils.*;
 
 import javax.imageio.ImageIO;
 
-import vaultescape.map.GamePanel;
-import vaultescape.ui.Sprite2D;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 /**
  * Represents a base entity in the game, with movement, collision detection, and
@@ -14,9 +14,11 @@ import vaultescape.ui.Sprite2D;
  * extend this class to inherit these common behaviors.
  */
 public class Entity extends Sprite2D {
-    protected double speed;
+    protected int speed;
     private Sprite2D _shadow;
-    protected int direction = 1;
+
+    protected enum Direction {LEFT,RIGHT,UP,DOWN};
+    protected Direction direction = Direction.LEFT;
     protected float spriteCounter = 0.0f;
     protected BufferedImage spritesheet;
     protected int[] spritesheetDim = {0, 0}; // Dimensions of tiles on the sprite sheet
@@ -28,27 +30,21 @@ public class Entity extends Sprite2D {
      *
      * @param gp the game panel associated with this entity
      */
-    public Entity(GamePanel gp) {
+    public Entity(GamePanel gp, Vector2 start) {
         super(gp);
-        this.width = gp.tilesize;
-        this.height = gp.tilesize;
-        setHitbox(width, height);
-        _shadow = Sprite2D.createSprite2D(gp, x, y, 14 * 4, 6 * 4);
+        setPosition(start);
+        setHitbox(getDimension().scale(0.7));
+        createShadow();
+    }
+
+    private void createShadow() {
+        _shadow = new Sprite2D(gp);
+        _shadow.getRect().setDimension(14*4,6*4);
         try {
             _shadow.setImage(ImageIO.read(getClass().getResourceAsStream("/entity/shadow.png")));
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Checks whether this sprite is touching the specified sprite.
-     *
-     * @param sprite the sprite to check for collision
-     * @return true if the entities are intersecting, false otherwise
-     */
-    public boolean isTouching(Sprite2D sprite) {
-        return sprite.getBounds().intersects(this.getBounds());
     }
 
     /**
@@ -63,6 +59,58 @@ public class Entity extends Sprite2D {
             }
         }
         return true;
+    }
+
+    /**
+     * Plays the animation by incrementing the sprite counter.
+     * If the sprite counter exceeds 3.9, it is reset to 0.0.
+     * Sets the current frame based on the sprite counter and direction.
+     */
+    public void playAnimation() {
+        spriteCounter += 0.1f;
+        if (spriteCounter > 3.9f) spriteCounter = 0.0f;
+        setFrame((int)Math.floor(spriteCounter), direction.ordinal());
+    }
+
+    /**
+     * Stops the animation by setting the sprite counter to 1.0.
+     * Sets the current frame based on the sprite counter and direction.
+     */
+    public void stopAnimation() {
+        spriteCounter = 1.0f;
+        setFrame((int)Math.floor(spriteCounter), direction.ordinal());
+    }
+
+    /**
+     * Moves the object in the specified direction at the given speed.
+     * Saves the old position before moving, and reverts if the move is not allowed.
+     * 
+     * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
+     */
+    public void move(Direction direction) {
+        Vector2 oldPosition = rect.getPosition();
+        setDirection(direction);
+        switch (direction) {
+            case LEFT:
+                rect.x -= speed;
+                break;
+            case RIGHT:
+                rect.x += speed;
+                break;
+            case UP:
+                rect.y -= speed;
+                break;
+            case DOWN:
+                rect.y += speed;
+                break;
+            default:
+                break;
+        }
+        if (!canMove()) rect.setPosition(oldPosition);
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 
     /**
@@ -109,16 +157,6 @@ public class Entity extends Sprite2D {
     }
 
     /**
-     * Sets the position of the entity using an integer array representing coordinates.
-     *
-     * @param vector an integer array where the first element is the x-coordinate and the second is the y-coordinate
-     */
-    public void setPosition(int[] vector) {
-        x = vector[0];
-        y = vector[1];
-    }
-
-    /**
      * Draws the entity and its shadow.
      *
      * @param g2 the Graphics2D object used for rendering
@@ -136,8 +174,7 @@ public class Entity extends Sprite2D {
      * @param g2 the Graphics2D object used for rendering
      */
     public void drawShadow(Graphics2D g2) {
-        _shadow.setX(x + 4);
-        _shadow.setY(y + 48);
+        _shadow.getRect().setPosition(rect.x + 4, rect.y + 4*12);
         _shadow.draw(g2);
     }
 }

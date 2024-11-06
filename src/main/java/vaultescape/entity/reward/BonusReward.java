@@ -1,6 +1,7 @@
-package vaultescape.reward;
+package vaultescape.entity.reward;
 
-import vaultescape.map.GamePanel;
+import vaultescape.ui.GamePanel;
+import vaultescape.utils.Vector2;
 
 /**
  * Represents a bonus reward item in the game, which has a spawn time attribute to track when it appears.
@@ -13,12 +14,11 @@ public class BonusReward extends Reward {
      * Constructs a BonusReward with a specified position, point value, and spawn time.
      *
      * @param gp the game panel associated with this bonus reward
-     * @param x the x-coordinate of the bonus reward's position
-     * @param y the y-coordinate of the bonus reward's position
+     * @param start the starting position
      * @param points the number of points the bonus reward grants upon collection
      */
-    public BonusReward(GamePanel gp, int x, int y, int points) {
-        super(gp, x, y, points);
+    public BonusReward(GamePanel gp, Vector2 start, int points) {
+        super(gp, start, points);
         this.spawnTime = System.currentTimeMillis();
     }
 

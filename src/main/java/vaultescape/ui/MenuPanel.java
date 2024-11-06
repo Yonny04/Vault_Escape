@@ -1,11 +1,11 @@
 package vaultescape.ui;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JPanel;
 
 /**
  * A custom JPanel that displays the main menu of the game, including buttons to start the game,
@@ -58,7 +58,7 @@ public class MenuPanel extends JPanel {
     private void loadResources() {
         try {
             InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
-            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background_city.png");
+            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background.png");
             background = ImageIO.read(backgroundStream);
             font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 16);
         } catch (Exception e) {

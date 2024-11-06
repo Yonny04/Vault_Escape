@@ -1,7 +1,10 @@
-package vaultescape.entity;
+package vaultescape.entity.enemy;
+
+import vaultescape.entity.Entity;
+import vaultescape.ui.GamePanel;
+import vaultescape.utils.*;
 
 import java.util.Random;
-import vaultescape.map.GamePanel;
 
 /**
  * Represents a generic enemy entity in the game. 
@@ -9,8 +12,7 @@ import vaultescape.map.GamePanel;
  */
 public class Enemy extends Entity {
 
-    public long lastCollisionTime = 0;
-    public static final long COOLDOWN = 500;
+    protected Timer hitCooldown = new Timer(1);
 
     Random r = new Random();
 
@@ -19,8 +21,8 @@ public class Enemy extends Entity {
      *
      * @param gp the game panel associated with this entity
      */
-    public Enemy(GamePanel gp) {
-        super(gp);
+    public Enemy(GamePanel gp, Vector2 start) {
+        super(gp, start);
     }
 
     /**
@@ -28,7 +30,7 @@ public class Enemy extends Entity {
      *
      * @return the speed of the enemy
      */
-    public double getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
@@ -37,7 +39,7 @@ public class Enemy extends Entity {
      *
      * @param value the new speed value to set
      */
-    public void setSpeed(double value) {
+    public void setSpeed(int value) {
         this.speed = value;
     }
 
@@ -48,4 +50,16 @@ public class Enemy extends Entity {
     public void update() {
         // Update logic for the enemy would be implemented here
     }
+
+    /**
+     * Determines if the dog can collide, based on the cooldown period.
+     *
+     * @return true if the cooldown period has passed, false otherwise
+     */
+    public boolean canCollide() {return hitCooldown.isTimeUp();}
+
+    /**
+     * Records the time of the last collision event.
+     */
+    public void recordCollision() {hitCooldown.start();}
 }

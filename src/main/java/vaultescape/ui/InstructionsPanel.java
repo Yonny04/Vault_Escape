@@ -1,19 +1,11 @@
 package vaultescape.ui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
-
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 public class InstructionsPanel extends JPanel{
     private Image background;
@@ -56,7 +48,7 @@ public class InstructionsPanel extends JPanel{
     private void loadResources() {
         try {
             InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
-            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background_city.png");
+            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background.png");
             background = ImageIO.read(backgroundStream);
             font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 32);
         } catch (Exception e) {

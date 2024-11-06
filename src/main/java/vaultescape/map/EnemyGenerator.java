@@ -1,12 +1,12 @@
-package vaultescape.entity;
+package vaultescape.map;
+
+import vaultescape.entity.Player;
+import vaultescape.entity.enemy.*;
+import vaultescape.ui.GamePanel;
+import vaultescape.utils.Vector2;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import vaultescape.map.GamePanel;
-import vaultescape.map.TileGenerator;
+import java.util.*;
 
 /**
  * Generates and manages all enemies within the game, including Dogs, Guards, and Cameras.
@@ -37,26 +37,27 @@ public class EnemyGenerator {
      * @param count the number of enemies to generate
      */
     private void generateEnemies(Class<? extends Enemy> enemyType, int count) {
-        List<int[]> availableTiles = new ArrayList<>(tg.availableTiles);
+        List<Vector2> availableTiles = new ArrayList<>(tg.availableTiles);
 
         for (int i = 0; i < count && !availableTiles.isEmpty(); i++) {
             int index = random.nextInt(availableTiles.size());
-            int[] start = availableTiles.remove(index);
+            Vector2 start = availableTiles.remove(index);
 
             try {
                 Enemy enemy;
-                if (enemyType == Guards.class) {
-                    int range = 200 + random.nextInt(251);
+                if (enemyType == Guard.class) {
+                    int range = gp.TILE_SIZE.x * 3 + random.nextInt(251);
                     boolean isHorizontal = random.nextBoolean();
-                    int x2 = isHorizontal ? start[0] + range : start[0];
-                    int y2 = isHorizontal ? start[1] : start[1] + range;
-                    x2 = Math.min(x2, gp.mapWidth - gp.tilesize);
-                    y2 = Math.min(y2, gp.mapHeight - gp.tilesize);
-                    enemy = new Guards(gp, start[0], start[1], x2, y2);
+                    Vector2 end = new Vector2(0, 0);
+                    end.x = isHorizontal ? start.x + range : start.x;
+                    end.y = isHorizontal ? start.y : start.y + range;
+                    end.x = Math.min(end.x, gp.MAP_SIZE.x - gp.TILE_SIZE.x);
+                    end.y = Math.min(end.y, gp.MAP_SIZE.y - gp.TILE_SIZE.y);
+                    enemy = new Guard(gp, start, end);
                 } else if (enemyType == Dog.class) {
-                    enemy = new Dog(gp, start[0], start[1]);
+                    enemy = new Dog(gp, start);
                 } else if (enemyType == Camera.class) {
-                    enemy = new Camera(gp, start[0], start[1], 100);
+                    enemy = new Camera(gp, start, 100);
                 } else {
                     continue;
                 }
@@ -75,7 +76,7 @@ public class EnemyGenerator {
      * @param cameraCount the number of Cameras to generate
      */
     public void generateAllEnemies(int guardsCount, int dogsCount, int cameraCount) {
-        generateEnemies(Guards.class, guardsCount);
+        generateEnemies(Guard.class, guardsCount);
         generateEnemies(Dog.class, dogsCount);
         generateEnemies(Camera.class, cameraCount);
     }
@@ -93,14 +94,14 @@ public class EnemyGenerator {
     }
 
     /**
-     * Increases the speed of certain enemies by a specified multiplier.
+     * Increases the speed of certain enemies by a bonus value.
      *
-     * @param multiplier the value by which to multiply the speed of each applicable enemy
+     * @param bonusSpeed the value by which to add the speed of each applicable enemy
      */
-    public void increaseEnemySpeed(double multiplier) {
+    public void increaseEnemySpeed(int bonusSpeed) {
         for (Enemy enemy : enemies) {
-            if (enemy instanceof Guards || enemy instanceof Dog) {
-                enemy.setSpeed(enemy.getSpeed() * multiplier);
+            if (enemy instanceof Guard || enemy instanceof Dog) {
+                enemy.setSpeed(enemy.getSpeed() + bonusSpeed);
             }
         }
     }
@@ -112,26 +113,25 @@ public class EnemyGenerator {
      */
     public void checkEnemyCollision(Player player) {
         for (Enemy enemy : enemies) {
-            if (enemy instanceof Guards guard) {
+            if (enemy instanceof Guard guard) {
                 if (guard.isTouching(player) && guard.canCollide()) {
-                    gp.getTimer().decreaseTime(6);
-                    gp.getSFX().play(5);
+                    gp.getTimer().decreaseTime(5);
+                    gp.getSFX().play("hit");
                     guard.recordCollision();
                 }
             }
             if (enemy instanceof Dog dog) {
                 if (dog.isTouching(player) && dog.canCollide()) {
-                    dog.freezeDog(1);
-                    gp.getTimer().decreaseTime(4);
-                    gp.getSFX().play(5);
+                    gp.getTimer().decreaseTime(3);
+                    gp.getSFX().play("hit");
                     dog.recordCollision();
                 }
             }
             if (enemy instanceof Camera camera) {
-                if (camera.isPlayerInRange() && camera.camDetect()) {
-                    increaseEnemySpeed(1.03);
-                    gp.getSFX().play(5);
-                    camera.recordDetection();
+                if (camera.isPlayerInRange() && camera.canCollide()) {
+                    increaseEnemySpeed(1);
+                    gp.getSFX().play("alarm");
+                    camera.recordCollision();
                 }
             }
         }

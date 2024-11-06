@@ -1,4 +1,4 @@
-package vaultescape.ui;
+package vaultescape.utils;
 
 /**
  * A Timer class that tracks countdown time in milliseconds, providing methods to start the timer,
@@ -13,8 +13,8 @@ public final class Timer {
      *
      * @param seconds the countdown duration in seconds
      */
-    public Timer(long seconds) {
-        this.countdownTime = seconds * 1000;
+    public Timer(double seconds) {
+        this.countdownTime = (long)Math.floor(seconds * 1000);
         start();
     }
 

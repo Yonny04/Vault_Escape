@@ -1,7 +1,6 @@
-package vaultescape.map;
+package vaultescape.utils;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
 /**
  * Detects keyboard input for movement controls, specifically for 'W', 'A', 'S', and 'D' keys.

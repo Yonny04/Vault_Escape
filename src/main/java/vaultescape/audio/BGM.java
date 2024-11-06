@@ -1,10 +1,8 @@
 package vaultescape.audio;
 
-import java.net.URL;
+import javax.sound.sampled.*;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import java.net.URL;
 
 /**
  * The BGM class handles background music for an application.
@@ -26,10 +24,10 @@ public class BGM {
     }
 
     /**
-     * Sets the audio file to be played.
+     * Loads the audio file into clip to be played.
      * @param i index of the music file to be set
      */
-    public void setFile(int i) {
+    public void loadBGM(int i) {
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(musicURL[i]);
             clip = AudioSystem.getClip();
@@ -51,7 +49,7 @@ public class BGM {
      * @param i index of the music file to be played
      */
     public void play(int i) {
-        setFile(i);
+        loadBGM(i);
         clip.start();
     }
 

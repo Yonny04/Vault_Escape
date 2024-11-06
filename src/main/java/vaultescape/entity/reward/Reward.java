@@ -1,32 +1,27 @@
-package vaultescape.reward;
+package vaultescape.entity.reward;
 
 import vaultescape.entity.Entity;
-import vaultescape.map.GamePanel;
+import vaultescape.ui.GamePanel;
+import vaultescape.utils.Vector2;
 
 /**
  * Represents a reward item in the game, providing points when collected by the player.
  * The appearance of the reward is determined by its point value, with different frames for different values.
  */
-class Reward extends Entity {
+public class Reward extends Entity {
     protected int points; // Points granted by the reward when collected
 
     /**
      * Constructs a Reward entity with specified position, point value, and appearance.
      *
      * @param gp the game panel associated with this reward
-     * @param x the x-coordinate of the reward's position
-     * @param y the y-coordinate of the reward's position
+     * @param start the starting position
      * @param points the number of points this reward grants upon collection
      */
-    public Reward(GamePanel gp, int x, int y, int points) {
-        super(gp);
-        this.x = x;
-        this.y = y;
+    public Reward(GamePanel gp, Vector2 start, int points) {
+        super(gp, start);
         this.points = points;
-        this.width = 64;
-        this.height = 64;
-        setHitbox(48, 48);
-        setSpritesheet("/reward/spritesheet.png", 6, 1);
+        setSpritesheet("/entity/reward/spritesheet.png", 6, 1);
         setRewardImage();
     }
 

@@ -1,19 +1,15 @@
 package vaultescape.map;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import vaultescape.entity.Exit;
+import vaultescape.ui.GamePanel;
+import vaultescape.utils.*;
 
 import javax.imageio.ImageIO;
 
-import vaultescape.entity.Exit;
-import vaultescape.ui.Sprite;
-import vaultescape.ui.Sprite2D;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.*;
 
 /**
  * Responsible for generating and managing the tiles in the game, including floors, walls, and available tiles for spawning.
@@ -25,12 +21,13 @@ public class TileGenerator {
     public ArrayList<Sprite2D> bottomTiles = new ArrayList<>(); // Bottom wall tiles
     public ArrayList<Sprite2D> topTiles = new ArrayList<>(); // Top wall tiles
     public ArrayList<Sprite2D> walls = new ArrayList<>(); // Collision wall tiles
-    public List<int[]> availableTiles = new ArrayList<>(); // Available tiles for entity spawning
+    public List<Vector2> availableTiles = new ArrayList<>(); // Available tiles for entity spawning
     public Exit exit; // Exit door
 
     protected BufferedImage floorSpritesheet;
     protected BufferedImage wallSpritesheet;
-    private final static int[] _bottomWallNums = {2, 4, 6, 8, 9, 10, 12, 14, 16, 26, 34, 36, 38, 40, 74, 76, 78, 80};
+    private final static int[] _bottomWallNums = {
+        2, 4, 6, 8, 9, 10, 12, 14, 16, 26, 34, 36, 38, 40, 74, 76, 78, 80};
 
     /**
      * Constructs the TileGenerator, loading the spritesheets and map data from resources.
@@ -62,15 +59,16 @@ public class TileGenerator {
         try {
             InputStream stream = getClass().getResourceAsStream("/map/floor1.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-    
-            for (int row = 0; row < gp.numMapCols; row++) {
+            for (int row = 0; row < gp.MAP_TILE.y; row++) {
                 String line = reader.readLine();
                 String[] numberStrings = line.split(";");
     
-                for (int col = 0; col < gp.numMapRows; col++) {
+                for (int col = 0; col < gp.MAP_TILE.x; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
                     if (tileNumber > 0) {
-                        createFloorTile(col, row, tileNumber);
+                        Vector2 position = new Vector2(col, row).toGlobal();
+                        Rect2 rect = new Rect2(position);
+                        createFloorTile(rect, tileNumber);
                     }
                 }
             }
@@ -83,16 +81,18 @@ public class TileGenerator {
             InputStream stream = getClass().getResourceAsStream("/map/wall1.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     
-            for (int row = 0; row < gp.numMapCols; row++) {
+            for (int row = 0; row < gp.MAP_TILE.y; row++) {
                 String line = reader.readLine();
                 String[] numberStrings = line.split(";");
     
-                for (int col = 0; col < gp.numMapRows; col++) {
+                for (int col = 0; col < gp.MAP_TILE.x; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
+                    Vector2 pos = new Vector2(col,row).toGlobal();
                     if (tileNumber > 0) {
-                        createWallTile(col, row, tileNumber);
+                        Rect2 rect = new Rect2(pos);
+                        createWallTile(rect, tileNumber); // Create wall
                     } else if (tileNumber == 0) {
-                        availableTiles.add(new int[]{col * gp.tilesize, row * gp.tilesize});
+                        availableTiles.add(pos); // Available Vector2 Position
                     }
                 }
             }
@@ -109,7 +109,8 @@ public class TileGenerator {
      * @return the BufferedImage of the specified tile
      */
     private BufferedImage getFloorTileImage(int tileNumber) {
-        return floorSpritesheet.getSubimage(tileNumber % 6 * 16, (int) Math.floor(tileNumber / 6.0) * 16, 16, 16);
+        return floorSpritesheet.getSubimage(tileNumber % 6 * 16, 
+            (int)Math.floor(tileNumber / 6.0) * 16, 16, 16);
     }
 
     /**
@@ -119,16 +120,17 @@ public class TileGenerator {
      * @return the BufferedImage of the specified wall tile
      */
     private BufferedImage getWallTileImage(int tileNumber) {
-        return wallSpritesheet.getSubimage(tileNumber % 9 * 16, (int) Math.floor(tileNumber / 9.0) * 16, 16, 16);
+        return wallSpritesheet.getSubimage(tileNumber % 9 * 16, 
+            (int)Math.floor(tileNumber / 9.0) * 16, 16, 16);
     }
 
     /**
      * Gets a random available tile in the map for entity spawning. 
      * This method does not remove the selected tile from available tiles.
      *
-     * @return an int array representing the x and y coordinates of the available tile
+     * @return an Vector2 array representing the x and y coordinates of the available tile
      */
-    public int[] getRandomAvailableTile() {
+    public Vector2 getRandomAvailableTile() {
         Random rand = new Random();
         int randomIndex = rand.nextInt(availableTiles.size());
         return availableTiles.get(randomIndex);
@@ -141,8 +143,9 @@ public class TileGenerator {
      * @param tileY the y-coordinate of the tile in tile units
      * @param tileNumber the index of the tile in the spritesheet
      */
-    private void createFloorTile(int tileX, int tileY, int tileNumber) {
-        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX * gp.tilesize, tileY * gp.tilesize, gp.tilesize, gp.tilesize);
+    private void createFloorTile(Rect2 rect, int tileNumber) {
+        Sprite2D tile = new Sprite2D(gp);
+        tile.setRect(rect);
         tile.setImage(getFloorTileImage(tileNumber));
         floorTiles.add(tile);
     }
@@ -150,18 +153,17 @@ public class TileGenerator {
     /**
      * Creates a wall tile and categorizes it into bottom, top, or collision tiles based on tile properties.
      *
-     * @param tileX the x-coordinate of the tile in tile units
-     * @param tileY the y-coordinate of the tile in tile units
      * @param tileNumber the index of the tile in the spritesheet
      */
-    private void createWallTile(int tileX, int tileY, int tileNumber) {
-        Sprite2D tile = Sprite2D.createSprite2D(gp, tileX * gp.tilesize, tileY * gp.tilesize, gp.tilesize, gp.tilesize);
+    private void createWallTile(Rect2 rect, int tileNumber) {
+        Sprite2D tile = new Sprite2D(gp);
+        tile.setRect(rect);
         tile.setImage(getWallTileImage(tileNumber));
 
         // Vault Door
         if (tileNumber == 75) {
             if (exit == null){
-                exit = new Exit(gp,tileX * gp.tilesize, tileY * gp.tilesize);
+                exit = new Exit(gp,rect.getPosition());
                 bottomTiles.add(exit);
                 walls.add(exit);
             }
@@ -181,14 +183,12 @@ public class TileGenerator {
                 break;
             }
         }
-
+        tile.setHitbox(tile.getDimension().scale(0.8));
         if (isBottomTile) {
             bottomTiles.add(tile);
             walls.add(tile);
-            tile.setHitbox(32, 36);
         } else {
             walls.add(tile);
-            tile.setHitbox(40, 36);
             if (tileNumber != 48) topTiles.add(tile);
             else bottomTiles.add(tile);
         }

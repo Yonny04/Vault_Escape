@@ -1,7 +1,9 @@
-package vaultescape.reward;
+package vaultescape.map;
 
 import vaultescape.entity.Player;
-import vaultescape.map.*;
+import vaultescape.entity.reward.*;
+import vaultescape.ui.GamePanel;
+import vaultescape.utils.Vector2;
 
 import java.awt.Graphics2D;
 import java.util.*;
@@ -58,10 +60,8 @@ public class RewardGenerator {
 
         for (int i = 0; i < n && !tg.availableTiles.isEmpty(); i++) {
             int index = random.nextInt(tg.availableTiles.size());
-            int[] position = tg.availableTiles.remove(index);
-            int x = position[0];
-            int y = position[1];
-            regularRewards.add(new RegularReward(gp, x, y));
+            Vector2 start = tg.availableTiles.remove(index);
+            regularRewards.add(new RegularReward(gp, start));
         }
     }
 
@@ -72,14 +72,11 @@ public class RewardGenerator {
     public void generateBonusRewards() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - bonusSpawnTime >= bonusRewardSpawnInterval) {
-            List<int[]> availableTiles = tg.availableTiles;
+            List<Vector2> availableTiles = tg.availableTiles;
             if (!availableTiles.isEmpty()) {
                 int index = random.nextInt(availableTiles.size());
-                int[] position = availableTiles.remove(index);
-                int x = position[0];
-                int y = position[1];
-
-                bonusRewards.add(new BonusReward(gp, x, y, 100));
+                Vector2 start = availableTiles.remove(index);
+                bonusRewards.add(new BonusReward(gp, start, 100));
                 bonusSpawnTime = currentTime;
             }
         }
@@ -105,7 +102,7 @@ public class RewardGenerator {
             if (player.isTouching(reward)) {
                 player.addScore(20);
                 regularRewards.remove(i);
-                gp.getSFX().play(0);
+                gp.getSFX().play("basic_collect");
                 i--;
             }
         }
@@ -115,7 +112,7 @@ public class RewardGenerator {
             if (player.isTouching(reward)) {
                 player.addScore(((BonusReward) reward).getPoints());
                 bonusRewards.remove(i);
-                gp.getSFX().play(1);
+                gp.getSFX().play("bonus_collect");
                 i--;
             }
         }

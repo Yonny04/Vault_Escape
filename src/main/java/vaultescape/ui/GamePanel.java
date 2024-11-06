@@ -1,10 +1,10 @@
-package vaultescape.map;
+package vaultescape.ui;
 
 import vaultescape.App;
 import vaultescape.audio.*;
-import vaultescape.entity.*;
-import vaultescape.reward.RewardGenerator;
-import vaultescape.ui.*;
+import vaultescape.entity.Player;
+import vaultescape.map.*;
+import vaultescape.utils.*;
 
 import javax.swing.JPanel;
 
@@ -18,32 +18,36 @@ import java.io.InputStream;
 public class GamePanel extends JPanel implements Runnable {
 
     // Tile and screen properties
-    final int defaultTileSize = 16; // Base size of a tile
-    final int scale = 4; // Scale factor for tile size
-    public final int tilesize = defaultTileSize * scale; // 64x64 scaled tile size
-    public final int numScreenCols = 20;
-    public final int numScreenRows = 12;
-    public final int screenWidth = tilesize * numScreenCols; // Screen width in pixels
-    public final int screenHeight = tilesize * numScreenRows; // Screen height in pixels
+    public final Vector2 TILE_DIM = Vector2.TILE_DIM; // Tile Size (1 tile)
+    public final Vector2 TILE_SIZE = Vector2.TILE_SIZE; // Tile Size (pixels)
+
+    public final Vector2 SCREEN_DIM = new Vector2(20,12); // Screen Size (in tiles)
+    public final Vector2 SCREEN_SIZE = SCREEN_DIM.toGlobal(); // Screen Size (in pixels)
 
     // Map properties
-    public final int numMapCols = 40;
-    public final int numMapRows = 40;
-    public final int mapWidth = tilesize * numMapCols;
-    public final int mapHeight = tilesize * numMapRows;
-
-    // Camera detection flag
-    private boolean playerDetected = false;
+    public final Vector2 MAP_TILE = new Vector2(40,40); // Map Size (in tiles)
+    public final Vector2 MAP_SIZE = MAP_TILE.toGlobal(); // Map Size (in pixels)
 
     // Frames per second for game loop
-    final int fps = 60;
+    private final static int FPS = 65;
 
     // Game components
     private final KeyDetector keyh = new KeyDetector();
     private TileGenerator tileGenerator = new TileGenerator(this);
-    private final Player player = new Player(this, keyh);
+    private final Vector2 playerSpawnPos = new Vector2(33,3).toGlobal();
+    private final Player player = new Player(this, playerSpawnPos,keyh);
     private Thread gameThread;
     private GameOverOverlay gameOverOverlay;
+
+    // Rewards
+    private final RewardGenerator rewardGenerator;
+    private final int regularRewardCount = 6;
+
+    // Enemies
+    private final EnemyGenerator enemyGenerator;
+    private static final int GUARDS_COUNT = 8;
+    private static final int DOGS_COUNT = 2;
+    private static final int CAMERA_COUNT = 4;
 
     //Music Components
     private BGM bgm = new BGM();
@@ -51,20 +55,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Timer
     private Timer timer;
-    public long levelTime = 60;
-
-    // Reward and Enemy generators
-    private final RewardGenerator rewardGenerator;
-    private final int regularRewardCount = 5;
-    private final EnemyGenerator enemyGenerator;
-    private final int guardsCount = 8;
-    private final int dogsCount = 2;
-    private final int cameraCount = 1;
-
+    public static final double LEVEL_TIME = 60.0;
 
     // App reference and font resource
     public App app;
     private Font font;
+
     /**
      * Constructs the GamePanel, setting up game dimensions, components, resources, and input listeners.
      *
@@ -72,7 +68,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public GamePanel(App app) {
         this.app = app;
-        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        this.setSize(SCREEN_SIZE.x, SCREEN_SIZE.y);
         this.setBackground(new Color(89, 81, 120));
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
@@ -127,35 +123,13 @@ public class GamePanel extends JPanel implements Runnable {
      * Gets the background music (BGM) object.
      * @return the BGM object
      */
-    public BGM getBGM() {
-        return bgm;
-    }
+    public BGM getBGM() {return bgm;}
 
     /**
      * Gets the sound effects (SFX) object.
      * @return the SFX object
      */
-    public SFX getSFX() {
-        return sfx;
-    }
-
-    /**
-     * Checks if the player has been detected by any camera.
-     *
-     * @return true if the player is detected, false otherwise
-     */
-    public boolean isPlayerDetected() {
-        return playerDetected;
-    }
-
-    /**
-     * Sets the player detection status.
-     *
-     * @param detected true to indicate the player is detected, false otherwise
-     */
-    public void setPlayerDetected(boolean detected) {
-        this.playerDetected = detected;
-    }
+    public SFX getSFX() {return sfx;}
 
     /**
      * Stops the game upon escaping the vault
@@ -164,10 +138,10 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread = null;
         bgm.stop();
         if (isWin) {
-            sfx.play(3);
+            sfx.play("game_complete");
             app.updateBestScoreAfterGame(getFinalScore());
         }
-        else sfx.play(4);
+        else sfx.play("game_over");
         updateGameOverScreen(isWin);
         showGameOverScreen();
     }
@@ -227,8 +201,8 @@ public class GamePanel extends JPanel implements Runnable {
      * Starts the game thread, initializing the timer and generating enemies and rewards.
      */
     public void startGameThread() {
-        timer = new Timer(levelTime);
-        enemyGenerator.generateAllEnemies(guardsCount, dogsCount, cameraCount);
+        timer = new Timer(LEVEL_TIME);
+        enemyGenerator.generateAllEnemies(GUARDS_COUNT, DOGS_COUNT, CAMERA_COUNT);
         rewardGenerator.generateRegularRewards(regularRewardCount);
         gameThread = new Thread(this);
         gameThread.start();
@@ -239,7 +213,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     @Override
     public void run() {
-        double drawInterval = 1000000000 / fps;
+        double drawInterval = 1000000000 / FPS;
         double nextDrawTime = System.nanoTime() + drawInterval;
 
         while (gameThread != null) {
@@ -262,7 +236,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    public int getFinalScore(){
+    /**
+     * Calculates and returns the final score for the player.
+     * The final score is computed based on the time left and the player's score.
+     * 
+     * @return the final score as an integer
+     */
+    public int getFinalScore() {
         return (int)getTimer().getTimeLeft() / 50 + player.getScore();
     }
 
@@ -294,7 +274,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
-     * Paints all game elements onto the screen, including the background, player, enemies, rewards, and UI elements.
+     * Paints all game elements onto the screen, including the background, 
+     * player, enemies, rewards, and UI elements.
      *
      * @param g the Graphics object for rendering
      */
