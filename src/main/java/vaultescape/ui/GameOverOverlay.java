@@ -38,7 +38,7 @@ public class GameOverOverlay extends JPanel {
         scoreLabel.setBounds(410, 150, 400, 100);
         this.add(scoreLabel);
 
-        int bonusScore = isWin ? (timeLeft / 50) : 0;
+        int bonusScore = isWin ? (timeLeft / 50 + 200) : 0;
         JLabel bonusScoreLabel = new JLabel("Time Bonus: " + bonusScore);
         styleLabel(bonusScoreLabel);
         bonusScoreLabel.setBounds(310, 250, 600, 100);

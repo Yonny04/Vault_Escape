@@ -1,70 +1,70 @@
 package vaultescape.utils;
 
 /**
- * The {@code Rect2} class represents a rectangle, extending the {@code Vector2} class.
+ * The {@code Rect} class represents a rectangle, extending the {@code Vector} class.
  * It includes properties for width and height, and provides methods to get these properties
  * as well as to check if another rectangle is touching the current rectangle.
  * Inspired by Godot Game Engine's Rect2 class.
  */
-public class Rect2 extends Vector2 {
+public class Rect extends Vector {
     public int w, h;
 
-    public Rect2() {
+    public Rect() {
         super();
-        setDimension(TILE_SIZE);
+        setSize(TILE_SIZE);
     }
     /**
-     * Constructs a Rect2 object with specified x and y coordinates.
+     * Constructs a Rect object with specified x and y coordinates.
      * 
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    public Rect2(int x, int y) {
+    public Rect(int x, int y) {
         super(x, y);
-        setDimension(TILE_SIZE);
+        setSize(TILE_SIZE);
     }
 
     /**
-     * Constructs a Rect2 object with specified coordinates from a Vector2 object.
+     * Constructs a Rect object with specified coordinates from a Vector object.
      * 
-     * @param vector the Vector2 object containing the x and y coordinates
+     * @param vector the Vector object containing the x and y coordinates
      */
-    public Rect2(Vector2 vector) {
+    public Rect(Vector vector) {
         super(vector);
-        setDimension(TILE_SIZE);
+        setSize(TILE_SIZE);
     }
 
     /**
-     * Constructs a new {@code Rect2} with the specified coordinates and dimensions.
+     * Constructs a new {@code Rect} with the specified coordinates and dimensions.
      *
      * @param x the x coordinate of the rectangle
      * @param y the y coordinate of the rectangle
      * @param w the width of the rectangle
      * @param h the height of the rectangle
      */
-    public Rect2(int x, int y, int w, int h) {
+    public Rect(int x, int y, int w, int h) {
         super(x, y);
-        setDimension(w,h);
+        setSize(w,h);
     }
 
     /**
-     * Constructs a Rect2 object with specified coordinates and dimensions.
+     * Constructs a Rect object with specified coordinates and dimensions.
      * 
      * @param xy the vector containing the x and y coordinates
      * @param wh the vector containing the width (w) and height (h)
      */
-    public Rect2(Vector2 xy, Vector2 wh) {
+    public Rect(Vector xy, Vector wh) {
         super(xy);
-        setDimension(wh);
+        setSize(wh);
     }
 
-    public Rect2 getRect() {return this;}
+    public Rect getRect() {return this;}
     
-    public void setRect(Rect2 rect) {
+    public void setRect(Rect rect) {
         setPosition(rect.getPosition());
-        setDimension(rect.getDimension());
+        setSize(rect.getSize());
     }
-    
+
     /**
      * Returns the width of the rectangle.
      *
@@ -85,7 +85,7 @@ public class Rect2 extends Vector2 {
      * @param w the width to be set
      * @param h the height to be set
      */
-    public void setDimension(int w, int h) {
+    public void setSize(int w, int h) {
         this.w = w;
         this.h = h;
     }
@@ -95,26 +95,26 @@ public class Rect2 extends Vector2 {
      * 
      * @param vector the Vector containing the width and height to be set
      */
-    public void setDimension(Vector2 vector) {
-        setDimension(vector.x,vector.y);
+    public void setSize(Vector vector) {
+        setSize(vector.x,vector.y);
     }
 
     /**
-     * Gets the dimensions of the object as a Vector2 object.
+     * Gets the dimensions of the object as a Vector object.
      * 
-     * @return a new Vector2 object containing the width and height (w, h)
+     * @return a new Vector object containing the width and height (w, h)
      */
-    public Vector2 getDimension() {
-        return new Vector2(w, h);
+    public Vector getSize() {
+        return new Vector(w, h);
     }
 
     /**
      * Checks if the current rectangle is touching another rectangle.
      *
-     * @param rect the 2 rectangle to check against
+     * @param rect the Rect object to check against
      * @return {@code true} if the rectangles are touching, otherwise {@code false}
      */
-    public boolean isTouching(Rect2 rect) {
+    public boolean isTouching(Rect rect) {
         return (x < (rect.x + rect.w) &&
                 (x + w) > rect.x &&
                 y < (rect.y + rect.h) &&

@@ -15,14 +15,14 @@ public final class Timer {
      */
     public Timer(double seconds) {
         this.countdownTime = (long)Math.floor(seconds * 1000);
-        start();
+        this.start();
     }
 
     /**
      * Starts or restarts the timer by setting the start time to the current system time.
      */
     public void start() {
-        startTime = System.currentTimeMillis();
+        this.startTime = System.currentTimeMillis();
     }
 
     /**
@@ -61,6 +61,6 @@ public final class Timer {
      * @param seconds the number of seconds to decrease from the countdown
      */
     public void decreaseTime(int seconds) {
-        countdownTime = Math.max(countdownTime - seconds * 1000, 0);
+        this.countdownTime = Math.max(countdownTime - seconds * 1000, 0);
     }
 }

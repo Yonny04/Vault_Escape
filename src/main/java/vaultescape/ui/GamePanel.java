@@ -3,6 +3,7 @@ package vaultescape.ui;
 import vaultescape.App;
 import vaultescape.audio.*;
 import vaultescape.entity.Player;
+import vaultescape.entity.reward.Valuable;
 import vaultescape.map.*;
 import vaultescape.utils.*;
 
@@ -17,45 +18,47 @@ import java.io.InputStream;
  */
 public class GamePanel extends JPanel implements Runnable {
 
-    // Tile and screen properties
-    public final Vector2 TILE_DIM = Vector2.TILE_DIM; // Tile Size (1 tile)
-    public final Vector2 TILE_SIZE = Vector2.TILE_SIZE; // Tile Size (pixels)
-
-    public final Vector2 SCREEN_DIM = new Vector2(20,12); // Screen Size (in tiles)
-    public final Vector2 SCREEN_SIZE = SCREEN_DIM.toGlobal(); // Screen Size (in pixels)
+    public final Vector SCREEN_DIM = new Vector(20,12); // Screen Size (in tiles)
+    public final Vector SCREEN_SIZE = SCREEN_DIM.toGlobal(); // Screen Size (in pixels)
 
     // Map properties
-    public final Vector2 MAP_TILE = new Vector2(40,40); // Map Size (in tiles)
-    public final Vector2 MAP_SIZE = MAP_TILE.toGlobal(); // Map Size (in pixels)
+    public final Vector MAP_TILE = new Vector(40,40); // Map Size (in tiles)
+    public final Vector MAP_SIZE = MAP_TILE.toGlobal(); // Map Size (in pixels)
 
     // Frames per second for game loop
-    private final static int FPS = 65;
+    private final static int FPS = 60;
+
+    // Game Map Data
 
     // Game components
     private final KeyDetector keyh = new KeyDetector();
     private TileGenerator tileGenerator = new TileGenerator(this);
-    private final Vector2 playerSpawnPos = new Vector2(33,3).toGlobal();
+    private final Vector playerSpawnPos = new Vector(33,3).toGlobal();
     private final Player player = new Player(this, playerSpawnPos,keyh);
+
+    // Thread
     private Thread gameThread;
     private GameOverOverlay gameOverOverlay;
 
     // Rewards
-    private final RewardGenerator rewardGenerator;
-    private final int regularRewardCount = 6;
+    private final RewardGenerator rewardGenerator = new RewardGenerator(this, tileGenerator);
+    private final int VALUABLES_COUNT = 6;
+    private final int DIAMONDS_COUNT = 1;
 
     // Enemies
-    private final EnemyGenerator enemyGenerator;
+    private final EnemyGenerator enemyGenerator = new EnemyGenerator(this);
     private static final int GUARDS_COUNT = 8;
     private static final int DOGS_COUNT = 2;
     private static final int CAMERA_COUNT = 4;
 
     //Music Components
-    private BGM bgm = new BGM();
+    private Music music = new Music();
     private SFX sfx = new SFX();
 
     // Timer
     private Timer timer;
     public static final double LEVEL_TIME = 60.0;
+    private int lastTime = 60;
 
     // App reference and font resource
     public App app;
@@ -74,9 +77,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyh);
         this.setFocusable(true);
         this.loadResources();
-        tileGenerator = new TileGenerator(this);
-        rewardGenerator = new RewardGenerator(this, tileGenerator);
-        enemyGenerator = new EnemyGenerator(this);
     }
 
 
@@ -97,33 +97,27 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @return the tile generator for managing game map tiles
      */
-    public TileGenerator getTileGenerator() {
-        return tileGenerator;
-    }
+    public TileGenerator getTileGenerator() {return tileGenerator;}
 
     /**
      * Retrieves the reward generator instance.
      *
      * @return the reward generator for managing game rewards
      */
-    public RewardGenerator getRewardGenerator() {
-        return rewardGenerator;
-    }
+    public RewardGenerator getRewardGenerator() {return rewardGenerator;}
 
     /**
      * Retrieves the enemy generator instance.
      *
      * @return the enemy generator for managing game enemies
      */
-    public EnemyGenerator getEnemyGenerator() {
-        return enemyGenerator;
-    }
+    public EnemyGenerator getEnemyGenerator() {return enemyGenerator;}
 
     /**
-     * Gets the background music (BGM) object.
-     * @return the BGM object
+     * Gets the backround music (Music) object.
+     * @return the Music object
      */
-    public BGM getBGM() {return bgm;}
+    public Music getMusic() {return music;}
 
     /**
      * Gets the sound effects (SFX) object.
@@ -136,12 +130,12 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void completeGame(boolean isWin) {
         gameThread = null;
-        bgm.stop();
+        music.stop();
         if (isWin) {
             sfx.play("game_complete");
             app.updateBestScoreAfterGame(getFinalScore());
         }
-        else sfx.play("game_over");
+        else {sfx.play("game_over"); sfx.play("alarm"); sfx.loop(2);}
         updateGameOverScreen(isWin);
         showGameOverScreen();
     }
@@ -202,8 +196,8 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void startGameThread() {
         timer = new Timer(LEVEL_TIME);
-        enemyGenerator.generateAllEnemies(GUARDS_COUNT, DOGS_COUNT, CAMERA_COUNT);
-        rewardGenerator.generateRegularRewards(regularRewardCount);
+        enemyGenerator.spawnAll(GUARDS_COUNT, DOGS_COUNT, CAMERA_COUNT);
+        rewardGenerator.spawnAll(VALUABLES_COUNT,DIAMONDS_COUNT);
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -243,7 +237,8 @@ public class GamePanel extends JPanel implements Runnable {
      * @return the final score as an integer
      */
     public int getFinalScore() {
-        return (int)getTimer().getTimeLeft() / 50 + player.getScore();
+        if (timer.isTimeUp()) return player.getScore();
+        else return (int)getTimer().getTimeLeft() / 50 + 200 + player.getScore();
     }
 
     /**
@@ -271,6 +266,28 @@ public class GamePanel extends JPanel implements Runnable {
         player.update();
         rewardGenerator.update(player);
         enemyGenerator.update(player);
+
+        // Gametime Logic (music changes + speed increase + countdown)
+        int currentTime = (int)timer.getTimeLeft() / 1000;
+        if (lastTime != currentTime) {
+            if (lastTime <= 60 && lastTime > 30 && !music.isPlaying("60")) {
+                music.play("60");
+            }
+            else if (lastTime <= 31 && lastTime > 15 && !music.isPlaying("30")) {
+                music.play("30");
+                sfx.play("time_tick");
+                enemyGenerator.addEnemySpeed(1);
+            }
+            else if (lastTime <= 16 && lastTime > 0 && !music.isPlaying("15")) {
+                music.play("15");
+                sfx.play("time_tick");
+                enemyGenerator.addEnemySpeed(1);
+                player.addSpeed(1);
+            }
+            if (lastTime <= 10) sfx.play("time_tick");
+            lastTime = currentTime;
+        }
+        
     }
 
     /**
@@ -285,14 +302,16 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.WHITE);
 
-        tileGenerator.drawFloor(g2); // Draw floor tiles
-        player.drawShadow(g2); // Draw player shadow on the floor
-        tileGenerator.drawBottom(g2); // Draw bottom layer tiles
-        rewardGenerator.drawRewards(g2); // Draw rewards
-        enemyGenerator.drawEnemies(g2); // Draw enemies
+        //tileGenerator.drawFloor(g2); // Draw floor tiles
+        //player.drawShadow(g2); // Draw player shadow on the floor
+        //tileGenerator.drawBottom(g2); // Draw bottom layer tiles
+        //rewardGenerator.draw(g2); // Draw rewards
+        //enemyGenerator.drawEnemies(g2); // Draw enemies
 
-        player.draw(g2); // Draw player
-        tileGenerator.drawTop(g2); // Draw top layer tiles
+        tileGenerator.draw(g2);
+
+        //player.draw(g2); // Draw player
+        //tileGenerator.drawTop(g2); // Draw top layer tiles
 
         // Draw timer and score UI
         g2.setFont(font);
@@ -303,7 +322,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(Color.WHITE);
         g2.drawString("Time: " + timer.getFormattedTimeLeft(), 80, textY);
 
-        String rewardsText = "Valuables Left: " + rewardGenerator.getRegularRewardsSize();
+        String rewardsText = "Valuables Left: " + rewardGenerator.generator.getCountByType(Valuable.class);
         g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         g2.drawString(rewardsText, 80, textY + 46);
         g2.setColor(new Color(255, 255, 0));
@@ -314,6 +333,11 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawString(scoreText, 80, textY + 86);
         g2.setColor(new Color(0, 128, 255));
         g2.drawString(scoreText, 80, textY + 80);
+
+        if (sfx.isPlaying("alarm")) {
+            g2.setColor(new Color(1.0f, 0.0f, 0.0f, 0.3f));
+            g2.fillRect(0,0,SCREEN_SIZE.x,SCREEN_SIZE.y);
+        }
 
         g2.dispose();
     }

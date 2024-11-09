@@ -1,7 +1,7 @@
 package vaultescape.entity;
 
 import vaultescape.ui.GamePanel;
-import vaultescape.utils.Vector2;
+import vaultescape.utils.Vector;
 
 import java.awt.Graphics2D;
 
@@ -17,12 +17,12 @@ public class Exit extends Entity {
      * @param gp the game panel
      * @param start the starting position
      */
-    public Exit(GamePanel gp, Vector2 start) {
-        super(gp, start);
+    public Exit(GamePanel gp, Vector start) {
+        super(gp,start);
         this.rect.w *= 2;
         this.rect.h *= 2;
-        this.setHitbox(rect.scale(1.8));
-        this.spritesheetTileSize = 32;
+        hitbox.setSize(rect.getSize());
+        
         setSpritesheet("/entity/exit/spritesheet.png", 2, 1);
         setFrame(0);
     }
@@ -40,9 +40,9 @@ public class Exit extends Entity {
      */
     @Override
     public void draw(Graphics2D g2) {
-        if (gp.getRewardGenerator().getRegularRewardsSize() == 0 && !_open) {
+        if (!gp.getRewardGenerator().hasValuablesLeft() && !_open) {
             setFrame(1);
-            setHitbox(rect.scale(0.5));
+            hitbox.setSize(rect.scale(0.5));
             gp.getSFX().play("exit_open");
             _open = true;
         }

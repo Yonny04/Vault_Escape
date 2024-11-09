@@ -10,9 +10,9 @@ import java.awt.*;
  */
 public class Sprite2D extends Sprite {
     protected GamePanel gp; // Reference to the game panel for player positioning
-    public Rect2 hitbox; // Hitbox Rect
-    protected Vector2 screen = new Vector2(); // Screen coordinates for rendering
-    protected boolean _drawCollisions = false; // Flag to toggle collision hitbox rendering
+    public Rect hitbox; // Hitbox Rect
+    protected Vector screen; // Screen coordinates for rendering
+    protected boolean drawCollisions = false; // Flag to toggle collision hitbox rendering
 
     /**
      * Constructs a Sprite2D associated with a specified game panel.
@@ -21,26 +21,9 @@ public class Sprite2D extends Sprite {
      */
     public Sprite2D(GamePanel gp) {
         this.gp = gp;
-        hitbox = new Rect2();
-        rect = new Rect2();
-    }
-
-    public Rect2 getHitbox() {return this.hitbox;}
-    /**
-     * Sets the dimensions of the sprite's hitbox for collision detection.
-     *
-     * @param rect rect to set the hitbox to
-     */
-    public void setHitbox(Rect2 rect) {
-        hitbox.setRect(rect);
-    }
-    /**
-     * Sets the dimensions of the sprite's hitbox for collision detection.
-     *
-     * @param vector dimension of the width and height of the hitbox
-     */
-    public void setHitbox(Vector2 vector) {
-        hitbox.setDimension(vector);
+        rect = new Rect();
+        hitbox = new Rect();
+        screen = new Vector();
     }
 
     /**
@@ -48,7 +31,7 @@ public class Sprite2D extends Sprite {
      *
      * @return the Vector2 screen position. 
      */
-    public Vector2 getScreenPosition() {return screen;}
+    public Vector getScreenPosition() {return screen;}
 
     /**
      * Draws the sprite at its calculated screen location if it is within the viewable area,
@@ -58,17 +41,22 @@ public class Sprite2D extends Sprite {
      */
     @Override
     public void draw(Graphics2D g2) {
-        Vector2 player = gp.getPlayer().getRect().getPosition();
-        Vector2 playerScreen = gp.getPlayer().getScreenPosition();
-        screen.x = rect.x - player.x + playerScreen.x;
-        screen.y = rect.y - player.y + playerScreen.y;
-        if (rect.x + 2*gp.TILE_SIZE.x > player.x - playerScreen.x && 
-            rect.x - 2*gp.TILE_SIZE.x < player.x + playerScreen.x && 
-            rect.y + 2*gp.TILE_SIZE.y > player.y - playerScreen.y && 
-            rect.y - 2*gp.TILE_SIZE.y < player.y + playerScreen.y) {
+        Vector offset = gp.getPlayer().getCameraOffset();
+        Vector camera = gp.getPlayer().getCameraPosition();
+        screen.setPosition(rect.subtract(camera).add(offset));
+        if (isVisible()) {
             g2.drawImage(image, screen.x, screen.y, rect.w, rect.h, null);
-            if (_drawCollisions) drawHitbox(g2);
+            if (drawCollisions) drawHitbox(g2);
         }
+    }
+
+    public boolean isVisible() {
+        Vector offset = gp.getPlayer().getCameraOffset();
+        Vector camera = gp.getPlayer().getCameraPosition();
+        return (rect.x + 2*Vector.TILE_SIZE.x > camera.x - offset.x && 
+            rect.x - 2*Vector.TILE_SIZE.x < camera.x + offset.x && 
+            rect.y + 2*Vector.TILE_SIZE.y > camera.y - offset.y && 
+            rect.y - 2*Vector.TILE_SIZE.y < camera.y + offset.y);
     }
 
     /**
@@ -77,11 +65,31 @@ public class Sprite2D extends Sprite {
      * @param g2 the Graphics2D object used to render the hitbox
      */
     public void drawHitbox(Graphics2D g2) {
-        if (_drawCollisions && !hitbox.isZero()) {
+        if (drawCollisions && !hitbox.getSize().isZero()) {
             g2.setColor(new Color(0,1.0f,1.0f,0.5f));
-            g2.drawRect(screen.x + (rect.w - hitbox.w)/2, 
-                screen.y + (rect.h - hitbox.h)/2, hitbox.w, hitbox.h);
+            g2.drawRect(screen.x + hitbox.x,screen.y + hitbox.y, hitbox.w, hitbox.h);
         }
+    }
+
+    /**
+     * Returns the center point of this object.
+     * The center is calculated by adding half of its size to its current position.
+     *
+     * @return A Vector representing the center point of this object.
+     */
+    public Vector getCenter() {
+        return getRect().add(getSize().scale(0.5));
+    }
+
+    /**
+     * Determines if this sprite2D is visually above the specified sprite2D.
+     * This is determined by comparing the y-coordinates of their center points.
+     *
+     * @param rect The rectangle to compare against.
+     * @return true if this object is above the specified rectangle, false otherwise.
+     */
+    public boolean isAbove(Sprite2D sprite) {
+        return getCenter().y > sprite.getCenter().y;
     }
 
     /**
@@ -92,10 +100,8 @@ public class Sprite2D extends Sprite {
      * @return {@code true} if the rectangles are touching, otherwise {@code false}
      */
     public boolean isTouching(Sprite2D sprite) {
-        getHitbox().setPosition(getPosition());
-        Rect2 thisRect = getHitbox();
-        sprite.getHitbox().setPosition(sprite.getPosition());
-        Rect2 spriteRect = sprite.getHitbox();
-        return (thisRect.isTouching(spriteRect));
+        Rect r1 = new Rect(hitbox.add(getPosition()),hitbox.getSize());
+        Rect r2 = new Rect(sprite.hitbox.add(sprite.getPosition()),sprite.hitbox.getSize());
+        return (r1.isTouching(r2));
     }
 }

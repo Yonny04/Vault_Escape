@@ -11,6 +11,7 @@ import java.net.URL;
 public class SFX {
     
     private Clip clip; // Clip currently loaded
+    private String clipName = "";
 
     /**
      * Default constructor for the SFX class.
@@ -24,7 +25,7 @@ public class SFX {
      * @return the URL of the sound effect file
      */
     private URL getURL(String sfxName) {
-        String path = String.format("audio/%s.wav", sfxName);
+        String path = String.format("audio/sfx/%s.wav", sfxName);
         return getClass().getClassLoader().getResource(path);
     }
 
@@ -38,9 +39,7 @@ public class SFX {
             AudioInputStream ais = AudioSystem.getAudioInputStream(getURL(sfxName));
             clip = AudioSystem.getClip();
             clip.open(ais);
-        } catch (Exception ex) {
-            // Handle exception
-        }
+        } catch (Exception ex) {}
     }
 
     /**
@@ -51,12 +50,28 @@ public class SFX {
     public void play(String sfxName) {
         loadSFX(sfxName);
         clip.start();
+        clipName = sfxName;
+    }
+
+    /**
+     * Loop the sound effect (count) amount of times
+     * @param count the number of times to loop the sound effect file
+     */
+    public void loop(int count) {
+        clip.loop(count);
     }
 
     /**
      * Stops the currently playing audio file.
      */
-    public void stop() {
-        clip.stop();
+    public void stop() {clip.stop();}
+
+    /**
+     * Checks whether the given music file is playing.
+     * @param sfxName the music name to check (no path and .wav)
+     * @return true if the musicName matches what is currently playing
+     */
+    public boolean isPlaying(String sfxName) {
+        return (sfxName == clipName && clip.isRunning());
     }
 }

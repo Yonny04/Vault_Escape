@@ -12,8 +12,8 @@ import java.util.Random;
  */
 public class Enemy extends Entity {
 
-    protected Timer hitCooldown = new Timer(1);
-
+    protected Timer attackCooldown = new Timer(1);
+    protected int range = 0;
     Random r = new Random();
 
     /**
@@ -21,7 +21,7 @@ public class Enemy extends Entity {
      *
      * @param gp the game panel associated with this entity
      */
-    public Enemy(GamePanel gp, Vector2 start) {
+    public Enemy(GamePanel gp, Vector start) {
         super(gp, start);
     }
 
@@ -33,33 +33,31 @@ public class Enemy extends Entity {
     public int getSpeed() {
         return speed;
     }
-
+    
     /**
-     * Sets the movement speed of the enemy.
-     *
-     * @param value the new speed value to set
+     * Records the time of the last player collision event.
+     * Attacks the player.
      */
-    public void setSpeed(int value) {
-        this.speed = value;
+    public void attack() {
+        attackCooldown.start();
     }
 
     /**
-     * Updates the enemy entity's behavior. This method is intended to be overridden by subclasses
-     * with specific movement or attack logic for each type of enemy.
-     */
-    public void update() {
-        // Update logic for the enemy would be implemented here
-    }
-
-    /**
-     * Determines if the dog can collide, based on the cooldown period.
+     * Determines if the enemy can attack the player, 
+     * based on the cooldown period.
      *
      * @return true if the cooldown period has passed, false otherwise
      */
-    public boolean canCollide() {return hitCooldown.isTimeUp();}
+    public boolean canAttack() {return attackCooldown.isTimeUp();}
 
     /**
-     * Records the time of the last collision event.
+     * Checks if the player is within the dog's chase range.
+     *
+     * @return true if the player is within range, false otherwise
      */
-    public void recordCollision() {hitCooldown.start();}
+    public boolean isPlayerInRange() {
+        Rect player = gp.getPlayer().getRect();
+        return Math.abs(player.x - rect.x) < range && Math.abs(player.y - rect.y) <= range;
+    }
+    
 }

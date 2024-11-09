@@ -1,5 +1,6 @@
 package vaultescape.entity;
 
+import vaultescape.tile.Tile;
 import vaultescape.ui.GamePanel;
 import vaultescape.utils.*;
 
@@ -13,16 +14,16 @@ import java.awt.image.BufferedImage;
  * sprite management capabilities. Other entities, such as players or enemies, can
  * extend this class to inherit these common behaviors.
  */
-public class Entity extends Sprite2D {
+public class Entity extends Tile {
     protected int speed;
-    private Sprite2D _shadow;
+    protected Sprite2D _shadow;
 
-    protected enum Direction {LEFT,RIGHT,UP,DOWN};
     protected Direction direction = Direction.LEFT;
-    protected float spriteCounter = 0.0f;
-    protected BufferedImage spritesheet;
-    protected int[] spritesheetDim = {0, 0}; // Dimensions of tiles on the sprite sheet
-    protected int spritesheetTileSize = 16; // size of the tile
+
+    protected BufferedImage sheet;
+    protected Vector sheetDim;
+    protected float frame = 0.0f;
+    protected Vector frameSize;
 
     /**
      * Constructs an Entity with a specified game panel, setting up basic
@@ -30,21 +31,29 @@ public class Entity extends Sprite2D {
      *
      * @param gp the game panel associated with this entity
      */
-    public Entity(GamePanel gp, Vector2 start) {
+    public Entity(GamePanel gp, Vector start) {
         super(gp);
         setPosition(start);
-        setHitbox(getDimension().scale(0.7));
+        hitbox.setSize(getSize().scale(0.6));
+        hitbox.setPosition(hitbox.getSize().scale(0.4));
         createShadow();
     }
 
     private void createShadow() {
         _shadow = new Sprite2D(gp);
-        _shadow.getRect().setDimension(14*4,6*4);
+        _shadow.setSize(14*4,6*4);
         try {
             _shadow.setImage(ImageIO.read(getClass().getResourceAsStream("/entity/shadow.png")));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public boolean isTouchingPlayer() {
+        if (this == gp.getPlayer()) return false;
+        return isTouching(gp.getPlayer());
     }
 
     /**
@@ -53,32 +62,12 @@ public class Entity extends Sprite2D {
      * @return true if the entity is not touching any walls, false otherwise
      */
     public boolean canMove() {
-        for (Sprite2D wall : gp.getTileGenerator().walls) {
-            if (isTouching(wall)) {
+        for (Tile wall : gp.getTileGenerator().wallTiles) {
+            if (isTouching(wall) && wall.collisionMask) {
                 return false;
             }
         }
         return true;
-    }
-
-    /**
-     * Plays the animation by incrementing the sprite counter.
-     * If the sprite counter exceeds 3.9, it is reset to 0.0.
-     * Sets the current frame based on the sprite counter and direction.
-     */
-    public void playAnimation() {
-        spriteCounter += 0.1f;
-        if (spriteCounter > 3.9f) spriteCounter = 0.0f;
-        setFrame((int)Math.floor(spriteCounter), direction.ordinal());
-    }
-
-    /**
-     * Stops the animation by setting the sprite counter to 1.0.
-     * Sets the current frame based on the sprite counter and direction.
-     */
-    public void stopAnimation() {
-        spriteCounter = 1.0f;
-        setFrame((int)Math.floor(spriteCounter), direction.ordinal());
     }
 
     /**
@@ -88,7 +77,7 @@ public class Entity extends Sprite2D {
      * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
      */
     public void move(Direction direction) {
-        Vector2 oldPosition = rect.getPosition();
+        Vector oldPosition = rect.getPosition();
         setDirection(direction);
         switch (direction) {
             case LEFT:
@@ -109,51 +98,30 @@ public class Entity extends Sprite2D {
         if (!canMove()) rect.setPosition(oldPosition);
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
     /**
-     * Sets the sprite image to a spritesheet and defines its tile dimensions.
+     * Moves the object in the specified direction at the given speed.
+     * DOES NOT CHECK FOR COLLISION.
      * 
-     * @param pathString the path to the spritesheet resource (e.g., "/map/spritesheet.png")
-     * @param numTilesX the number of tiles horizontally on the spritesheet
-     * @param numTilesY the number of tiles vertically on the spritesheet
+     * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
      */
-    public void setSpritesheet(String pathString, int numTilesX, int numTilesY) {
-        try {
-            spritesheet = ImageIO.read(getClass().getResourceAsStream(pathString));
-            spritesheetDim = new int[] { numTilesX, numTilesY };
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void moveUnsafe(Direction direction) {
+        setDirection(direction);
+        switch (direction) {
+            case LEFT:
+                rect.x -= speed;
+                break;
+            case RIGHT:
+                rect.x += speed;
+                break;
+            case UP:
+                rect.y -= speed;
+                break;
+            case DOWN:
+                rect.y += speed;
+                break;
+            default:
+                break;
         }
-    }
-
-    /**
-     * Sets the sprite's image to a specific tile on the spritesheet using tile coordinates.
-     *
-     * @param coordX the x-coordinate (column) on the spritesheet
-     * @param coordY the y-coordinate (row) on the spritesheet
-     */
-    public void setFrame(int coordX, int coordY) {
-        if (spritesheetDim[1] == 0) return;
-        BufferedImage currentFrame = spritesheet.getSubimage(coordX * spritesheetTileSize, 
-            coordY * spritesheetTileSize, spritesheetTileSize, spritesheetTileSize);
-        setImage(currentFrame);
-    }
-
-    /**
-     * Sets the sprite's image to a specific tile based on a linear index.
-     *
-     * @param spriteNum the index of the tile in the spritesheet (counted left to right, top to bottom)
-     */
-    public void setFrame(int spriteNum) {
-        if (spritesheetDim[1] == 0) return;
-        int spriteCol = spriteNum % spritesheetDim[0];
-        int spriteRow = spriteNum / spritesheetDim[0];
-        BufferedImage currentFrame = spritesheet.getSubimage(spriteCol * spritesheetTileSize, 
-            spriteRow * spritesheetTileSize, spritesheetTileSize, spritesheetTileSize);
-        setImage(currentFrame);
     }
 
     /**
@@ -174,7 +142,89 @@ public class Entity extends Sprite2D {
      * @param g2 the Graphics2D object used for rendering
      */
     public void drawShadow(Graphics2D g2) {
-        _shadow.getRect().setPosition(rect.x + 4, rect.y + 4*12);
+        _shadow.setPosition(rect.x + 4, rect.y + 4*12);
         _shadow.draw(g2);
     }
+    
+    /**
+     * Sets the sprite image to a spritesheet and defines its tile dimensions.
+     * 
+     * @param path the path to the spritesheet resource (e.g., "/map/spritesheet.png")
+     * @param numTilesX the number of tiles horizontally on the spritesheet
+     * @param numTilesY the number of tiles vertically on the spritesheet
+     */
+    public void setSpritesheet(String path, int tilesX, int tilesY) {
+        try {
+            sheet = ImageIO.read(getClass().getResourceAsStream(path));
+            sheetDim = new Vector(tilesX,tilesY);
+            frameSize = new Vector(sheet.getWidth()/sheetDim.x,sheet.getHeight()/sheetDim.y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAnimation() {}
+
+    /**
+     * Sets the sprite's image to a specific tile on the spritesheet using tile coordinates.
+     *
+     * @param coordX the x-coordinate (column) on the spritesheet
+     * @param coordY the y-coordinate (row) on the spritesheet
+     */
+    public void setFrame(int coordX, int coordY) {
+        if (sheetDim.x == 0) return;
+        BufferedImage currentFrame = sheet.getSubimage(coordX * frameSize.x, 
+            coordY * frameSize.y, frameSize.x, frameSize.y);
+        setImage(currentFrame);
+    }
+
+    /**
+     * Sets the sprite's image to a specific tile based on a linear index.
+     *
+     * @param spriteNum the index of the tile in the spritesheet (counted left to right, top to bottom)
+     */
+    public void setFrame(int spriteNum) {
+        int coordX = spriteNum % sheetDim.x;
+        int coordY = spriteNum / sheetDim.y;
+        if (sheetDim.y == 1) setFrame(coordX, 0);
+        else setFrame(coordX, coordY);
+    }
+
+    public float getFrame() {
+        return frame;
+    }
+
+    public int getNextFrame() {
+        return (int)Math.floor(frame);
+    }
+
+    /**
+     * Plays the animation by incrementing the sprite counter.
+     * If the sprite counter exceeds 3.9, it is reset to 0.0.
+     * Sets the current frame based on the sprite counter and direction.
+     */
+    public void playAnimation() {
+        frame += 0.1f;
+        if (frame > 3.9f) frame = 0.0f;
+        setFrame((int)Math.floor(frame), direction.ordinal());
+    }
+
+    /**
+     * Stops the animation by setting the sprite counter to 1.0.
+     * Sets the current frame based on the sprite counter and direction.
+     */
+    public void stopAnimation() {
+        frame = 1.0f;
+        setFrame((int)Math.floor(frame), direction.ordinal());
+    }
+
+     /**
+     * Adds the movement speed of the enemy.
+     *
+     * @param value the value to add to speed
+     */
+    public void addSpeed(int value) {
+        this.speed += value;
+    }
+
 }

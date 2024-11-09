@@ -11,9 +11,8 @@ import java.awt.*;
  */
 public class Dog extends Enemy {
 
-    private final int chaseRange;
     int timer = 0;
-    private Vector2 next = new Vector2();
+    private Vector next = new Vector();
     private Timer biteCooldown = new Timer(0.3);
 
     /**
@@ -22,10 +21,10 @@ public class Dog extends Enemy {
      * @param gp the game panel associated with this entity
      * @param start the starting position
      */
-    public Dog(GamePanel gp, Vector2 start) {
+    public Dog(GamePanel gp, Vector start) {
         super(gp, start);
-        this.chaseRange = 250;
         this.speed = 4;
+        this.range = 200;
         next.x = next.y = 0;
         setSpritesheet("/entity/enemy/dog/spritesheet.png", 4, 4);
     }
@@ -36,6 +35,7 @@ public class Dog extends Enemy {
      */
     @Override
     public void update() {
+        if (speed > 5) speed = 5;
 
         if (!biteCooldown.isTimeUp()) {
             stopAnimation(); 
@@ -70,24 +70,13 @@ public class Dog extends Enemy {
     }
 
     /**
-     * Checks if the player is within the dog's chase range.
-     *
-     * @return true if the player is within range, false otherwise
-     */
-    private boolean isPlayerInRange() {
-        Rect2 player = gp.getPlayer().getRect();
-        return Math.abs(player.x - rect.x) < chaseRange && Math.abs(player.y - rect.y) <= chaseRange;
-    }
-
-    /**
      * Makes the dog chase the player if they are within range, moving in the direction of the player.
      * Adjusts the position based on obstacles and checks for collisions.
      */
     private void chasePlayer() {
-        if (speed > 4) speed = 4;
         
-        Vector2 player = gp.getPlayer().getRect();
-        Vector2 delta = player.subtract(getPosition());
+        Vector player = gp.getPlayer().getRect();
+        Vector delta = player.subtract(getPosition());
 
         if (delta.x > 0) move(Direction.RIGHT);
         else if (delta.x < 0) move(Direction.LEFT);
@@ -105,16 +94,18 @@ public class Dog extends Enemy {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        if (_drawCollisions) {
+        if (drawCollisions) {
             g2.setColor(new Color(1.0f, 0.5f, 0.0f, 0.2f));
-            g2.drawOval(screen.x + rect.w/2 - chaseRange, 
-                screen.y + rect.h/2 - chaseRange, chaseRange * 2, chaseRange * 2);
+            g2.drawOval(screen.x + rect.w/2 - range, 
+                screen.y + rect.h/2 - range, range * 2, range * 2);
         }
     }
 
     @Override
-    public void recordCollision() {
-        super.recordCollision();
+    public void attack() {
+        gp.getSFX().play("bite");
+        gp.getTimer().decreaseTime(3);
         biteCooldown.start();
+        super.attack();
     }
 }

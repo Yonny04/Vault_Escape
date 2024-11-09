@@ -3,20 +3,17 @@ package vaultescape.map;
 import vaultescape.entity.Player;
 import vaultescape.entity.enemy.*;
 import vaultescape.ui.GamePanel;
-import vaultescape.utils.Vector2;
 
-import java.awt.Graphics2D;
-import java.util.*;
+import java.util.List;
 
 /**
  * Generates and manages all enemies within the game, including Dogs, Guards, and Cameras.
  * Provides methods to initialize, update, draw, and check interactions between enemies and the player.
  */
 public class EnemyGenerator {
-    private final GamePanel gp;
-    private final TileGenerator tg;
-    private final List<Enemy> enemies;
-    private final Random random;
+    GamePanel gp;
+    TileGenerator tg;
+    public Generator<Enemy> generator;
 
     /**
      * Constructs an EnemyGenerator with a specified game panel.
@@ -26,46 +23,16 @@ public class EnemyGenerator {
     public EnemyGenerator(GamePanel gp) {
         this.gp = gp;
         this.tg = gp.getTileGenerator();
-        this.enemies = new ArrayList<>();
-        this.random = new Random();
+        this.generator = new Generator<>(gp);
     }
 
     /**
-     * Generates a specified number of enemies of a certain type and places them on available tiles.
+     * Spawn a specified number of basic rewards at random available tile positions.
      *
-     * @param enemyType the class type of the enemy to generate
-     * @param count the number of enemies to generate
+     * @param n the number of basic rewards to generate
      */
-    private void generateEnemies(Class<? extends Enemy> enemyType, int count) {
-        List<Vector2> availableTiles = new ArrayList<>(tg.availableTiles);
-
-        for (int i = 0; i < count && !availableTiles.isEmpty(); i++) {
-            int index = random.nextInt(availableTiles.size());
-            Vector2 start = availableTiles.remove(index);
-
-            try {
-                Enemy enemy;
-                if (enemyType == Guard.class) {
-                    int range = gp.TILE_SIZE.x * 3 + random.nextInt(251);
-                    boolean isHorizontal = random.nextBoolean();
-                    Vector2 end = new Vector2(0, 0);
-                    end.x = isHorizontal ? start.x + range : start.x;
-                    end.y = isHorizontal ? start.y : start.y + range;
-                    end.x = Math.min(end.x, gp.MAP_SIZE.x - gp.TILE_SIZE.x);
-                    end.y = Math.min(end.y, gp.MAP_SIZE.y - gp.TILE_SIZE.y);
-                    enemy = new Guard(gp, start, end);
-                } else if (enemyType == Dog.class) {
-                    enemy = new Dog(gp, start);
-                } else if (enemyType == Camera.class) {
-                    enemy = new Camera(gp, start, 100);
-                } else {
-                    continue;
-                }
-                enemies.add(enemy);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public void spawn(Class<? extends Enemy> type, int count) {
+        generator.spawn(type, count);
     }
 
     /**
@@ -75,10 +42,10 @@ public class EnemyGenerator {
      * @param dogsCount the number of Dogs to generate
      * @param cameraCount the number of Cameras to generate
      */
-    public void generateAllEnemies(int guardsCount, int dogsCount, int cameraCount) {
-        generateEnemies(Guard.class, guardsCount);
-        generateEnemies(Dog.class, dogsCount);
-        generateEnemies(Camera.class, cameraCount);
+    public void spawnAll(int guardsCount, int dogsCount, int cameraCount) {
+        spawn(Guard.class, guardsCount);
+        spawn(Dog.class, dogsCount);
+        spawn(Camera.class, cameraCount);
     }
 
     /**
@@ -87,21 +54,19 @@ public class EnemyGenerator {
      * @param player the player entity to check collisions against
      */
     public void update(Player player) {
-        checkEnemyCollision(player);
-        for (Enemy enemy : enemies) {
-            enemy.update();
-        }
+        generator.update();
+        checkEnemyCollision();
     }
 
     /**
-     * Increases the speed of certain enemies by a bonus value.
+     * Adds the speed of certain enemies by a bonus value.
      *
-     * @param bonusSpeed the value by which to add the speed of each applicable enemy
+     * @param value the value by which to add the speed of each applicable enemy
      */
-    public void increaseEnemySpeed(int bonusSpeed) {
-        for (Enemy enemy : enemies) {
+    public void addEnemySpeed(int value) {
+        for (Enemy enemy : generator.elements) {
             if (enemy instanceof Guard || enemy instanceof Dog) {
-                enemy.setSpeed(enemy.getSpeed() + bonusSpeed);
+                enemy.addSpeed(value);
             }
         }
     }
@@ -111,40 +76,11 @@ public class EnemyGenerator {
      *
      * @param player the player entity to check collisions against
      */
-    public void checkEnemyCollision(Player player) {
-        for (Enemy enemy : enemies) {
-            if (enemy instanceof Guard guard) {
-                if (guard.isTouching(player) && guard.canCollide()) {
-                    gp.getTimer().decreaseTime(5);
-                    gp.getSFX().play("hit");
-                    guard.recordCollision();
-                }
+    public void checkEnemyCollision() {
+        for (Enemy enemy : generator.elements) {
+            if (enemy.isTouchingPlayer() && enemy.canAttack()) {
+                enemy.attack();
             }
-            if (enemy instanceof Dog dog) {
-                if (dog.isTouching(player) && dog.canCollide()) {
-                    gp.getTimer().decreaseTime(3);
-                    gp.getSFX().play("hit");
-                    dog.recordCollision();
-                }
-            }
-            if (enemy instanceof Camera camera) {
-                if (camera.isPlayerInRange() && camera.canCollide()) {
-                    increaseEnemySpeed(1);
-                    gp.getSFX().play("alarm");
-                    camera.recordCollision();
-                }
-            }
-        }
-    }
-
-    /**
-     * Draws each enemy on the screen.
-     *
-     * @param g2 the Graphics2D object used for rendering
-     */
-    public void drawEnemies(Graphics2D g2) {
-        for (Enemy enemy : enemies) {
-            enemy.draw(g2);
         }
     }
 
@@ -154,6 +90,6 @@ public class EnemyGenerator {
      * @return a list of enemies
      */
     public List<Enemy> getEnemies() {
-        return enemies;
+        return generator.elements;
     }
 }

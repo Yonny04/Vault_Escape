@@ -4,7 +4,7 @@ import vaultescape.ui.GamePanel;
 import vaultescape.utils.*;
 
 import java.awt.Graphics2D;
-
+import java.util.Random;
 /**
  * Represents the player character in the game, allowing for movement, scoring, and interaction with the game environment.
  * The Player class utilizes input from a KeyDetector to manage movement and animations.
@@ -12,6 +12,9 @@ import java.awt.Graphics2D;
 public class Player extends Entity {
     KeyDetector keyh; // Key detector to manage player input
     private int score = 0; // Player's current score
+    private Vector camera = new Vector();
+    private Vector cameraOffset = new Vector();
+    private double cameraLerp = 0.064;
 
     /**
      * Constructs a Player entity with a specified game panel and key detector for movement input.
@@ -20,15 +23,35 @@ public class Player extends Entity {
      * @param start the starting position
      * @param keyh the key detector handling input for the player
      */
-    public Player(GamePanel gp, Vector2 start, KeyDetector keyh) {
+    public Player(GamePanel gp, Vector start, KeyDetector keyh) {
         super(gp,start);
         this.keyh = keyh;
-        this.screen.setPosition(gp.SCREEN_SIZE.subtract(gp.TILE_SIZE).scale(0.5));
+        setPosition(start);
         this.speed = 5;
-        this.direction = Direction.DOWN;
+        setDirection(Direction.DOWN);
+        camera.setPosition(rect);
+        cameraOffset.setPosition(gp.SCREEN_SIZE.subtract(Vector.TILE_SIZE).scale(0.5));
         setSpritesheet("/entity/player/spritesheet.png", 4, 4);
     }
 
+    /**
+     * Gets the current position of the camera.
+     * 
+     * @return a Vector2 object representing the camera's position
+     */
+    public Vector getCameraPosition() {
+        return camera;
+    }
+
+    /**
+     * Gets the current offset of the camera.
+     * 
+     * @return a Vector2 object representing the camera's offset
+     */
+    public Vector getCameraOffset() {
+        return cameraOffset;
+    }
+    
     /**
      * Retrieves the current score of the player.
      *
@@ -42,7 +65,6 @@ public class Player extends Entity {
      * @param points the number of points to add to the score
      */
     public void addScore(int points) {score += points;}
-
     /**
      * Checks if the current sprite is touching an exit tile.
      * Iterates through all the wall tiles and checks for collisions.
@@ -51,8 +73,8 @@ public class Player extends Entity {
      * @return true if the current sprite is touching an exit, false otherwise
      */
     public boolean canEscape() {
-        if (gp.getRewardGenerator().getRegularRewardsSize() > 0) return false;
-        for (Sprite2D wall : gp.getTileGenerator().walls) {
+        if (gp.getRewardGenerator().hasValuablesLeft()) return false;
+        for (Sprite2D wall : gp.getTileGenerator().wallTiles) {
             if (isTouching(wall)) {
                 if (wall instanceof Exit) {
                     return true;
@@ -67,7 +89,7 @@ public class Player extends Entity {
      * Handles movement along both x and y axes, resetting position if collisions are detected.
      */
     public void update() {
-        Vector2 old = rect.getPosition();
+        Vector old = rect.getPosition();
         // Handle movement input from the key detector
         if (keyh.up || keyh.left || keyh.down || keyh.right) {
             if (keyh.left) {
@@ -89,10 +111,35 @@ public class Player extends Entity {
             }
             if (canEscape()) gp.completeGame(true); // Win Condition
             if (!canMove()) rect.y = old.y; // Second check for collisions with walls on the y-axis
-
+            
+            int oldFrame = (int)Math.floor(frame);
             playAnimation();
+            int newFrame = (int)Math.floor(frame);
+            if (oldFrame != newFrame && newFrame % 2 == 0) gp.getSFX().play("footstep");
         } else stopAnimation(); 
 
+        updateCamera();
+
+    }
+
+    /**
+     * Updates the camera's position based on the current game state.
+     * If a "bite" or "hit" sound effect is playing, the camera shakes randomly.
+     * Otherwise, the camera smoothly follows the target rectangle using linear interpolation.
+     */
+    private void updateCamera() {
+        if (gp.getSFX().isPlaying("bite") || gp.getSFX().isPlaying("hit")) {
+            Random r = new Random();
+            int d1 = r.nextInt(2);
+            int d2 = r.nextInt(2);
+            if (d1 == 0) d1 = -1;
+            if (d2 == 0) d2 = -1;
+            Vector shakeOffset = new Vector(d1,d2).scale(8);
+            camera = camera.add(shakeOffset);
+        } else {
+            Vector deltaCamera = rect.subtract(camera).scale(cameraLerp);
+            camera = camera.add(deltaCamera);
+        }
     }
 
     /**
@@ -102,7 +149,7 @@ public class Player extends Entity {
      */
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, screen.x, screen.y, rect.w, rect.h, null);
-        super.drawHitbox(g2);
+        super.draw(g2);
+        if (drawCollisions) g2.drawString(String.format("%1.1f", frame), screen.x, screen.y);
     }
 }

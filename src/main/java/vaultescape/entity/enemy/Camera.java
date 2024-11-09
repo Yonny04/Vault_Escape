@@ -1,7 +1,7 @@
 package vaultescape.entity.enemy;
 
 import vaultescape.ui.GamePanel;
-import vaultescape.utils.*;
+import vaultescape.utils.Vector;
 
 import java.awt.*;
 
@@ -11,7 +11,6 @@ import java.awt.*;
  * specific actions in the game, such as speeding up gameplay.
  */
 public class Camera extends Enemy {
-    private int detectionRange;
 
     /**
      * Constructs a Camera object with specified game panel, position, and detection range.
@@ -20,9 +19,9 @@ public class Camera extends Enemy {
      * @param start the camera's starting position
      * @param detectionRange the range within which the camera can detect the player
      */
-    public Camera(GamePanel gp, Vector2 start, int detectionRange) {
-        super(gp,start);
-        this.detectionRange = detectionRange;
+    public Camera(GamePanel gp, Vector start) {
+        super(gp, start);
+        this.range = 50;
         setSpritesheet("/entity/enemy/camera/spritesheet.png", 2, 3);
         setFrame(0);
     }
@@ -34,25 +33,14 @@ public class Camera extends Enemy {
      */
     @Override
     public void update() {
-        spriteCounter += 0.02f;
-        if (spriteCounter > 5.98) spriteCounter = 0.0f;
+        frame += 0.02f;
+        if (frame > 5.98) frame = 0.0f;
 
-        if (isPlayerInRange() && canCollide()) {
-            recordCollision(); // Update last detection time
+        if (isPlayerInRange() && canAttack()) {
+            attack(); // Update last detection time
         }
 
-        setFrame((int) spriteCounter);
-    }
-
-    /**
-     * Checks if the player is within the camera's detection range.
-     *
-     * @return true if the player is within the detection range, false otherwise
-     */
-    public boolean isPlayerInRange() {
-        Rect2 player = gp.getPlayer().getRect();
-        if ((int)Math.floor(spriteCounter) == 0) return false;
-        return Math.sqrt(Math.pow(player.x - rect.x, 2) + Math.pow(player.y - rect.y, 2)) <= detectionRange;
+        setFrame((int) frame);
     }
 
     /**
@@ -63,9 +51,15 @@ public class Camera extends Enemy {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        if (_drawCollisions) {
+        if (drawCollisions) {
             g2.setColor(Color.red);
-            g2.drawOval(screen.x + rect.w / 2 - detectionRange, screen.y + rect.h / 2 - detectionRange, detectionRange * 2, detectionRange * 2);
+            g2.drawOval(screen.x + rect.w / 2 - range, screen.y + rect.h / 2 - range, range * 2, range * 2);
         }
+    }
+    @Override
+    public void attack() {
+        gp.getSFX().play("alarm");
+        gp.getEnemyGenerator().addEnemySpeed(1);
+        super.attack();
     }
 }

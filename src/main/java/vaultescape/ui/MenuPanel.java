@@ -1,5 +1,7 @@
 package vaultescape.ui;
 
+import vaultescape.audio.Music;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -14,6 +16,7 @@ import java.io.InputStream;
 public class MenuPanel extends JPanel {
     private Image background; // Background image for the menu
     private Font font; // Custom font for menu buttons and title
+    public Music music = new Music();
 
     /**
      * Constructs the MenuPanel with specified action listeners for each button.
@@ -25,6 +28,7 @@ public class MenuPanel extends JPanel {
     public MenuPanel(ActionListener startListener, ActionListener bestScoresListener, ActionListener instructionListener, ActionListener exitListener) {
         this.setLayout(null);
         this.loadResources();
+        music.play("music");
 
         JButton buttonStart = new JButton("Start");
         styleButton(buttonStart);

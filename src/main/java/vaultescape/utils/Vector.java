@@ -4,25 +4,25 @@ package vaultescape.utils;
  * The {@code Vector2} class represents a 2-dimensional vector with integer coordinates.
  * Inspired by Godot Game Engine's Vector2
  */
-public class Vector2 {
+public class Vector {
     public int x,y;
 
     // Base Vector Sizing
-    public static final Vector2 TILE_DIM = new Vector2(16,16); // Tile Size (base)
+    public static final Vector TILE_DIM = new Vector(16,16); // Tile Size (base)
     public static final int SCALE = 4; // Tile Scale (to pixels)
-    public static final Vector2 TILE_SIZE = TILE_DIM.scale(SCALE); // Tile Size (pixels)
+    public static final Vector TILE_SIZE = TILE_DIM.scale(SCALE); // Tile Size (pixels)
 
     /**
      * Constructs a new Vector2 object with coordinates (0, 0).
      */
-    public Vector2() {this.x = this.y = 0;}
+    public Vector() {this.x = this.y = 0;}
 
     /**
      * Constructs a new Vector2 object as a copy of an existing vector.
      * 
      * @param vector the Vector2 object to copy
      */
-    public Vector2(Vector2 vector) {
+    public Vector(Vector vector) {
         setPosition(vector);
     }
 
@@ -32,7 +32,7 @@ public class Vector2 {
      * @param x the x coordinate of the vector
      * @param y the y coordinate of the vector
      */
-    public Vector2(int x, int y) {
+    public Vector(int x, int y) {
         setPosition(x,y);
     }
 
@@ -41,7 +41,7 @@ public class Vector2 {
      * 
      * @param xy the value to set for both x and y coordinates
      */
-    public Vector2(int xy) {
+    public Vector(int xy) {
         setPosition(xy, xy);
     }
 
@@ -75,7 +75,7 @@ public class Vector2 {
      *
      * @param vector the vector2 whose coordinates will be used to set the position
      */
-    public void setPosition(Vector2 vector) {
+    public void setPosition(Vector vector) {
         setPosition(vector.x,vector.y);
     }
 
@@ -84,8 +84,8 @@ public class Vector2 {
      * 
      * @return a new Vector2 object containing the x and y coordinates
      */
-    public Vector2 getPosition() {
-        return new Vector2(x, y);
+    public Vector getPosition() {
+        return new Vector(x, y);
     }
     
     /**
@@ -95,13 +95,13 @@ public class Vector2 {
      * @param vector the vector to compare with
      * @return true if the vectors are approximately equal, false otherwise
      */
-    public boolean equals(Vector2 vector) {
+    public boolean equals(Vector vector) {
         // NOTE: EQUALS APPROX, TOLERANCE = 1
         return Math.abs(this.x - vector.x) <= 1 && Math.abs(this.y - vector.y) <= 1;
     }
 
     public boolean isZero() {
-        return equals(new Vector2(0,0));
+        return equals(new Vector(0,0));
     }
     /**
      * Multiplies the current vector with another vector.
@@ -109,8 +109,8 @@ public class Vector2 {
      * @param vector the vector to multiply with
      * @return a new Vector2 object that is the result of the multiplication
      */
-    public Vector2 multiply(Vector2 vector) {
-        return new Vector2(x * vector.x, y * vector.y);
+    public Vector multiply(Vector vector) {
+        return new Vector(x * vector.x, y * vector.y);
     }
 
     /**
@@ -119,8 +119,8 @@ public class Vector2 {
      * @param vector the vector to add
      * @return a new Vector2 object that is the result of the addition
      */
-    public Vector2 add(Vector2 vector) {
-        return new Vector2(x + vector.x, y + vector.y);
+    public Vector add(Vector vector) {
+        return new Vector(x + vector.x, y + vector.y);
     }
 
     /**
@@ -129,8 +129,8 @@ public class Vector2 {
      * @param vector the vector to subtract
      * @return a new Vector2 object that is the result of the subtraction
      */
-    public Vector2 subtract(Vector2 vector) {
-        return new Vector2(x - vector.x, y - vector.y);
+    public Vector subtract(Vector vector) {
+        return new Vector(x - vector.x, y - vector.y);
     }
 
     /**
@@ -139,13 +139,21 @@ public class Vector2 {
      * @param scalar the value to scale the vector by
      * @return a new Vector2 object that is the result of the scaling
      */
-    public Vector2 scale(int scalar) {
-        return new Vector2(x * scalar, y * scalar);
+    public Vector scale(int scalar) {
+        return new Vector(x * scalar, y * scalar);
     }
 
-    public Vector2 scale(double scalar) {
-        return new Vector2((int)Math.floor(x * scalar), 
-            (int)Math.floor(y * scalar));
+    public Vector scale(double scalar) {
+        return new Vector((int)Math.round(x * scalar), 
+            (int)Math.round(y * scalar));
+    }
+
+    public boolean greaterThan(Vector vector) {
+        return (x > vector.x && y > vector.y);
+    }
+
+    public boolean lessThan(Vector vector) {
+        return (x < vector.x && y < vector.y);
     }
 
     /**
@@ -153,7 +161,7 @@ public class Vector2 {
      * 
      * @return a new Vector2 object that is the global representation of the vector
      */
-    public Vector2 toGlobal() {
+    public Vector toGlobal() {
         return this.multiply(TILE_SIZE);
     }
 
@@ -162,10 +170,9 @@ public class Vector2 {
      * 
      * @return a new Vector2 object that is the tile representation of the vector
      */
-    public Vector2 toTile() {
-        return new Vector2(x / TILE_SIZE.x, y / TILE_SIZE.y);
+    public Vector toTile() {
+        return new Vector(x / TILE_SIZE.x, y / TILE_SIZE.y);
     }
-
 
 }
 

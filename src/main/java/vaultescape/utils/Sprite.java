@@ -8,8 +8,9 @@ import java.awt.image.BufferedImage;
  * size, hitbox management, and image display. Component adapter class for Rect2.
  */
 public abstract class Sprite {
-    public Rect2 rect; // Draw Rect
+    protected Rect rect; // Draw Rect
     protected BufferedImage image; // Sprite Image
+    protected boolean visible = true;
 
     /**
      * Sets the image to be displayed by the sprite.
@@ -18,6 +19,7 @@ public abstract class Sprite {
      */
     public void setImage(BufferedImage image) {this.image = image;}
 
+    public void update() {}
     /**
      * Draws the sprite on the screen with the given Graphics2D context.
      *
@@ -29,16 +31,73 @@ public abstract class Sprite {
 
     // ADAPTER METHODS
 
-    public Rect2 getRect() {return rect;}
-    public void setRect(Rect2 rect) {this.rect = rect;}
+    /**
+     * Gets the current rectangle.
+     * 
+     * @return the current Rect object
+     */
+    public Rect getRect() {return this.rect;}
 
-    public Vector2 getPosition() {return new Vector2(rect.x, rect.y);}
-    public Vector2 getDimension() {return new Vector2(rect.w, rect.h);}
+    /**
+     * Sets the rectangle.
+     * 
+     * @param rect the Rect object to set
+     */
+    public void setRect(Rect rect) {this.rect = rect;}
 
-    public void setPosition(Vector2 vector) {rect.setPosition(vector);}
-    public void setPosition(int x, int y) {rect.setPosition(x, y);}
+    /**
+     * Gets the position as a Vector object.
+     * 
+     * @return a new Vector object representing the position (x, y)
+     */
+    public Vector getPosition() {
+        return new Vector(rect.x, rect.y);
+    }
 
-    public void setDimension(Vector2 vector) {rect.setDimension(vector);}
-    public void setDimension(int w, int h) {rect.setDimension(w, h);}
+    /**
+     * Gets the size as a Vector object.
+     * 
+     * @return a new Vector object representing the size (w, h)
+     */
+    public Vector getSize() {
+        return new Vector(rect.w, rect.h);
+    }
 
+    /**
+     * Sets the position using a Vector object.
+     * 
+     * @param vector the Vector object containing the new position (x, y)
+     */
+    public void setPosition(Vector vector) {
+        rect.setPosition(vector);
+    }
+
+    /**
+     * Sets the position using x and y coordinates.
+     * 
+     * @param x the x coordinate to set
+     * @param y the y coordinate to set
+     */
+    public void setPosition(int x, int y) {
+        rect.setPosition(x, y);
+    }
+
+    /**
+     * Sets the size using a Vector object.
+     * 
+     * @param vector the Vector object containing the new size (w, h)
+     */
+    public void setSize(Vector vector) {
+        rect.setSize(vector);
+    }
+
+    /**
+     * Sets the size using width and height values.
+     * 
+     * @param w the width to set
+     * @param h the height to set
+     */
+    public void setSize(int w, int h) {
+        rect.setSize(w, h);
+    }
 }

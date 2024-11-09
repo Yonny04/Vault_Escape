@@ -3,9 +3,8 @@ package vaultescape.map;
 import vaultescape.entity.Player;
 import vaultescape.entity.reward.*;
 import vaultescape.ui.GamePanel;
-import vaultescape.utils.Vector2;
+import vaultescape.utils.Timer;
 
-import java.awt.Graphics2D;
 import java.util.*;
 
 /**
@@ -13,29 +12,18 @@ import java.util.*;
  * collecting, and removing expired rewards. Rewards appear at random positions on available tiles.
  */
 public class RewardGenerator {
-    private GamePanel gp;
-    private List<Reward> regularRewards;
-    private List<Reward> bonusRewards;
-    private Random random;
-    private TileGenerator tg;
+    public Generator<Reward> generator;
 
-    private long bonusRewardSpawnInterval = 5000;
-    private long bonusRewardDuration = 7000;
-    private long bonusSpawnTime;
+    private Timer bonusSpawnTimer = new Timer(10);
 
     /**
      * Constructs a RewardGenerator with a specified game panel and tile generator.
      *
-     * @param gpp the game panel associated with this generator
-     * @param tgg the tile generator used for determining available tiles
+     * @param gp the game panel associated with this generator
+     * @param tg the tile generator used for determining available tiles
      */
-    public RewardGenerator(GamePanel gpp, TileGenerator tgg) {
-        this.gp = gpp;
-        this.tg = tgg;
-        this.regularRewards = new ArrayList<>();
-        this.bonusRewards = new ArrayList<>();
-        this.random = new Random();
-        this.bonusSpawnTime = System.currentTimeMillis();
+    public RewardGenerator(GamePanel gp, TileGenerator tg) {
+        this.generator = new Generator<>(gp);
     }
 
     /**
@@ -45,49 +33,51 @@ public class RewardGenerator {
      * @param player the player entity for checking reward collection
      */
     public void update(Player player) {
-        generateBonusRewards();
-        removeExpiredBonusRewards();
+        generator.update();
+        spawnDiamond();
         checkRewardCollection(player);
+        removeExpiredRewards();
     }
 
     /**
-     * Generates a specified number of regular rewards at random available tile positions.
+     * Spawn a specified number of basic rewards at random available tile positions.
      *
-     * @param n the number of regular rewards to generate
+     * @param n the number of basic rewards to generate
      */
-    public void generateRegularRewards(int n) {
-        regularRewards.clear();
-
-        for (int i = 0; i < n && !tg.availableTiles.isEmpty(); i++) {
-            int index = random.nextInt(tg.availableTiles.size());
-            Vector2 start = tg.availableTiles.remove(index);
-            regularRewards.add(new RegularReward(gp, start));
-        }
+    public void spawnAll(int valuables,int diamonds) {
+        generator.spawn(Valuable.class, valuables);
+        generator.spawn(Diamond.class, diamonds);
     }
 
     /**
-     * Generates bonus rewards at random positions if the bonus spawn interval has passed.
-     * Bonus rewards provide a higher point value and appear temporarily.
+     * Spawn a specified number of basic rewards at random available tile positions.
+     *
+     * @param n the number of basic rewards to generate
      */
-    public void generateBonusRewards() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - bonusSpawnTime >= bonusRewardSpawnInterval) {
-            List<Vector2> availableTiles = tg.availableTiles;
-            if (!availableTiles.isEmpty()) {
-                int index = random.nextInt(availableTiles.size());
-                Vector2 start = availableTiles.remove(index);
-                bonusRewards.add(new BonusReward(gp, start, 100));
-                bonusSpawnTime = currentTime;
-            }
-        }
+    public void spawn(Class<? extends Reward> type, int n) {
+        generator.spawn(type, n);
     }
 
+    public void spawnDiamond() {
+        if (bonusSpawnTimer.isTimeUp()) {
+            spawn(Diamond.class, 1);
+            bonusSpawnTimer.start();
+        }
+
+    }
     /**
      * Removes bonus rewards that have expired based on the set duration.
      */
-    public void removeExpiredBonusRewards() {
-        long currentTime = System.currentTimeMillis();
-        bonusRewards.removeIf(reward -> (currentTime - ((BonusReward) reward).getSpawnTime()) >= bonusRewardDuration);
+    public void removeExpiredRewards() {
+        for (Iterator<Reward> it = generator.elements.iterator(); it.hasNext();) {
+                Reward reward = it.next();
+                if (reward instanceof Diamond) {
+                    if (((Diamond)reward).getTimer().isTimeUp()) it.remove();
+                }
+                if (reward.animationTimer != null) {
+                    if (reward.animationTimer.isTimeUp()) it.remove();
+                }
+        }
     }
 
     /**
@@ -97,74 +87,37 @@ public class RewardGenerator {
      * @param player the player entity for checking reward collection
      */
     public void checkRewardCollection(Player player) {
-        for (int i = 0; i < regularRewards.size(); i++) {
-            Reward reward = regularRewards.get(i);
-            if (player.isTouching(reward)) {
-                player.addScore(20);
-                regularRewards.remove(i);
-                gp.getSFX().play("basic_collect");
-                i--;
+        for (Iterator<Reward> it = generator.elements.iterator(); it.hasNext();) {
+            Reward reward = it.next();
+            if (reward.isTouchingPlayer()) {
+                if (reward.animationTimer == null) reward.pickup();
             }
-        }
-
-        for (int i = 0; i < bonusRewards.size(); i++) {
-            Reward reward = bonusRewards.get(i);
-            if (player.isTouching(reward)) {
-                player.addScore(((BonusReward) reward).getPoints());
-                bonusRewards.remove(i);
-                gp.getSFX().play("bonus_collect");
-                i--;
-            }
-        }
+    }
     }
 
-    /**
-     * Draws all regular and bonus rewards on the screen.
-     *
-     * @param g2 the Graphics2D object used for rendering
-     */
-    public void drawRewards(Graphics2D g2) {
-        for (Reward reward : regularRewards) {
-            reward.draw(g2);
-        }
-        for (Reward reward : bonusRewards) {
-            reward.draw(g2);
-        }
+    public int getValuableCount() {
+        return generator.getCountByType(Valuable.class);
     }
-
-    /**
-     * Retrieves the list of regular rewards.
-     *
-     * @return a list of regular rewards
-     */
-    public List<Reward> getRegularRewards() {
-        return regularRewards;
-    }
-
-    /**
-     * Retrieves the list of bonus rewards.
-     *
-     * @return a list of bonus rewards
-     */
-    public List<Reward> getBonusRewards() {
-        return bonusRewards;
-    }
-
     /**
      * Retrieves the count of regular rewards currently in the game.
      *
      * @return the size of the regular rewards list
      */
-    public int getRegularRewardsSize() {
-        return regularRewards.size();
+    public boolean hasValuablesLeft() {
+        for (Reward reward : generator.elements) {
+            if (reward instanceof Valuable) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Retrieves the count of bonus rewards currently in the game.
+     * Retrieves the list of all generated rewards.
      *
-     * @return the size of the bonus rewards list
+     * @return a list of enemies
      */
-    public int getBonusRewardsSize() {
-        return bonusRewards.size();
+    public List<Reward> getRewards() {
+        return generator.elements;
     }
 }

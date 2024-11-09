@@ -24,7 +24,7 @@ public class App extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1280, 768);
         setResizable(false);
-        setTitle("VaultEscape");
+        setTitle("Vault Escape");
         setLocationRelativeTo(null);
         
         mp = new MenuPanel(
@@ -46,6 +46,7 @@ public class App extends JFrame {
      */
     public void startGame() {
         gp = new GamePanel(this);
+        mp.music.stop();
         setContentPane(gp);
         revalidate();
         repaint();
@@ -83,6 +84,7 @@ public class App extends JFrame {
      */
     public void backToMenu() {
         setContentPane(mp);
+        mp.music.play("music");
         revalidate();
         repaint();
     }
