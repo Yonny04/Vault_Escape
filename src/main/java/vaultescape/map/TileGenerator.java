@@ -55,7 +55,9 @@ public class TileGenerator {
         try {
             wallSheet = ImageIO.read(getClass().getResourceAsStream("/map/wall_spritesheet.png"));
             floorSheet = ImageIO.read(getClass().getResourceAsStream("/map/floor_spritesheet.png"));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -79,7 +81,9 @@ public class TileGenerator {
                 }
             }
             reader.close();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
         try {
             InputStream stream = getClass().getResourceAsStream("/map/wall1.txt");
@@ -101,14 +105,16 @@ public class TileGenerator {
                 }
             }
             reader.close();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Gets a random available tile in the map for entity spawning. 
      * This method does not remove the selected tile from available tiles.
      *
-     * @return an Vector2 array representing the x and y coordinates of the available tile
+     * @return a Vector representing the x and y coordinates of the available tile
      */
     public Vector getEmptyTile() {
         Random rand = new Random();
@@ -119,10 +125,9 @@ public class TileGenerator {
     /**
      * Uses up a random available tile in the map for entity spawning.
      *
-     * @return an Vector2 array representing the x and y coordinates of the available tile
+     * @return a Vector representing the x and y coordinates of the available tile
      */
     public Vector nextEmptyTile() {
-        //if (emptyTiles.isEmpty()) return new Vector();
         Random rand = new Random();
         int randomIndex = rand.nextInt(emptyTiles.size());
         return emptyTiles.remove(randomIndex);
@@ -153,8 +158,7 @@ public class TileGenerator {
     /**
      * Creates a floor tile and adds it to the floor tiles list.
      *
-     * @param tileX the x-coordinate of the tile in tile units
-     * @param tileY the y-coordinate of the tile in tile units
+     * @param rect the rectangle representing the tile's position and size
      * @param tileNumber the index of the tile in the spritesheet
      */
     private void createFloorTile(Rect rect, int tileNumber) {
@@ -168,6 +172,7 @@ public class TileGenerator {
     /**
      * Creates a wall tile and categorizes it into bottom, top, or collision tiles based on tile properties.
      *
+     * @param rect the rectangle representing the tile's position and size
      * @param tileNumber the index of the tile in the spritesheet
      */
     private void createWallTile(Rect rect, int tileNumber) {
@@ -206,7 +211,7 @@ public class TileGenerator {
             wallTiles.add(tile);
             if (tileNumber != 26) tile.setLayer(Layer.BOTTOM);
             else {
-                tile.hitbox.setRect(new Rect(16,16,16,16));
+                tile.hitbox.setRect(new Rect(16,16,24,16));
                 tile.setLayer(Layer.ORDERED);
             }
         } else {
@@ -215,13 +220,23 @@ public class TileGenerator {
             else tile.setLayer(Layer.BOTTOM);
         }
     }
-
+    
+    /**
+     * Draws all tiles and entities in the game panel, managing their draw order.
+     *
+     * @param g2 The Graphics2D object used for drawing.
+     */
     public void draw(Graphics2D g2) {
         drawBottom(g2);
         drawOrdered(g2);
         drawTop(g2);
     }
 
+    /**
+     * Draws the bottom layer of tiles, including floor tiles and wall tiles with Layer.BOTTOM.
+     *
+     * @param g2 The Graphics2D object used for drawing.
+     */
     private void drawBottom(Graphics2D g2) {
         for (Tile floor : floorTiles) {
             floor.draw(g2);
@@ -233,33 +248,47 @@ public class TileGenerator {
         }
     }
 
+    /**
+     * Draws tiles and entities in a specific order to ensure correct visual layering.
+     * This includes drawing enemies, rewards, ordered wall tiles, the player, and the exit.
+     *
+     * @param g2 The Graphics2D object used for drawing.
+     */
     public void drawOrdered(Graphics2D g2) {
         List<Enemy> enemies = gp.getEnemyGenerator().getEnemies();
         List<Reward> rewards = gp.getRewardGenerator().getRewards();
         Player player = gp.getPlayer();
-        for (Enemy enemy:enemies) {
+        
+        for (Enemy enemy : enemies) {
             if (player.isAbove(enemy)) enemy.draw(g2);
         }
-        for (Reward reward:rewards) {
+        for (Reward reward : rewards) {
             if (player.isAbove(reward)) reward.draw(g2);
         }
-        for (Tile wall:wallTiles) {
+        for (Tile wall : wallTiles) {
             if (wall.layer == Layer.ORDERED && player.isAbove(wall)) wall.draw(g2);
         }
         if (exit != null && player.isAbove(exit)) exit.draw(g2);
+        
         player.draw(g2);
-        for (Enemy enemy:enemies) {
+        
+        for (Enemy enemy : enemies) {
             if (!player.isAbove(enemy)) enemy.draw(g2);
         }
-        for (Reward reward:rewards) {
+        for (Reward reward : rewards) {
             if (!player.isAbove(reward)) reward.draw(g2);
         }
-        for (Tile wall:wallTiles) {
+        for (Tile wall : wallTiles) {
             if (wall.layer == Layer.ORDERED && !player.isAbove(wall)) wall.draw(g2);
         }
         if (exit != null && !player.isAbove(exit)) exit.draw(g2);
     }
 
+    /**
+     * Draws the top layer of wall tiles with Layer.TOP.
+     *
+     * @param g2 The Graphics2D object used for drawing.
+     */
     private void drawTop(Graphics2D g2) {
         for (Tile wall : wallTiles) {
             if (wall.layer == Layer.TOP) {
@@ -267,4 +296,5 @@ public class TileGenerator {
             }
         }
     }
+
 }

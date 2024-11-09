@@ -44,19 +44,25 @@ public class Sprite2D extends Sprite {
         Vector offset = gp.getPlayer().getCameraOffset();
         Vector camera = gp.getPlayer().getCameraPosition();
         screen.setPosition(rect.subtract(camera).add(offset));
-        if (isVisible()) {
+        if (isVisibleOnScreen() && isVisible()) {
             g2.drawImage(image, screen.x, screen.y, rect.w, rect.h, null);
             if (drawCollisions) drawHitbox(g2);
         }
     }
 
-    public boolean isVisible() {
+    /**
+     * Determines if this tile is visible within the player's camera view.
+     * The visibility is based on the tile's position relative to the player's camera offset and position.
+     *
+     * @return true if the tile is within the visible range of the player's camera, false otherwise.
+     */
+    public boolean isVisibleOnScreen() {
         Vector offset = gp.getPlayer().getCameraOffset();
         Vector camera = gp.getPlayer().getCameraPosition();
         return (rect.x + 2*Vector.TILE_SIZE.x > camera.x - offset.x && 
-            rect.x - 2*Vector.TILE_SIZE.x < camera.x + offset.x && 
-            rect.y + 2*Vector.TILE_SIZE.y > camera.y - offset.y && 
-            rect.y - 2*Vector.TILE_SIZE.y < camera.y + offset.y);
+                rect.x - 2*Vector.TILE_SIZE.x < camera.x + offset.x && 
+                rect.y + 2*Vector.TILE_SIZE.y > camera.y - offset.y && 
+                rect.y - 2*Vector.TILE_SIZE.y < camera.y + offset.y);
     }
 
     /**
@@ -65,7 +71,7 @@ public class Sprite2D extends Sprite {
      * @param g2 the Graphics2D object used to render the hitbox
      */
     public void drawHitbox(Graphics2D g2) {
-        if (drawCollisions && !hitbox.getSize().isZero()) {
+        if (drawCollisions && !hitbox.getSize().isZero() && isVisible()) {
             g2.setColor(new Color(0,1.0f,1.0f,0.5f));
             g2.drawRect(screen.x + hitbox.x,screen.y + hitbox.y, hitbox.w, hitbox.h);
         }

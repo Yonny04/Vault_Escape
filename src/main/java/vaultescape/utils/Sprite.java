@@ -100,4 +100,27 @@ public abstract class Sprite {
     public void setSize(int w, int h) {
         rect.setSize(w, h);
     }
+
+    /**
+     * Checks if this entity is currently visible.
+     *
+     * @return true if the entity is visible, false otherwise.
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Hides this entity by setting its visibility to false.
+     */
+    public void hide() {
+        visible = false;
+    }
+
+    /**
+     * Shows this entity by setting its visibility to true.
+     */
+    public void show() {
+        visible = true;
+    }
 }

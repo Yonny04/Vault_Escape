@@ -18,6 +18,7 @@ public class Entity extends Tile {
     protected int speed;
     protected Sprite2D _shadow;
 
+    public enum Direction {LEFT,RIGHT,UP,DOWN;}
     protected Direction direction = Direction.LEFT;
 
     protected BufferedImage sheet;
@@ -39,18 +40,37 @@ public class Entity extends Tile {
         createShadow();
     }
 
+    /**
+     * Creates a shadow sprite for this entity.
+     * Sets the size of the shadow and loads its image from resources.
+     */
     private void createShadow() {
         _shadow = new Sprite2D(gp);
-        _shadow.setSize(14*4,6*4);
+        _shadow.setSize(14*4, 6*4);
         try {
             _shadow.setImage(ImageIO.read(getClass().getResourceAsStream("/entity/shadow.png")));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();  // Consider adding this for debugging
+        }
     }
 
+
+    /**
+     * Sets the direction of this entity.
+     *
+     * @param direction The new direction to set for this entity.
+     */
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
 
+
+    /**
+     * Checks if this entity is touching the player. 
+     * If this entity is the player itself, it returns false.
+     *
+     * @return true if this entity is touching the player, false otherwise.
+     */
     public boolean isTouchingPlayer() {
         if (this == gp.getPlayer()) return false;
         return isTouching(gp.getPlayer());
@@ -142,8 +162,10 @@ public class Entity extends Tile {
      * @param g2 the Graphics2D object used for rendering
      */
     public void drawShadow(Graphics2D g2) {
-        _shadow.setPosition(rect.x + 4, rect.y + 4*12);
-        _shadow.draw(g2);
+        if (isVisible()) {
+            _shadow.setPosition(rect.x + 4, rect.y + 4*12);
+            _shadow.draw(g2);
+        }
     }
     
     /**

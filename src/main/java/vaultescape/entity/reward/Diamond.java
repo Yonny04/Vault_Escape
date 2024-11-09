@@ -8,7 +8,7 @@ import vaultescape.utils.*;
  * Bonus rewards provide additional points to the player when collected.
  */
 public class Diamond extends Reward {
-    private Timer spawnDuration = new Timer(10);
+    private Timer spawnDuration = new Timer(12);
 
     /**
      * Constructs a Diamond with a specified position, point value, and spawn time.
@@ -21,6 +21,29 @@ public class Diamond extends Reward {
         super(gp, start);
         this.points = 100;
         setRewardImage();
+    }
+
+    int oldTime = 0;
+    /**
+     * Updates the entity's state, including managing the visibility based on the remaining spawn duration.
+     * The visibility toggles as the remaining time decreases, creating a blinking effect.
+     */
+    @Override
+    public void update() {
+        int secondsLeft = (int) spawnDuration.getTimeLeft() / 1000;
+        int newTime;
+        if (secondsLeft <= 1) {
+            newTime = (int) spawnDuration.getTimeLeft() / 75;
+        } else if (secondsLeft <= 2) {
+            newTime = (int) spawnDuration.getTimeLeft() / 125;
+        } else {
+            newTime = (int) spawnDuration.getTimeLeft() / 250;
+        }
+        if (oldTime != newTime && secondsLeft <= 4) {
+            oldTime = newTime;
+            visible = !visible;
+        }
+        super.update();
     }
 
     public Timer getTimer() {return spawnDuration;}

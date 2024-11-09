@@ -24,7 +24,7 @@ public class Dog extends Enemy {
     public Dog(GamePanel gp, Vector start) {
         super(gp, start);
         this.speed = 4;
-        this.range = 200;
+        this.range = 250;
         next.x = next.y = 0;
         setSpritesheet("/entity/enemy/dog/spritesheet.png", 4, 4);
     }
@@ -78,11 +78,19 @@ public class Dog extends Enemy {
         Vector player = gp.getPlayer().getRect();
         Vector delta = player.subtract(getPosition());
 
+        
         if (delta.x > 0) move(Direction.RIGHT);
         else if (delta.x < 0) move(Direction.LEFT);
         if (delta.y > 0) move(Direction.DOWN);
         else if (delta.y < 0) move(Direction.UP);
 
+        if (Math.abs(delta.x) > Math.abs(delta.y)) {
+            if (delta.x > 0) setDirection(Direction.RIGHT);
+            else setDirection(Direction.LEFT);
+        } else {
+            if (delta.y > 0) setDirection(Direction.DOWN);
+            else if (delta.y < 0) setDirection(Direction.UP);   
+        }
         playAnimation();
     }
 

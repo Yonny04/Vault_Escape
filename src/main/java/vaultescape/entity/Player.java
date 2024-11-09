@@ -39,18 +39,14 @@ public class Player extends Entity {
      * 
      * @return a Vector2 object representing the camera's position
      */
-    public Vector getCameraPosition() {
-        return camera;
-    }
+    public Vector getCameraPosition() {return camera;}
 
     /**
      * Gets the current offset of the camera.
      * 
      * @return a Vector2 object representing the camera's offset
      */
-    public Vector getCameraOffset() {
-        return cameraOffset;
-    }
+    public Vector getCameraOffset() {return cameraOffset;}
     
     /**
      * Retrieves the current score of the player.
@@ -65,6 +61,7 @@ public class Player extends Entity {
      * @param points the number of points to add to the score
      */
     public void addScore(int points) {score += points;}
+    
     /**
      * Checks if the current sprite is touching an exit tile.
      * Iterates through all the wall tiles and checks for collisions.
@@ -150,6 +147,6 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        if (drawCollisions) g2.drawString(String.format("%1.1f", frame), screen.x, screen.y);
+        if (drawCollisions && isVisible()) g2.drawString(String.format("%1.1f", frame), screen.x, screen.y);
     }
 }

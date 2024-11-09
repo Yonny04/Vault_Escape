@@ -58,13 +58,17 @@ public class RewardGenerator {
         generator.spawn(type, n);
     }
 
+    /**
+     * Spawns a diamond if the bonus spawn timer has expired.
+     * Resets and starts the bonus spawn timer after spawning a diamond.
+     */
     public void spawnDiamond() {
         if (bonusSpawnTimer.isTimeUp()) {
             spawn(Diamond.class, 1);
             bonusSpawnTimer.start();
         }
-
     }
+
     /**
      * Removes bonus rewards that have expired based on the set duration.
      */
@@ -92,12 +96,19 @@ public class RewardGenerator {
             if (reward.isTouchingPlayer()) {
                 if (reward.animationTimer == null) reward.pickup();
             }
-    }
+        }
     }
 
+    /**
+     * Returns the count of valuable items managed by this generator.
+     * This method counts the number of elements of type Valuable.
+     *
+     * @return The number of valuable items.
+     */
     public int getValuableCount() {
         return generator.getCountByType(Valuable.class);
     }
+    
     /**
      * Retrieves the count of regular rewards currently in the game.
      *

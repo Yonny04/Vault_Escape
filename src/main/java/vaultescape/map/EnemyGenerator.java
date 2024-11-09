@@ -7,8 +7,7 @@ import vaultescape.ui.GamePanel;
 import java.util.List;
 
 /**
- * Generates and manages all enemies within the game, including Dogs, Guards, and Cameras.
- * Provides methods to initialize, update, draw, and check interactions between enemies and the player.
+ * The EnemyGenerator class is responsible for generating and managing enemies in the game.
  */
 public class EnemyGenerator {
     GamePanel gp;
@@ -16,9 +15,9 @@ public class EnemyGenerator {
     public Generator<Enemy> generator;
 
     /**
-     * Constructs an EnemyGenerator with a specified game panel.
+     * Constructs an EnemyGenerator with the specified game panel.
      *
-     * @param gp the game panel associated with this generator
+     * @param gp The game panel associated with this enemy generator.
      */
     public EnemyGenerator(GamePanel gp) {
         this.gp = gp;
@@ -27,20 +26,21 @@ public class EnemyGenerator {
     }
 
     /**
-     * Spawn a specified number of basic rewards at random available tile positions.
+     * Spawns a specified number of enemies of the given type.
      *
-     * @param n the number of basic rewards to generate
+     * @param type  The class type of the enemies to spawn.
+     * @param count The number of enemies to spawn.
      */
     public void spawn(Class<? extends Enemy> type, int count) {
         generator.spawn(type, count);
     }
 
     /**
-     * Generates all types of enemies with specified counts for each type.
+     * Spawns the specified number of guards, dogs, and cameras.
      *
-     * @param guardsCount the number of Guards to generate
-     * @param dogsCount the number of Dogs to generate
-     * @param cameraCount the number of Cameras to generate
+     * @param guardsCount The number of guards to spawn.
+     * @param dogsCount   The number of dogs to spawn.
+     * @param cameraCount The number of cameras to spawn.
      */
     public void spawnAll(int guardsCount, int dogsCount, int cameraCount) {
         spawn(Guard.class, guardsCount);
@@ -49,9 +49,9 @@ public class EnemyGenerator {
     }
 
     /**
-     * Updates each enemy's state and checks for collisions with the player.
+     * Updates the state of all enemies and checks for collisions with the player.
      *
-     * @param player the player entity to check collisions against
+     * @param player The player object to check for collisions.
      */
     public void update(Player player) {
         generator.update();
@@ -59,9 +59,9 @@ public class EnemyGenerator {
     }
 
     /**
-     * Adds the speed of certain enemies by a bonus value.
+     * Increases the speed of all guards and dogs by the specified value.
      *
-     * @param value the value by which to add the speed of each applicable enemy
+     * @param value The value to add to the speed of each guard and dog.
      */
     public void addEnemySpeed(int value) {
         for (Enemy enemy : generator.elements) {
@@ -72,9 +72,7 @@ public class EnemyGenerator {
     }
 
     /**
-     * Checks for collisions between the player and each enemy, applying penalties or effects as needed.
-     *
-     * @param player the player entity to check collisions against
+     * Checks if any enemies are touching the player and, if so, allows them to attack.
      */
     public void checkEnemyCollision() {
         for (Enemy enemy : generator.elements) {
@@ -85,9 +83,9 @@ public class EnemyGenerator {
     }
 
     /**
-     * Retrieves the list of all generated enemies.
+     * Returns a list of all enemies managed by this generator.
      *
-     * @return a list of enemies
+     * @return A list of all enemies.
      */
     public List<Enemy> getEnemies() {
         return generator.elements;
