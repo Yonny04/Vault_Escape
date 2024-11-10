@@ -23,8 +23,8 @@ public class Exit extends Entity {
         this.rect.h *= 2;
         hitbox.setSize(rect.getSize());
         
-        setSpritesheet("/entity/exit/spritesheet.png", 2, 1);
-        setFrame(0);
+        getAnimationPlayer().setSpritesheet("/entity/exit/spritesheet.png", 2, 1);
+        getAnimationPlayer().setFrame(0);
     }
 
     /**
@@ -41,7 +41,7 @@ public class Exit extends Entity {
     @Override
     public void draw(Graphics2D g2) {
         if (!gp.getRewardGenerator().hasValuablesLeft() && !_open) {
-            setFrame(1);
+            getAnimationPlayer().setFrame(1);
             hitbox.setSize(rect.scale(0.5));
             gp.getSFX().play("exit_open");
             _open = true;

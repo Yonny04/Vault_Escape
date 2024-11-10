@@ -2,7 +2,7 @@ package vaultescape.ui;
 
 import vaultescape.App;
 import vaultescape.audio.*;
-import vaultescape.entity.Player;
+import vaultescape.entity.character.Player;
 import vaultescape.entity.reward.Valuable;
 import vaultescape.map.*;
 import vaultescape.utils.*;
@@ -26,7 +26,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final Vector MAP_SIZE = MAP_TILE.toGlobal(); // Map Size (in pixels)
 
     // Frames per second for game loop
-    private final static int FPS = 60;
+    public final int FPS = 60;
 
     // Game Map Data
 

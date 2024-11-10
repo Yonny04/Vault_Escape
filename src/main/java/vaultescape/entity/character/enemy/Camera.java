@@ -1,4 +1,4 @@
-package vaultescape.entity.enemy;
+package vaultescape.entity.character.enemy;
 
 import vaultescape.ui.GamePanel;
 import vaultescape.utils.Vector;
@@ -22,25 +22,10 @@ public class Camera extends Enemy {
     public Camera(GamePanel gp, Vector start) {
         super(gp, start);
         this.range = 50;
-        setSpritesheet("/entity/enemy/camera/spritesheet.png", 2, 3);
-        setFrame(0);
-    }
-
-    /**
-     * Updates the camera logic, including sprite animation and player detection.
-     * If the player is within detection range and detection cooldown has passed, the camera
-     * triggers a detection event and updates the last detection time.
-     */
-    @Override
-    public void update() {
-        frame += 0.02f;
-        if (frame > 5.98) frame = 0.0f;
-
-        if (isPlayerInRange() && canAttack()) {
-            attack(); // Update last detection time
-        }
-
-        setFrame((int) frame);
+        getAnimationPlayer().setSpritesheet("/entity/character/enemy/camera/spritesheet.png", 2, 3);
+        getAnimationPlayer().setFrame(0);
+        getAnimationPlayer().newAnimation("on", new int[]{0,1,2,3,4,5}, 6, 0.2f, true);
+        getAnimationPlayer().playAnimation("on");
     }
 
     /**

@@ -1,7 +1,8 @@
 package vaultescape.map;
 
-import vaultescape.entity.*;
-import vaultescape.entity.enemy.Enemy;
+import vaultescape.entity.Exit;
+import vaultescape.entity.character.Player;
+import vaultescape.entity.character.enemy.Enemy;
 import vaultescape.entity.reward.Reward;
 import vaultescape.tile.Tile;
 import vaultescape.tile.Tile.Layer;

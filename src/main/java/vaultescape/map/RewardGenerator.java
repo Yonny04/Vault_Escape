@@ -1,6 +1,6 @@
 package vaultescape.map;
 
-import vaultescape.entity.Player;
+import vaultescape.entity.character.Player;
 import vaultescape.entity.reward.*;
 import vaultescape.ui.GamePanel;
 import vaultescape.utils.Timer;
@@ -78,8 +78,8 @@ public class RewardGenerator {
                 if (reward instanceof Diamond) {
                     if (((Diamond)reward).getTimer().isTimeUp()) it.remove();
                 }
-                if (reward.animationTimer != null) {
-                    if (reward.animationTimer.isTimeUp()) it.remove();
+                if (reward.getAnimationPlayer().finished()) {
+                    it.remove();
                 }
         }
     }
@@ -94,7 +94,7 @@ public class RewardGenerator {
         for (Iterator<Reward> it = generator.elements.iterator(); it.hasNext();) {
             Reward reward = it.next();
             if (reward.isTouchingPlayer()) {
-                if (reward.animationTimer == null) reward.pickup();
+                if (!reward.getAnimationPlayer().isPlaying()) reward.pickup();
             }
         }
     }

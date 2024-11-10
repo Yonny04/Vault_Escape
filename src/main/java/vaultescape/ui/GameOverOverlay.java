@@ -1,6 +1,6 @@
 package vaultescape.ui;
 
-import vaultescape.entity.Player;
+import vaultescape.entity.character.Player;
 
 import javax.swing.*;
 

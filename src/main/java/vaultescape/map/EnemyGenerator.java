@@ -1,7 +1,7 @@
 package vaultescape.map;
 
-import vaultescape.entity.Player;
-import vaultescape.entity.enemy.*;
+import vaultescape.entity.character.Player;
+import vaultescape.entity.character.enemy.*;
 import vaultescape.ui.GamePanel;
 
 import java.util.List;

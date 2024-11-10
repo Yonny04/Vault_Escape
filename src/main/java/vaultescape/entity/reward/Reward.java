@@ -25,7 +25,8 @@ public class Reward extends Entity {
      */
     public Reward(GamePanel gp, Vector start) {
         super(gp, start);
-        setSpritesheet("/entity/reward/spritesheet.png", 8, 1);
+        getAnimationPlayer().setSpritesheet("/entity/reward/spritesheet.png", 8, 1);
+        getAnimationPlayer().newAnimation("pickup",new int[]{6,7},2,0.5f,false);
         setRewardImage();
         oldRect = rect.add(new Vector());
     }
@@ -36,24 +37,15 @@ public class Reward extends Entity {
      */
     protected void setRewardImage() {
         Random rand = new Random();
-        int frameNum = rand.nextInt(sheetDim.x - 3);
-        if (points != 100) setFrame(frameNum, 0);
-        else setFrame(sheetDim.x - 3, 0);
+        int valuable = rand.nextInt(5);
+        if (points != 100) getAnimationPlayer().setFrame(valuable);
+        else getAnimationPlayer().setFrame(5); // Diamond
 
-    }
-
-    protected void playPickupAnimation() {
-        if (animationTimer != null) {
-            if (!animationTimer.isTimeUp()) {
-                frame += 0.1f;
-                setFrame(6 + getNextFrame());
-            }
-        }
     }
 
     public void pickup() {
         gp.getPlayer().addScore(points);
-        animationTimer = new Timer(0.25);
+        getAnimationPlayer().playAnimation("pickup");
     }
 
     double i = 0;
@@ -61,7 +53,7 @@ public class Reward extends Entity {
     public void update() {
         i += Math.PI / 20.0;
         if (animationTimer == null) rect.y = rect.y + (int)Math.round(Math.sin(i));
-        playPickupAnimation();
+        super.update();
     }
 
     /**

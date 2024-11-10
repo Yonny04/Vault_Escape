@@ -1,4 +1,4 @@
-package vaultescape.entity.enemy;
+package vaultescape.entity.character.enemy;
 
 import vaultescape.ui.GamePanel;
 import vaultescape.utils.*;
@@ -26,7 +26,7 @@ public class Dog extends Enemy {
         this.speed = 4;
         this.range = 250;
         next.x = next.y = 0;
-        setSpritesheet("/entity/enemy/dog/spritesheet.png", 4, 4);
+        getAnimationPlayer().setSpritesheet("/entity/character/enemy/dog/spritesheet.png", 4, 4);
     }
 
     /**
@@ -38,7 +38,7 @@ public class Dog extends Enemy {
         if (speed > 5) speed = 5;
 
         if (!biteCooldown.isTimeUp()) {
-            stopAnimation(); 
+            getAnimationPlayer().stopAnimation(); 
             return;
         }
         if (isPlayerInRange()) {
@@ -48,6 +48,7 @@ public class Dog extends Enemy {
             wander();
             timer++;
         }
+        super.update();
     }
 
     /**
@@ -65,8 +66,8 @@ public class Dog extends Enemy {
             else if (next.y < 0) move(Direction.UP);
             if (next.x > 0) move(Direction.RIGHT);
             else if (next.x < 0) move(Direction.LEFT);
-            playAnimation();
-        } else stopAnimation();
+            getAnimationPlayer().playAnimation(direction.name());
+        } else getAnimationPlayer().setFrame(1,direction.ordinal());
     }
 
     /**
@@ -91,7 +92,7 @@ public class Dog extends Enemy {
             if (delta.y > 0) setDirection(Direction.DOWN);
             else if (delta.y < 0) setDirection(Direction.UP);   
         }
-        playAnimation();
+        getAnimationPlayer().playAnimation(direction.name());
     }
 
     /**

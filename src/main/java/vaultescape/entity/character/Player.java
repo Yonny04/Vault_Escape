@@ -1,5 +1,6 @@
-package vaultescape.entity;
+package vaultescape.entity.character;
 
+import vaultescape.entity.Exit;
 import vaultescape.ui.GamePanel;
 import vaultescape.utils.*;
 
@@ -9,7 +10,7 @@ import java.util.Random;
  * Represents the player character in the game, allowing for movement, scoring, and interaction with the game environment.
  * The Player class utilizes input from a KeyDetector to manage movement and animations.
  */
-public class Player extends Entity {
+public class Player extends Character {
     KeyDetector keyh; // Key detector to manage player input
     private int score = 0; // Player's current score
     private Vector camera = new Vector();
@@ -31,7 +32,7 @@ public class Player extends Entity {
         setDirection(Direction.DOWN);
         camera.setPosition(rect);
         cameraOffset.setPosition(gp.SCREEN_SIZE.subtract(Vector.TILE_SIZE).scale(0.5));
-        setSpritesheet("/entity/player/spritesheet.png", 4, 4);
+        getAnimationPlayer().setSpritesheet("/entity/character/player/spritesheet.png", 4, 4);
     }
 
     /**
@@ -108,12 +109,12 @@ public class Player extends Entity {
             }
             if (canEscape()) gp.completeGame(true); // Win Condition
             if (!canMove()) rect.y = old.y; // Second check for collisions with walls on the y-axis
-            
-            int oldFrame = (int)Math.floor(frame);
-            playAnimation();
-            int newFrame = (int)Math.floor(frame);
+            getAnimationPlayer().playAnimation(direction.name());
+            int oldFrame = getAnimationPlayer().getFrame();
+            super.update();
+            int newFrame = getAnimationPlayer().getFrame();
             if (oldFrame != newFrame && newFrame % 2 == 0) gp.getSFX().play("footstep");
-        } else stopAnimation(); 
+        } else getAnimationPlayer().setFrame(1,direction.ordinal());
 
         updateCamera();
 
@@ -147,6 +148,6 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        if (drawCollisions && isVisible()) g2.drawString(String.format("%1.1f", frame), screen.x, screen.y);
+        if (drawCollisions && isVisible()) g2.drawString(String.format("%1.1f", getAnimationPlayer().getFrame()), screen.x, screen.y);
     }
 }

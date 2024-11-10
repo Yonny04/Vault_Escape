@@ -1,4 +1,4 @@
-package vaultescape.entity.enemy;
+package vaultescape.entity.character.enemy;
 
 import vaultescape.ui.GamePanel;
 import vaultescape.utils.*;
@@ -31,7 +31,7 @@ public class Guard extends Enemy {
         super(gp, start);
         this.speed = 2;
         setPath();
-        setSpritesheet("/entity/enemy/guard/spritesheet.png", 4, 4);
+        getAnimationPlayer().setSpritesheet("/entity/character/enemy/guard/spritesheet.png", 4, 4);
     }
 
     public void setPath() {
@@ -76,7 +76,8 @@ public class Guard extends Enemy {
             else move(Direction.UP);
         }
         if (rect.equals(start) || rect.equals(end)) reverse();
-        playAnimation();
+        getAnimationPlayer().playAnimation(direction.name());
+        super.update();
     }
 
     /**

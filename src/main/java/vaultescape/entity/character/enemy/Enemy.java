@@ -1,6 +1,6 @@
-package vaultescape.entity.enemy;
+package vaultescape.entity.character.enemy;
 
-import vaultescape.entity.Entity;
+import vaultescape.entity.character.Character;
 import vaultescape.ui.GamePanel;
 import vaultescape.utils.*;
 
@@ -10,7 +10,7 @@ import java.util.Random;
  * Represents a generic enemy entity in the game. 
  * Contains basic attributes and behaviors common to all enemies, such as movement speed and collision cooldown.
  */
-public class Enemy extends Entity {
+public class Enemy extends Character {
 
     protected Timer attackCooldown = new Timer(1);
     protected int range = 0;
