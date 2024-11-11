@@ -7,3 +7,6 @@ target/*
 
 # MacOS specific ignores
 .DS_Store
+
+# Best Scores ignore
+best_scores.json
