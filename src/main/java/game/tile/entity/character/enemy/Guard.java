@@ -17,7 +17,7 @@ public class Guard extends Enemy {
     private Vector end; // Ending position
 
     private Vector last; // Old Position since last moveTime
-    private Timer moveTime = new Timer(1.0);
+    private Timer moveTime = new Timer(0.9);
     
     private boolean goingEnd = true; // Direction of movement: true means moving towards the end position
     private boolean horizontal; // Direction type: true if movement is horizontal, false if vertical
@@ -111,7 +111,7 @@ public class Guard extends Enemy {
                 g2.fillRect(endScreen.x+32,endScreen.y+32,rect.w/2,rect.h/2);
             }
         }
-        if (!canAttack()) {
+        if ((double)(attackCooldown.getTimeLeft() / 1000.0) > 0.5 && !canAttack()) {
             attackLabel.setText(String.format("-%ds",timeReduction));
             attackLabel.draw(g2,gp.getPlayer().getScreenPosition());
         }

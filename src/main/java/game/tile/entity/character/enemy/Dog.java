@@ -109,7 +109,7 @@ public class Dog extends Enemy {
             g2.drawOval(screen.x + rect.w/2 - range, 
                 screen.y + rect.h/2 - range, range * 2, range * 2);
         }
-        if ((double)Math.floor(attackCooldown.getTimeLeft() / 1000.0) > 0.5) {
+        if ((double)(attackCooldown.getTimeLeft() / 1000.0) > 0.5 && !canAttack()) {
             attackLabel.setText(String.format("-%ds",timeReduction));
             attackLabel.draw(g2,gp.getPlayer().getScreenPosition());
         }
