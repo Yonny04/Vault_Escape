@@ -2,9 +2,8 @@ package game.tile.entity.character.enemy;
 
 import game.object.Vector;
 import game.panel.GamePanel;
-import game.utils.Timer;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.Random;
 
 
@@ -13,14 +12,9 @@ import java.util.Random;
  * The Guard can reverse direction upon reaching its patrol endpoints or if obstructed.
  */
 public class Guard extends Enemy {
-    private Vector start; // Starting position
-    private Vector end; // Ending position
-
-    private Vector last; // Old Position since last moveTime
-    private Timer moveTime = new Timer(0.9);
     
-    private boolean goingEnd = true; // Direction of movement: true means moving towards the end position
-    private boolean horizontal; // Direction type: true if movement is horizontal, false if vertical
+    private boolean isHorizontal; // Direction type: true if movement is horizontal, false if vertical
+    private boolean goingEnd = true;
     private int timeReduction = 5;
 
     /**
@@ -34,24 +28,12 @@ public class Guard extends Enemy {
         this.speed = 2;
         setPath();
         getAnimationPlayer().setSpritesheet("/tile/entity/character/enemy/guard/spritesheet.png", 4, 4);
+        getAnimationPlayer().setFrame(9);
     }
 
     public void setPath() {
-        this.start = getPosition();
-        this.last = start;
         Random random = new Random();
-        boolean isHorizontal = random.nextBoolean();
-        Vector end = new Vector();
-        int moveRange = random.nextInt(0,2);
-        if (moveRange == 0) moveRange = -1;
-        moveRange *= random.nextInt(2,5) * 64;
-        end.x = isHorizontal ? start.x + moveRange : start.x;
-        end.y = isHorizontal ? start.y : start.y + moveRange;
-        end.x = Math.min(end.x, gp.MAP_SIZE.x - Vector.TILE_SIZE.x);
-        end.y = Math.min(end.y, gp.MAP_SIZE.y - Vector.TILE_SIZE.y);
-        this.end = end;
-        this.horizontal = (start.x != end.x);
-        goingEnd = true;
+        this.isHorizontal = random.nextBoolean();
     }
     /**
      * Updates the guard's position along its patrol path. If the guard reaches the end of the path,
@@ -61,23 +43,16 @@ public class Guard extends Enemy {
     public void update() {
         if (speed > 7) speed = 7;
         
-        if (moveTime.isTimeUp()) {
-            if (last.equals(getPosition())) reverse();
-            else last = rect.getPosition();
-            moveTime.start();
-        }
-        Vector delta;
-        if (goingEnd) delta = end.subtract(rect);
-        else delta = start.subtract(rect);
-        
-        if (horizontal){
-            if (delta.x < 0) move(Direction.RIGHT);
-            else move(Direction.RIGHT);
+        Vector old = rect.getPosition();
+        if (isHorizontal){
+            if (goingEnd) moveUnsafe(Direction.RIGHT);
+            else moveUnsafe(Direction.LEFT);
+            if (!canMove()) {turnAround(); rect.x = old.x;}
         } else {
-            if (delta.y > 0) move(Direction.DOWN);
-            else move(Direction.UP);
+            if (goingEnd) moveUnsafe(Direction.DOWN);
+            else moveUnsafe(Direction.UP);
+            if (!canMove()) {turnAround(); rect.y = old.y;}
         }
-        if (rect.equals(start) || rect.equals(end)) reverse();
         getAnimationPlayer().playAnimation(direction.name());
         super.update();
     }
@@ -85,7 +60,7 @@ public class Guard extends Enemy {
     /**
      * Reverses the guard's direction along its patrol path.
      */
-    private void reverse() {goingEnd = !goingEnd;}
+    private void turnAround() {goingEnd = !goingEnd;}
 
     /**
      * Draws the guard entity. With debug collisions enabled, the 
@@ -96,21 +71,6 @@ public class Guard extends Enemy {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        if (drawCollisions) {
-            Vector player = gp.getPlayer().getPosition();
-            Vector playerScreen = gp.getPlayer().getScreenPosition();
-            Vector startScreen = start.subtract(player).add(playerScreen);
-            Vector endScreen = end.subtract(player).add(playerScreen);
-            if (rect.x + 2*Vector.TILE_SIZE.x > player.x - playerScreen.x && 
-            rect.x - 2*Vector.TILE_SIZE.x < player.x + playerScreen.x && 
-            rect.y + 2*Vector.TILE_SIZE.y > player.y - playerScreen.y && 
-            rect.y - 2*Vector.TILE_SIZE.y < player.y + playerScreen.y) {
-                g2.setColor(new Color(0.0f, 0.9f, 0.2f, 0.2f));
-                g2.fillRect(startScreen.x+32,startScreen.y+32,rect.w/2,rect.h/2);
-                g2.setColor(new Color(0.0f, 0.2f, 0.9f, 0.2f));
-                g2.fillRect(endScreen.x+32,endScreen.y+32,rect.w/2,rect.h/2);
-            }
-        }
         if ((double)(attackCooldown.getTimeLeft() / 1000.0) > 0.5 && !canAttack()) {
             attackLabel.setText(String.format("-%ds",timeReduction));
             attackLabel.draw(g2,gp.getPlayer().getScreenPosition());

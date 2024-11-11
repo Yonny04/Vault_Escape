@@ -25,7 +25,7 @@ public class Dog extends Enemy {
      */
     public Dog(GamePanel gp, Vector start) {
         super(gp, start);
-        this.speed = 4;
+        this.speed = 3;
         this.range = 172;
         next.x = next.y = 0;
         getAnimationPlayer().setSpritesheet("/tile/entity/character/enemy/dog/spritesheet.png", 4, 4);
@@ -117,6 +117,7 @@ public class Dog extends Enemy {
 
     @Override
     public void attack() {
+        if (speed > 4) this.speed = 4;
         gp.getSFX().play("bite");
         gp.getTimer().decreaseTime(timeReduction);
         biteCooldown.start();

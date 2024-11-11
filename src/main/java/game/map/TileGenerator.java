@@ -202,11 +202,12 @@ public class TileGenerator {
         }
         if (isBottomTile) {
             wallTiles.add(tile);
-            if (tileNumber != 26) tile.setLayer(Layer.BOTTOM);
-            else {
+            if (tileNumber == 26) { // Bottom Pillar
                 tile.getHitbox().setRect(new Rect(16,16,24,16));
                 tile.setLayer(Layer.ORDERED);
-            }
+            } else if (tileNumber == 74) {
+                tile.getHitbox().setRect(new Rect(0,16,32,8));
+            } else tile.setLayer(Layer.BOTTOM);
         } else {
             wallTiles.add(tile);
             if (tileNumber != 48) tile.setLayer(Layer.TOP);

@@ -4,6 +4,7 @@ import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.Tile;
 import game.tile.entity.Entity;
+import game.tile.entity.character.enemy.Enemy;
 
 /**
  * Represents a character in the game, extending the Entity class.
@@ -92,6 +93,9 @@ public class Character extends Entity {
      * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
      */
     public void moveUnsafe(Direction direction) {
+        if (gp.introFade > 0 && this instanceof Enemy) {
+            getAnimationPlayer().stopAnimation(); return;
+        }
         setDirection(direction);
         switch (direction) {
             case LEFT:
