@@ -3,7 +3,8 @@ package game.tile.entity.character.enemy;
 import game.object.*;
 import game.panel.GamePanel;
 import game.tile.entity.character.Character;
-import game.utils.Timer;
+import game.ui.Label;
+import game.utils.*;
 
 import java.util.Random;
 
@@ -13,8 +14,10 @@ import java.util.Random;
  */
 public class Enemy extends Character {
 
-    protected Timer attackCooldown = new Timer(1);
+    protected Timer attackCooldown = new Timer(1.0);
     protected int range = 0;
+    protected int timeReduction = 0;
+    protected Label attackLabel = new Label(ColorPalette.RED,true);
     Random r = new Random();
 
     /**
@@ -24,6 +27,7 @@ public class Enemy extends Character {
      */
     public Enemy(GamePanel gp, Vector start) {
         super(gp, start);
+        attackLabel.setFont(gp.font);
     }
 
     /**
@@ -34,7 +38,7 @@ public class Enemy extends Character {
     public int getSpeed() {
         return speed;
     }
-    
+
     @Override
     public void update() {
         if (isTouchingPlayer() && canAttack()) attack();
@@ -54,7 +58,7 @@ public class Enemy extends Character {
      *
      * @return true if the cooldown period has passed, false otherwise
      */
-    public boolean canAttack() {return attackCooldown.isTimeUp();}
+    public boolean canAttack() {return attackCooldown.isTimeUp() || gp.introFade > 0;}
 
     /**
      * Checks if the player is within the dog's chase range.

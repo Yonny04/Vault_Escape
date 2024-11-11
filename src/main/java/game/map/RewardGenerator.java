@@ -20,7 +20,6 @@ public class RewardGenerator {
      * Constructs a RewardGenerator with a specified game panel and tile generator.
      *
      * @param gp the game panel associated with this generator
-     * @param tg the tile generator used for determining available tiles
      */
     public RewardGenerator(GamePanel gp) {
         this.generator = new Generator<>(gp);
@@ -40,9 +39,10 @@ public class RewardGenerator {
     }
 
     /**
-     * Spawn a specified number of basic rewards at random available tile positions.
+     * Spawn a specified number of valuables and diamonds.
      *
-     * @param n the number of basic rewards to generate
+     * @param valuables the number of valuables to generate
+     * @param diamonds the number of diamonds to generate
      */
     public void spawnAll(int valuables,int diamonds) {
         generator.spawn(Valuable.class, valuables);

@@ -2,7 +2,7 @@ package game.tile.entity.reward;
 
 import game.object.Vector;
 import game.panel.GamePanel;
-import game.utils.Timer;
+import game.utils.*;
 
 /**
  * Represents a bonus reward item in the game, which has a spawn time attribute to track when it appears.
@@ -18,7 +18,8 @@ public class Diamond extends Reward {
      * @param start the starting position
      */
     public Diamond(GamePanel gp, Vector start) {
-        super(gp, start, 100);
+        super(gp, start, 150);
+        scoreLabel.setColor(ColorPalette.LIGHT_PURPLE);
     }
 
     int oldTime = 0;

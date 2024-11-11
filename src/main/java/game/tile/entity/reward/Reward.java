@@ -3,20 +3,20 @@ package game.tile.entity.reward;
 import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.entity.Entity;
-import game.utils.Timer;
+import game.ui.Label;
+import game.utils.ColorPalette;
 
 import java.awt.Graphics2D;
 import java.util.Random;
+
 /**
  * Represents a reward item in the game, providing points when collected by the player.
  * The appearance of the reward is determined by its point value, with different frames for different values.
  */
 public class Reward extends Entity {
-    protected int points = 
-    0; // Points granted by the reward when collected
+    protected int points = 0; // Points granted by the reward when collected
+    protected Label scoreLabel = new Label(ColorPalette.YELLOW,true);
     private Vector oldRect;
-
-    public Timer animationTimer;
 
     /**
      * Constructs a Reward entity with specified position, point value, and appearance.
@@ -32,6 +32,7 @@ public class Reward extends Entity {
         this.points = points;
         setRewardImage();
         oldRect = rect.add(new Vector());
+        scoreLabel.setFont(gp.font);
     }
 
     /**
@@ -41,8 +42,8 @@ public class Reward extends Entity {
     protected void setRewardImage() {
         Random rand = new Random();
         int valuable = rand.nextInt(5);
-        if (points != 100) getAnimationPlayer().setFrame(valuable);
-        else getAnimationPlayer().setFrame(5); // Diamond
+        if (this instanceof Diamond) getAnimationPlayer().setFrame(5); // Diamond
+        else getAnimationPlayer().setFrame(valuable);
 
     }
 
@@ -55,10 +56,19 @@ public class Reward extends Entity {
     @Override
     public void update() {
         i += Math.PI / 20.0;
-        if (animationTimer == null) rect.y = rect.y + (int)Math.round(Math.sin(i));
+        if (!getAnimationPlayer().isPlaying()) rect.y = rect.y + (int)Math.round(Math.sin(i));
         super.update();
     }
 
+    @Override
+    public void draw(Graphics2D g2) {
+        if (getAnimationPlayer().isPlaying()) { //Pickup animation
+            scoreLabel.setText(String.format("+%3d",points));
+            scoreLabel.draw(g2,screen);
+        }
+        super.draw(g2);
+        
+    }
     /**
      * Draws the shadow below the entity at a calculated offset.
      * This should be called before the main draw call to render beneath the entity.

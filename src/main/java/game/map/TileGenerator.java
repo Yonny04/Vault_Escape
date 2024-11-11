@@ -82,13 +82,8 @@ public class TileGenerator {
                 }
             }
             reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        try {
-            InputStream stream = getClass().getResourceAsStream("/map/wall1.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            stream = getClass().getResourceAsStream("/map/wall1.txt");
+            reader = new BufferedReader(new InputStreamReader(stream));
     
             for (int row = 0; row < gp.MAP_TILE.y; row++) {
                 String line = reader.readLine();
@@ -106,9 +101,7 @@ public class TileGenerator {
                 }
             }
             reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 
     /**
@@ -165,7 +158,7 @@ public class TileGenerator {
     private void createFloorTile(Rect rect, int tileNumber) {
         Tile tile = new Tile(gp);
         tile.setRect(rect);
-        tile.setLayer(Tile.Layer.BOTTOM);
+        tile.setLayer(Layer.BOTTOM);
         tile.setImage(getFloorTileImage(tileNumber));
         floorTiles.add(tile);
     }
@@ -181,8 +174,7 @@ public class TileGenerator {
         tile.setRect(rect);
         tile.setImage(getWallTileImage(tileNumber));
         tile.setLayer(Layer.BOTTOM);
-
-        tile.hitbox.setSize(tile.getSize().scale(0.8));
+        tile.getHitbox().setSize(tile.getSize().scale(0.8));
         // Vault Door
         if (tileNumber == 75) {
             if (exit == null){
@@ -212,7 +204,7 @@ public class TileGenerator {
             wallTiles.add(tile);
             if (tileNumber != 26) tile.setLayer(Layer.BOTTOM);
             else {
-                tile.hitbox.setRect(new Rect(16,16,24,16));
+                tile.getHitbox().setRect(new Rect(16,16,24,16));
                 tile.setLayer(Layer.ORDERED);
             }
         } else {

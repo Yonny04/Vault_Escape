@@ -50,10 +50,11 @@ public class GamePanel extends JPanel implements Runnable {
     private static final int CAMERA_COUNT = 4;
 
     // In-Game UI
+    public int introFade = 255;
     private Container overlayContainer = new Container(this);
-    Label timerLabel = new Label(Color.WHITE,true);
-    Label valuablesLabel = new Label(new Color(255, 255, 0),true);
-    Label scoreLabel = new Label(new Color(0, 128, 255),true);
+    private Label timerLabel = new Label(ColorPalette.WHITE,true);
+    private Label valuablesLabel = new Label(ColorPalette.YELLOW,true);
+    private Label scoreLabel = new Label(ColorPalette.LIGHT_PURPLE,true);
 
     //Music Components
     private Music music = new Music();
@@ -61,8 +62,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Timer
     private Timer timer;
-    public static final double LEVEL_TIME = 60.0;
-    private int lastTime = 60;
+    public static final double LEVEL_TIME = 61.0;
+    private int lastTime = 61;
 
     // Thread
     private Thread gameThread;
@@ -70,7 +71,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // App reference and font resource
     public App app;
-    private Font font;
+    public Font font;
 
     /**
      * Constructs the GamePanel, setting up game dimensions, components, resources, and input listeners.
@@ -80,7 +81,7 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel(App app) {
         this.app = app;
         this.setSize(SCREEN_SIZE.x, SCREEN_SIZE.y);
-        this.setBackground(new Color(89, 81, 120));
+        this.setBackground(ColorPalette.PURPLE);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
@@ -289,7 +290,7 @@ public class GamePanel extends JPanel implements Runnable {
         // Gametime Logic (music changes + speed increase + countdown)
         int currentTime = (int)timer.getTimeLeft() / 1000;
         if (lastTime != currentTime) {
-            if (lastTime <= 60 && lastTime > 30 && !music.isPlaying("60")) {
+            if (lastTime <= LEVEL_TIME && lastTime > 30 && !music.isPlaying("60")) {
                 music.play("60");
             }
             else if (lastTime <= 31 && lastTime > 15 && !music.isPlaying("30")) {
@@ -300,6 +301,7 @@ public class GamePanel extends JPanel implements Runnable {
             else if (lastTime <= 16 && lastTime > 0 && !music.isPlaying("15")) {
                 music.play("15");
                 sfx.play("time_tick");
+                timerLabel.setColor(ColorPalette.RED);
                 enemyGenerator.addEnemySpeed(1);
                 player.addSpeed(1);
             }
@@ -309,6 +311,7 @@ public class GamePanel extends JPanel implements Runnable {
         
     }
 
+    private double _fadeLerp = 0.5;
     /**
      * Paints all game elements onto the screen, including the background, 
      * player, enemies, rewards, and UI elements.
@@ -325,10 +328,10 @@ public class GamePanel extends JPanel implements Runnable {
         tileGenerator.draw(g2);
 
         // Draw Time and Score Overlay Container
-        String timeString = String.format("Time: %d", timer.getSecondsLeft());
+        String timeString = String.format("Time Left: %ds", timer.getSecondsLeft());
         String valuablesString = String.format("Valuables Left: %d",
             rewardGenerator.generator.getCountByType(Valuable.class));
-        String scoreText = String.format("Score: %03d",player.getScore());
+        String scoreText = String.format("Score: %04d",player.getScore());
         overlayContainer.getLabel(0).setText(timeString);
         overlayContainer.getLabel(1).setText(valuablesString);
         overlayContainer.getLabel(2).setText(scoreText);
@@ -339,6 +342,13 @@ public class GamePanel extends JPanel implements Runnable {
             g2.fillRect(0,0,SCREEN_SIZE.x,SCREEN_SIZE.y);
         }
 
+        if (introFade > 0) {
+            timer.start();
+            
+            g2.setColor(new Color(89, 81, 120,introFade));
+            g2.fillRect(0,0,SCREEN_SIZE.x,SCREEN_SIZE.y);
+            introFade = (int)Math.round((double)introFade - 8.0 * _fadeLerp);
+        }
         g2.dispose();
     }
 }

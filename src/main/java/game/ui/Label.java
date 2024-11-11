@@ -1,6 +1,7 @@
 package game.ui;
 
 import game.object.*;
+import game.utils.ColorPalette;
 
 import java.awt.*;
 
@@ -10,7 +11,7 @@ import java.awt.*;
  */
 public class Label extends Rect {
     String text = "";
-    Color color = Color.WHITE;
+    Color color = ColorPalette.WHITE;
     boolean visible = true;
     boolean hasShadow = false;
     boolean displayInt = false;
@@ -36,14 +37,14 @@ public class Label extends Rect {
      */
     public void draw(Graphics2D g2, Vector screen) {
         if (isVisible()) {
-            g2.setFont(font);
+            if (font != null) g2.setFont(font);
             setPosition(screen);
             // FontMetrics metrics = g2.getFontMetrics(font);
             // this.w = metrics.stringWidth(text);
             // this.h = metrics.getHeight();
             if (hasShadow) {
-                g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
-                g2.drawString(text, screen.x, screen.y + 6);
+                g2.setColor(ColorPalette.SHADOW);
+                g2.drawString(text, screen.x, screen.y + 4);
             }
             g2.setColor(color);
             g2.drawString(text, screen.x, screen.y);

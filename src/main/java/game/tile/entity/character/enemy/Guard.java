@@ -21,13 +21,13 @@ public class Guard extends Enemy {
     
     private boolean goingEnd = true; // Direction of movement: true means moving towards the end position
     private boolean horizontal; // Direction type: true if movement is horizontal, false if vertical
+    private int timeReduction = 5;
 
     /**
      * Constructs a Guard entity with a specified patrol range.
      *
      * @param gp the game panel associated with this guard
      * @param start the starting position of this guard's path
-     * @param end the end position of this guard's path
      */
     public Guard(GamePanel gp, Vector start) {
         super(gp, start);
@@ -111,12 +111,16 @@ public class Guard extends Enemy {
                 g2.fillRect(endScreen.x+32,endScreen.y+32,rect.w/2,rect.h/2);
             }
         }
+        if (!canAttack()) {
+            attackLabel.setText(String.format("-%ds",timeReduction));
+            attackLabel.draw(g2,gp.getPlayer().getScreenPosition());
+        }
     }
 
     @Override
     public void attack() {
         gp.getSFX().play("hit");
-        gp.getTimer().decreaseTime(5);
+        gp.getTimer().decreaseTime(timeReduction);
         super.attack();
     }
 }

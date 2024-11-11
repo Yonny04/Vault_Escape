@@ -13,17 +13,16 @@ import java.awt.image.BufferedImage;
 public class Tile {
     protected GamePanel gp; // Reference to the game panel for player positioning
     protected BufferedImage image; // Sprite Image
-    
-    public Rect hitbox; // Hitbox Rect
+
     protected Rect rect; // Draw Rect
+    protected Rect hitbox; // Hitbox Rect
     protected Vector screen; // Screen coordinates for rendering
+
     protected boolean visible = true;
     protected boolean drawCollisions = false; // Flag to toggle collision hitbox rendering
 
     public enum Layer {BOTTOM, ORDERED, TOP}
-    
     public Layer layer = Layer.ORDERED; // Default layer is ORDERED
-    public Layer collisionLayer = Layer.ORDERED;
     public boolean collisionMask = true;
 
     /**
@@ -133,31 +132,31 @@ public class Tile {
     }
 
     /**
-     * Determines if this sprite2D is visually above the specified sprite2D.
+     * Determines if this tile is visually above the specified tile.
      * This is determined by comparing the y-coordinates of their center points.
      *
-     * @param rect The rectangle to compare against.
-     * @return true if this object is above the specified rectangle, false otherwise.
+     * @param tile The sprite to compare against.
+     * @return true if this object is above the specified tile, false otherwise.
      */
-    public boolean isAbove(Tile sprite) {
-        return getCenter().y > sprite.getCenter().y;
+    public boolean isAbove(Tile tile) {
+        return getCenter().y > tile.getCenter().y;
     }
 
     /**
-     * Checks if the current Sprite2D is touching another Sprite2D.
+     * Checks if this tile is touching another tile.
      * Adapter design pattern
      *
-     * @param sprite the sprite2D to check against
-     * @return {@code true} if the rectangles are touching, otherwise {@code false}
+     * @param tile the tile to check against
+     * @return true if the tiles are touching, otherwise false
      */
-    public boolean isTouching(Tile sprite) {
+    public boolean isTouching(Tile tile) {
         Rect r1 = new Rect(hitbox.add(getPosition()),hitbox.getSize());
-        Rect r2 = new Rect(sprite.hitbox.add(sprite.getPosition()),sprite.hitbox.getSize());
+        Rect r2 = new Rect(tile.hitbox.add(tile.getPosition()),tile.hitbox.getSize());
         return (r1.isTouching(r2));
     }
 
     /**
-     * Sets the image to be displayed by the sprite.
+     * Sets the image to be displayed by this tile.
      *
      * @param image the BufferedImage to display
      */
@@ -256,5 +255,23 @@ public class Tile {
      */
     public void show() {
         visible = true;
+    }
+
+    /**
+     * Returns the hitbox of this entity.
+     *
+     * @return The Rect object representing the hitbox of the entity.
+     */
+    public Rect getHitbox() {
+        return hitbox;
+    }
+
+    /**
+     * Sets the hitbox of this entity to the specified rectangular bounds.
+     *
+     * @param rect The Rect object to set as the hitbox.
+     */
+    public void setHitbox(Rect rect) {
+        hitbox = rect;
     }
 }

@@ -58,7 +58,14 @@ public class Rect extends Vector {
         setSize(wh);
     }
 
-    public Rect getRect() {return this;}
+    /**
+     * Returns the rectangular bounds of this entity.
+     *
+     * @return This Rect object representing the bounds of the entity.
+     */
+    public Rect getRect() {
+        return this;
+    }
     
     public void setRect(Rect rect) {
         setPosition(rect.getPosition());

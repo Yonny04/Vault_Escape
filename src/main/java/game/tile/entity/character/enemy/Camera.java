@@ -2,6 +2,7 @@ package game.tile.entity.character.enemy;
 
 import game.object.Vector;
 import game.panel.GamePanel;
+import game.utils.ColorPalette;
 
 import java.awt.*;
 
@@ -17,17 +18,24 @@ public class Camera extends Enemy {
      *
      * @param gp the game panel associated with this entity
      * @param start the camera's starting position
-     * @param detectionRange the range within which the camera can detect the player
      */
     public Camera(GamePanel gp, Vector start) {
         super(gp, start);
-        this.range = 50;
+        this.range = 128;
         getAnimationPlayer().setSpritesheet("/tile/entity/character/enemy/camera/spritesheet.png", 2, 3);
+        getAnimationPlayer().newAnimation("move", new int[]{0,1,2,3,4,5}, 6, 0.2f, true);
+        getAnimationPlayer().playAnimation("move");
         getAnimationPlayer().setFrame(0);
-        getAnimationPlayer().newAnimation("on", new int[]{0,1,2,3,4,5}, 6, 0.2f, true);
-        getAnimationPlayer().playAnimation("on");
+        attackLabel.setColor(ColorPalette.PURPLE);
     }
 
+    @Override
+    public void update() {
+        if (isPlayerInRange() && canAttack()) {
+            attack();
+        }
+        super.update();
+    }
     /**
      * Draws the camera entity, including a red detection range indicator.
      *
@@ -40,11 +48,24 @@ public class Camera extends Enemy {
             g2.setColor(Color.red);
             g2.drawOval(screen.x + rect.w / 2 - range, screen.y + rect.h / 2 - range, range * 2, range * 2);
         }
+        if (!canAttack()) {
+            attackLabel.setText(String.format("+1 Patrol",timeReduction));
+            attackLabel.draw(g2,gp.getPlayer().getScreenPosition().subtract(new Vector(32,0)));
+        }
     }
+   
+    /**
+     * Executes the attack action for the entity. 
+     * If the current animation frame is an odd number (indicating the red light is on), it plays an alarm sound,
+     * increases the speed of all enemies, and then performs the superclass's attack behavior.
+     */
     @Override
     public void attack() {
-        gp.getSFX().play("alarm");
-        gp.getEnemyGenerator().addEnemySpeed(1);
-        super.attack();
+        if (getAnimationPlayer().getFrame() % 2 == 1) { // When red light on
+            gp.getSFX().play("alarm");
+            gp.getEnemyGenerator().addEnemySpeed(1);
+            super.attack();
+        }
     }
+
 }

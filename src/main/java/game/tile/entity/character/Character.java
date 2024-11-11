@@ -63,6 +63,7 @@ public class Character extends Entity {
      * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
      */
     public void move(Direction direction) {
+        if (gp.introFade > 0) {getAnimationPlayer().stopAnimation(); return;}
         Vector oldPosition = rect.getPosition();
         setDirection(direction);
         switch (direction) {
