@@ -6,7 +6,6 @@ import game.tile.Tile;
 import game.tile.entity.Exit;
 import game.utils.KeyDetector;
 
-import java.awt.Graphics2D;
 import java.util.Random;
 /**
  * Represents the player character in the game, allowing for movement, scoring, and interaction with the game environment.
@@ -92,26 +91,20 @@ public class Player extends Character {
         Vector old = rect.getPosition();
         // Handle movement input from the key detector
         if (keyh.up || keyh.left || keyh.down || keyh.right) {
-            if (keyh.left) {
-                rect.x -= speed;
-                setDirection(Direction.LEFT);
-            } else if (keyh.right) {
-                rect.x += speed;
-                setDirection(Direction.RIGHT);
-            }
+            if (keyh.left) moveUnsafe(Direction.LEFT);
+            else if (keyh.right) moveUnsafe(Direction.RIGHT);
+
             if (canEscape()) gp.completeGame(true); // Win Condition
             if (!canMove()) rect.x = old.x; // Check for collisions with walls on the x-axis
 
-            if (keyh.up) {
-                rect.y -= speed;
-                setDirection(Direction.UP);
-            } else if (keyh.down) {
-                rect.y += speed;
-                setDirection(Direction.DOWN);
-            }
+            if (keyh.up) moveUnsafe(Direction.UP);
+            else if (keyh.down) moveUnsafe(Direction.DOWN);
+
             if (canEscape()) gp.completeGame(true); // Win Condition
             if (!canMove()) rect.y = old.y; // Second check for collisions with walls on the y-axis
+
             getAnimationPlayer().playAnimation(direction.name());
+
             int oldFrame = getAnimationPlayer().getFrame();
             super.update();
             int newFrame = getAnimationPlayer().getFrame();
@@ -141,15 +134,5 @@ public class Player extends Character {
             camera = camera.add(deltaCamera);
         }
     }
-
-    /**
-     * Draws the player character on the screen and renders the hitbox for debugging purposes.
-     *
-     * @param g2 the Graphics2D object used for rendering
-     */
-    @Override
-    public void draw(Graphics2D g2) {
-        super.draw(g2);
-        if (drawCollisions && isVisible()) g2.drawString(String.format("%1.1f", getAnimationPlayer().getFrame()), screen.x, screen.y);
-    }
+    
 }

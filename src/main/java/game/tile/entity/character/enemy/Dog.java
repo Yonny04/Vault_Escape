@@ -26,7 +26,7 @@ public class Dog extends Enemy {
     public Dog(GamePanel gp, Vector start) {
         super(gp, start);
         this.speed = 4;
-        this.range = 250;
+        this.range = 172;
         next.x = next.y = 0;
         getAnimationPlayer().setSpritesheet("/tile/entity/character/enemy/dog/spritesheet.png", 4, 4);
     }
