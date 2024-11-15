@@ -28,7 +28,8 @@ public class Dog extends Enemy {
         this.speed = 3;
         this.range = 172;
         next.x = next.y = 0;
-        getAnimationPlayer().setSpritesheet("/tile/entity/character/enemy/dog/spritesheet.png", 4, 4);
+        getAnimationPlayer().setSpritesheet("dog", 4, 4);
+        getAnimationPlayer().setFrame(1);
     }
 
     /**

@@ -27,7 +27,7 @@ public class Guard extends Enemy {
         super(gp, start);
         this.speed = 2;
         setPath();
-        getAnimationPlayer().setSpritesheet("/tile/entity/character/enemy/guard/spritesheet.png", 4, 4);
+        getAnimationPlayer().setSpritesheet("guard", 4, 4);
         getAnimationPlayer().setFrame(9);
     }
 

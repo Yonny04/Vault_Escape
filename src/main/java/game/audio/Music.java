@@ -1,8 +1,9 @@
 package game.audio;
 
-import javax.sound.sampled.*;
+import game.utils.ResourceLoader;
+import game.utils.ResourceLoader.Resource;
 
-import java.net.URL;
+import javax.sound.sampled.Clip;
 
 /**
  * The Music class handles background music for an application.
@@ -19,30 +20,6 @@ public class Music {
     public Music() {}
 
     /**
-     * Retrieves the URL for the specified music name.
-     * 
-     * @param musicName the name of the music file (without extension)
-     * @return the URL of the music file
-     */
-    private URL getURL(String musicName) {
-        String path = String.format("audio/music/%s.wav", musicName);
-        return getClass().getClassLoader().getResource(path);
-    }
-
-    /**
-     * Loads the music specified by its name.
-     * 
-     * @param musicName the name of the music file (without extension and path)
-     */
-    public void loadMusic(String musicName) {
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(getURL(musicName));
-            clip = AudioSystem.getClip();
-            clip.open(ais);
-        } catch (Exception ex) {}
-    }
-
-    /**
      * Plays the music specified by its name.
      * Loops the currently set music file continuously.
      * 
@@ -50,7 +27,7 @@ public class Music {
      */
     public void play(String musicName) {
         if (clip != null) {clip.stop();clipName = "";}
-        loadMusic(musicName);
+        clip = ResourceLoader.loadAudio(Resource.MUSIC,musicName);
         clip.start();
         clipName = musicName;
         clip.loop(Clip.LOOP_CONTINUOUSLY);

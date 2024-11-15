@@ -1,33 +1,30 @@
 package game.utils;
 
-import game.panel.GamePanel;
-
 /**
  * Represents an animation in the game, managing the frames and playback of the animation.
  */
 public class Animation {
-    int[] track;
-    int frames;
-    float duration = 1.0f;
+    protected int[] track;
+    protected int frames;
+    protected float duration = 1.0f;
 
-    String name;
-    float frame = 0.0f;
-    float frameInterval;
-    private boolean loop = false;
+    protected String name;
+    protected float frame = 0.0f;
+    protected float frameInterval;
+    protected boolean loop = false;
 
-    boolean isPlaying = false;
+    protected boolean isPlaying = false;
 
     /**
      * Constructs an Animation with the specified parameters.
      *
-     * @param gp        The game panel associated with this animation.
      * @param name      The name of the animation.
      * @param track     An array representing the frame sequence of the animation.
      * @param frames    The number of frames in the animation.
      * @param duration  The duration of the animation in seconds.
      * @param loop      Whether the animation should loop.
      */
-    public Animation(GamePanel gp, String name, int[] track, int frames, float duration, boolean loop) {
+    public Animation(String name, int[] track, int frames, float duration, boolean loop) {
         this.name = name;
         this.track = track;
         this.frames = frames;

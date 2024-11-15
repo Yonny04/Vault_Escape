@@ -3,9 +3,7 @@ package game.tile.entity;
 import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.Tile;
-import game.utils.AnimationPlayer;
-
-import javax.imageio.ImageIO;
+import game.utils.*;
 
 import java.awt.Graphics2D;
 
@@ -29,7 +27,8 @@ public class Entity extends Tile {
     public Entity(GamePanel gp, Vector start) {
         super(gp, start);
         createShadow();
-        animationPlayer = new AnimationPlayer(gp, this);
+        animationPlayer = new AnimationPlayer(this);
+        animationPlayer.setEntity(this);
     }
 
     /**
@@ -39,11 +38,7 @@ public class Entity extends Tile {
     private void createShadow() {
         _shadow = new Tile(gp);
         _shadow.setSize(new Vector(14, 6).scale(Vector.SCALE));
-        try {
-            _shadow.setImage(ImageIO.read(getClass().getResourceAsStream("/tile/entity/shadow.png")));
-        } catch (Exception e) {
-            e.printStackTrace();  // Consider adding this for debugging
-        }
+        _shadow.setImage(ResourceLoader.loadSpritesheet("shadow"));
     }
 
 
@@ -63,6 +58,7 @@ public class Entity extends Tile {
         animationPlayer.update();
         super.update();
     }
+    
     /**
      * Draws the entity and its shadow.
      *
@@ -87,6 +83,18 @@ public class Entity extends Tile {
         }
     }
 
+    /**
+     * Returns the AnimationPlayer for this entity.
+     * @return the AnimationPlayer for this entity
+     */
     public AnimationPlayer getAnimationPlayer() {return animationPlayer;}
+
+    /**
+     * Sets the AnimationPlayer for this entity.
+     * @param animationPlayer the AnimationPlayer to set to
+     */
+    public void setAnimationPlayer(AnimationPlayer animationPlayer) {
+        this.animationPlayer = animationPlayer;
+    }
 
 }

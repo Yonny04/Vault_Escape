@@ -1,8 +1,9 @@
 package game.audio;
 
-import javax.sound.sampled.*;
+import game.utils.ResourceLoader;
+import game.utils.ResourceLoader.Resource;
 
-import java.net.URL;
+import javax.sound.sampled.Clip;
 
 /**
  * The SFX class handles sound effects for an application.
@@ -17,30 +18,7 @@ public class SFX {
      * Default constructor for the SFX class.
      */
     public SFX() {}
-
-    /**
-     * Retrieves the URL for the specified sound effect name.
-     * 
-     * @param sfxName the name of the sound effect file (without extension)
-     * @return the URL of the sound effect file
-     */
-    private URL getURL(String sfxName) {
-        String path = String.format("audio/sfx/%s.wav", sfxName);
-        return getClass().getClassLoader().getResource(path);
-    }
-
-    /**
-     * Loads the sound effect specified by its name.
-     * 
-     * @param sfxName the name of the sound effect file (without extension)
-     */
-    public void loadSFX(String sfxName) {
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(getURL(sfxName));
-            clip = AudioSystem.getClip();
-            clip.open(ais);
-        } catch (Exception ex) {}
-    }
+    
 
     /**
      * Plays the sound effect specified by its name.
@@ -48,7 +26,7 @@ public class SFX {
      * @param sfxName the name of the sound effect file (without extension)
      */
     public void play(String sfxName) {
-        loadSFX(sfxName);
+        clip = ResourceLoader.loadAudio(Resource.SFX,sfxName);
         clip.start();
         clipName = sfxName;
     }

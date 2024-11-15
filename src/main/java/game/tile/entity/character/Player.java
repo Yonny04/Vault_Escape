@@ -4,7 +4,7 @@ import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.Tile;
 import game.tile.entity.Exit;
-import game.utils.KeyDetector;
+import game.utils.*;
 
 import java.util.Random;
 /**
@@ -28,12 +28,12 @@ public class Player extends Character {
     public Player(GamePanel gp, Vector start, KeyDetector keyh) {
         super(gp,start);
         this.keyh = keyh;
-        setPosition(start);
         this.speed = 5;
+        setPosition(start);
+        ResourceLoader.loadAnimationPlayer(this, "player");
         setDirection(Direction.DOWN);
         camera.setPosition(rect);
         cameraOffset.setPosition(gp.SCREEN_SIZE.subtract(Vector.TILE_SIZE).scale(0.5));
-        getAnimationPlayer().setSpritesheet("/tile/entity/character/player/spritesheet.png", 4, 4);
     }
 
     /**

@@ -2,7 +2,7 @@ package game.tile.entity.character.enemy;
 
 import game.object.Vector;
 import game.panel.GamePanel;
-import game.utils.ColorPalette;
+import game.utils.*;
 
 import java.awt.*;
 
@@ -22,8 +22,8 @@ public class Camera extends Enemy {
     public Camera(GamePanel gp, Vector start) {
         super(gp, start);
         this.range = 128;
-        getAnimationPlayer().setSpritesheet("/tile/entity/character/enemy/camera/spritesheet.png", 2, 3);
-        getAnimationPlayer().newAnimation("move", new int[]{0,1,2,3,4,5}, 6, 0.2f, true);
+        getAnimationPlayer().setSpritesheet("camera", 2, 3);
+        getAnimationPlayer().newAnimation(ResourceLoader.loadAnimation("camera"));
         getAnimationPlayer().playAnimation("move");
         getAnimationPlayer().setFrame(0);
         attackLabel.setColor(ColorPalette.PURPLE);

@@ -5,6 +5,7 @@ import game.panel.GamePanel;
 import game.tile.Tile;
 import game.tile.entity.Entity;
 import game.tile.entity.character.enemy.Enemy;
+import game.utils.ResourceLoader;
 
 /**
  * Represents a character in the game, extending the Entity class.
@@ -19,6 +20,7 @@ public class Character extends Entity {
     
     protected Direction direction = Direction.LEFT; // Default direction is LEFT
     protected int speed;
+    protected int maxSpeed = 7;
 
     /**
      * Constructs a Character with the specified game panel and starting position.
@@ -28,10 +30,7 @@ public class Character extends Entity {
      */
     public Character(GamePanel gp, Vector start) {
         super(gp, start);
-        getAnimationPlayer().newAnimation("LEFT",new int[]{0,1,2,3},4,1.2f,true);
-        getAnimationPlayer().newAnimation("RIGHT",new int[]{4,5,6,7},4,1.2f,true);
-        getAnimationPlayer().newAnimation("UP",new int[]{8,9,10,11},4,1.2f,true);
-        getAnimationPlayer().newAnimation("DOWN",new int[]{12,13,14,15},4,1.2f,true);
+        ResourceLoader.loadAnimationPlayer(this, "character");
     }
 
     /**
@@ -116,11 +115,26 @@ public class Character extends Entity {
     }
 
      /**
-     * Adds the movement speed of the enemy.
+     * Adds the movement speed of the character.
      *
      * @param value the value to add to speed
      */
     public void addSpeed(int value) {
         this.speed += value;
+        if (this.speed >= maxSpeed) {
+            this.speed = maxSpeed;
+        }
+    }
+
+    /**
+     * Sets the speed of the character.
+     * @param speed the new speed of the character
+     */
+    public void setSpeed(int speed) {
+        if (speed >= maxSpeed) {
+            this.speed = maxSpeed;
+            return;
+        }
+        this.speed = speed;
     }
 }

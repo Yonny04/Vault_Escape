@@ -1,0 +1,7 @@
+[ANIMATION]
+.anim::move
+6
+0,1,2,3,4,5
+0.200000
+true
+/.anim

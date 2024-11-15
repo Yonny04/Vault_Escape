@@ -45,8 +45,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Enemies
     private final EnemyGenerator enemyGenerator = new EnemyGenerator(this);
-    private static final int GUARDS_COUNT = 8;
-    private static final int DOGS_COUNT = 2;
+    private static final int GUARDS_COUNT = 9;
+    private static final int DOGS_COUNT = 3;
     private static final int CAMERA_COUNT = 4;
 
     // In-Game UI

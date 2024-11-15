@@ -2,6 +2,7 @@ package game.tile.entity;
 
 import game.object.Vector;
 import game.panel.GamePanel;
+import game.utils.ResourceLoader;
 
 import java.awt.Graphics2D;
 
@@ -22,8 +23,7 @@ public class Exit extends Entity {
         this.rect.w *= 2;
         this.rect.h *= 2;
         hitbox.setSize(rect.getSize());
-        
-        getAnimationPlayer().setSpritesheet("/tile/entity/exit/spritesheet.png", 2, 1);
+        ResourceLoader.loadAnimationPlayer(this, "exit");
         getAnimationPlayer().setFrame(0);
     }
 

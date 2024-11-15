@@ -4,7 +4,7 @@ import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.entity.Entity;
 import game.ui.Label;
-import game.utils.ColorPalette;
+import game.utils.*;
 
 import java.awt.Graphics2D;
 import java.util.Random;
@@ -27,8 +27,7 @@ public class Reward extends Entity {
      */
     public Reward(GamePanel gp, Vector start, int points) {
         super(gp, start);
-        getAnimationPlayer().setSpritesheet("/tile/entity/reward/spritesheet.png", 8, 1);
-        getAnimationPlayer().newAnimation("pickup",new int[]{6,7},2,0.7f,false);
+        ResourceLoader.loadAnimationPlayer(this, "reward");
         this.points = points;
         setRewardImage();
         oldRect = rect.add(new Vector());

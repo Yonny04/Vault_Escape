@@ -9,12 +9,11 @@ import game.tile.entity.Exit;
 import game.tile.entity.character.Player;
 import game.tile.entity.character.enemy.Enemy;
 import game.tile.entity.reward.Reward;
-
-import javax.imageio.ImageIO;
+import game.utils.ResourceLoader;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
 import java.util.*;
 
 /**
@@ -54,8 +53,8 @@ public class TileGenerator {
      */
     public void setTileSpritesheet() {
         try {
-            wallSheet = ImageIO.read(getClass().getResourceAsStream("/tile/wall_spritesheet.png"));
-            floorSheet = ImageIO.read(getClass().getResourceAsStream("/tile/floor_spritesheet.png"));
+            wallSheet = ResourceLoader.loadSpritesheet("wall");
+            floorSheet = ResourceLoader.loadSpritesheet("floor");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,8 +65,7 @@ public class TileGenerator {
      */
     public void loadMap() {
         try {
-            InputStream stream = getClass().getResourceAsStream("/map/floor1.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            BufferedReader reader = ResourceLoader.loadFile("/map/floor1.map");
             for (int row = 0; row < gp.MAP_TILE.y; row++) {
                 String line = reader.readLine();
                 String[] numberStrings = line.split(";");
@@ -82,8 +80,7 @@ public class TileGenerator {
                 }
             }
             reader.close();
-            stream = getClass().getResourceAsStream("/map/wall1.txt");
-            reader = new BufferedReader(new InputStreamReader(stream));
+            reader = ResourceLoader.loadFile("/map/wall1.map");
     
             for (int row = 0; row < gp.MAP_TILE.y; row++) {
                 String line = reader.readLine();

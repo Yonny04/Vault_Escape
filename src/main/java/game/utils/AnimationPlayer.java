@@ -1,10 +1,7 @@
 package game.utils;
 
 import game.object.Vector;
-import game.panel.GamePanel;
 import game.tile.entity.Entity;
-
-import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -13,14 +10,14 @@ import java.util.*;
  * Manages animations for an entity, including playing, stopping, and updating animations.
  */
 public class AnimationPlayer {
-
-    GamePanel gp;
-    Entity en;
+    private Entity entity;
     
     protected BufferedImage sheet;
-    protected Vector sheetDim;
-    protected Vector frameSize;
-    
+    public String sheetName;
+    public Vector sheetDim;
+
+    private Vector frameSize;
+
     public int currentFrame = 0;
     public int lastFrame = 0;
 
@@ -30,12 +27,9 @@ public class AnimationPlayer {
     /**
      * Constructs an AnimationPlayer with the specified game panel and entity.
      *
-     * @param gp The game panel associated with this animation player.
-     * @param en The entity associated with this animation player.
      */
-    public AnimationPlayer(GamePanel gp, Entity en) {
-        this.gp = gp;
-        this.en = en;
+    public AnimationPlayer(Entity entity) {
+        setEntity(entity);
     }
 
     /**
@@ -69,8 +63,12 @@ public class AnimationPlayer {
      * @param loop     Whether the animation should loop.
      */
     public void newAnimation(String name, int[] track, int frames, float duration, boolean loop) {
-        Animation animation = new Animation(gp, name, track, frames, duration, loop);
+        Animation animation = new Animation(name, track, frames, duration, loop);
         animations.put(name, animation);
+    }
+
+    public void newAnimation(Animation animation) {
+        animations.put(animation.name, animation);
     }
 
     /**
@@ -80,11 +78,8 @@ public class AnimationPlayer {
      */
     public void playAnimation(String name) {
         if (isPlaying()) {
-            if (currentAnimation.name.equals(name)) {
-                return;
-            } else {
-                currentAnimation.stop();
-            }
+            if (currentAnimation.name.equals(name)) return;
+            else currentAnimation.stop();
         }
         this.currentAnimation = animations.get(name);
         this.currentAnimation.start();
@@ -94,9 +89,7 @@ public class AnimationPlayer {
      * Stops the currently playing animation.
      */
     public void stopAnimation() {
-        if (isPlaying()) {
-            this.currentAnimation.stop();
-        }
+        if (isPlaying()) this.currentAnimation.stop();
         this.currentAnimation = null;
     }
 
@@ -122,22 +115,21 @@ public class AnimationPlayer {
      * @return The index of the current frame in the track.
      */
     public int getFrame() {
-        if (isPlaying()) {
-            return currentAnimation.getFrame();
-        }
+        if (isPlaying()) return currentAnimation.getFrame();
         return 0;
     }
 
     /**
      * Sets the sprite image to a spritesheet and defines its tile dimensions.
      *
-     * @param path     The path to the spritesheet resource (e.g., "/map/spritesheet.png").
+     * @param name     The name of the spritesheet file in the spritesheet folder.
      * @param tilesX   The number of tiles horizontally on the spritesheet.
      * @param tilesY   The number of tiles vertically on the spritesheet.
      */
-    public void setSpritesheet(String path, int tilesX, int tilesY) {
+    public void setSpritesheet(String name, int tilesX, int tilesY) {
         try {
-            sheet = ImageIO.read(getClass().getResourceAsStream(path));
+            sheet = ResourceLoader.loadSpritesheet(name);
+            sheetName = name;
             sheetDim = new Vector(tilesX, tilesY);
             frameSize = new Vector(sheet.getWidth() / sheetDim.x, sheet.getHeight() / sheetDim.y);
         } catch (Exception e) {
@@ -160,7 +152,7 @@ public class AnimationPlayer {
         }
         BufferedImage currentFrame = sheet.getSubimage(coordX * frameSize.x, 
                 coordY * frameSize.y, frameSize.x, frameSize.y);
-        en.setImage(currentFrame);
+        if (entity != null) entity.setImage(currentFrame);
     }
 
     /**
@@ -172,6 +164,18 @@ public class AnimationPlayer {
     public void setFrame(int frameX, int frameY) {
         BufferedImage currentFrame = sheet.getSubimage(frameX * frameSize.x, 
                 frameY * frameSize.y, frameSize.x, frameSize.y);
-        en.setImage(currentFrame);
+        if (entity != null) entity.setImage(currentFrame);
+    }
+
+    /**
+     * Sets the entity associated with this animation player.
+     * @param entity the entity to set
+     */
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    public Map<String,Animation> getAnimations() {
+        return animations;
     }
 }
