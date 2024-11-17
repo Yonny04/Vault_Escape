@@ -3,6 +3,7 @@ package game.map;
 import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.Tile;
+import game.tile.entity.character.enemy.*;
 
 import java.util.*;
 
@@ -36,6 +37,12 @@ public class Generator<T extends Tile> {
             for (int i = 0; i < count; i++) {
                 Class<?>[] args = new Class[]{GamePanel.class, Vector.class};
                 Vector tile = gp.getTileGenerator().nextEmptyTile();
+                if (type == Camera.class) {
+                    tile = gp.getTileGenerator().nextCameraTile();
+                }
+                else if (type == Laser.class) {
+                    tile = gp.getTileGenerator().nextLaserTile();
+                }
                 T element = type.getDeclaredConstructor(args).newInstance(gp, tile);
                 elements.add(element);
             }

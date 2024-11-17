@@ -6,6 +6,7 @@ import game.tile.Tile;
 import game.utils.*;
 
 import java.awt.Graphics2D;
+import java.util.Map;
 
 /**
  * Represents a base entity in the game, with movement, collision detection, and
@@ -13,7 +14,7 @@ import java.awt.Graphics2D;
  * extend this class to inherit these common behaviors.
  */
 public class Entity extends Tile {
-    protected Tile _shadow;
+    protected Tile shadow;
 
     protected AnimationPlayer animationPlayer;
 
@@ -36,11 +37,23 @@ public class Entity extends Tile {
      * Sets the size of the shadow and loads its image from resources.
      */
     private void createShadow() {
-        _shadow = new Tile(gp);
-        _shadow.setSize(new Vector(14, 6).scale(Vector.SCALE));
-        _shadow.setImage(ResourceLoader.loadSpritesheet("shadow"));
+        shadow = new Tile(gp);
+        shadow.setSize(new Vector(14, 6).scale(Vector.SCALE));
+        shadow.setImage(ResourceLoader.loadSpritesheet("shadow"));
+        shadow.setLayer(Layer.BOTTOM);
     }
 
+    /**
+     * Checks if this entity has a shadow.
+     * @return true if this entity has a shadow, false otherwise
+     */
+    public boolean hasShadow() {return shadow != null;}
+    /**
+     * Returns the shadow tile for this entity.
+     * For drawing purposes, the shadow is rendered beneath the entity.
+     * @return the shadow tile for this entity
+     */
+    public Tile getShadow() {return shadow;}
 
     /**
      * Checks if this entity is touching the player. 
@@ -53,6 +66,21 @@ public class Entity extends Tile {
         return isTouching(gp.getPlayer());
     }
 
+    public boolean isTouchingWall() {
+        Map<String, Tile> walls = gp.getTileGenerator().wallTiles;
+        for (int i=-1; i<=1; i++) {
+            for (int j=-1; j<=1; j++) {
+                String unit = rect.add(new Vector(i*64, j*64)).getUnitString();
+                if (walls.containsKey(unit)) {
+                    Tile wall = walls.get(unit);
+                    if (isTouching(wall) && wall.collisionMask) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     @Override
     public void update() {
         animationPlayer.update();
@@ -66,7 +94,6 @@ public class Entity extends Tile {
      */
     @Override
     public void draw(Graphics2D g2) {
-        drawShadow(g2);
         super.draw(g2);
     }
 
@@ -77,9 +104,9 @@ public class Entity extends Tile {
      * @param g2 the Graphics2D object used for rendering
      */
     public void drawShadow(Graphics2D g2) {
-        if (isVisible()) {
-            _shadow.setPosition(rect.x + 4, rect.y + 4*12);
-            _shadow.draw(g2);
+        if (isVisible() && shadow != null) {
+            shadow.setPosition(rect.x + 4, rect.y + 4*12);
+            shadow.draw(g2);
         }
     }
 

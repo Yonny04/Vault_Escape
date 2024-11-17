@@ -2,9 +2,7 @@ package game.tile.entity.character;
 
 import game.object.Vector;
 import game.panel.GamePanel;
-import game.tile.Tile;
 import game.tile.entity.Entity;
-import game.tile.entity.character.enemy.Enemy;
 import game.utils.ResourceLoader;
 
 /**
@@ -18,9 +16,9 @@ public class Character extends Entity {
      */
     public enum Direction {LEFT, RIGHT, UP, DOWN}
     
-    protected Direction direction = Direction.LEFT; // Default direction is LEFT
+    protected Direction direction = Direction.DOWN; // Default direction is LEFT
     protected int speed;
-    protected int maxSpeed = 7;
+    protected int maxSpeed = 8;
 
     /**
      * Constructs a Character with the specified game panel and starting position.
@@ -48,12 +46,7 @@ public class Character extends Entity {
      * @return true if the entity is not touching any walls, false otherwise
      */
     public boolean canMove() {
-        for (Tile wall : gp.getTileGenerator().wallTiles) {
-            if (isTouching(wall) && wall.collisionMask) {
-                return false;
-            }
-        }
-        return true;
+        return !isTouchingWall();
     }
 
     /**
@@ -63,7 +56,6 @@ public class Character extends Entity {
      * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
      */
     public void move(Direction direction) {
-        if (gp.introFade > 0) {getAnimationPlayer().stopAnimation(); return;}
         Vector oldPosition = rect.getPosition();
         setDirection(direction);
         switch (direction) {
@@ -92,9 +84,6 @@ public class Character extends Entity {
      * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
      */
     public void moveUnsafe(Direction direction) {
-        if (gp.introFade > 0 && this instanceof Enemy) {
-            getAnimationPlayer().stopAnimation(); return;
-        }
         setDirection(direction);
         switch (direction) {
             case LEFT:
@@ -114,16 +103,18 @@ public class Character extends Entity {
         }
     }
 
+    public void idle() {
+        getAnimationPlayer().stopAnimation();
+        getAnimationPlayer().setFrame(1, direction.ordinal());
+    }
+
      /**
      * Adds the movement speed of the character.
      *
      * @param value the value to add to speed
      */
     public void addSpeed(int value) {
-        this.speed += value;
-        if (this.speed >= maxSpeed) {
-            this.speed = maxSpeed;
-        }
+        this.speed = Math.min(speed+value,maxSpeed);
     }
 
     /**
@@ -131,10 +122,13 @@ public class Character extends Entity {
      * @param speed the new speed of the character
      */
     public void setSpeed(int speed) {
-        if (speed >= maxSpeed) {
-            this.speed = maxSpeed;
-            return;
-        }
-        this.speed = speed;
+        this.speed = Math.min(speed,maxSpeed);
     }
+
+    /**
+     * Retrieves the current movement speed of the character.
+     *
+     * @return the speed of the character.
+     */
+    public int getSpeed() {return speed;}
 }

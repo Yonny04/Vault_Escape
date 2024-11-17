@@ -67,13 +67,13 @@ public class Tile {
      * @param g2 the Graphics2D object used to render the sprite
      */
     public void draw(Graphics2D g2) {
+        if (!isVisible()) return;
+        if (!isVisibleOnScreen()) return;
         Vector offset = gp.getPlayer().getCameraOffset();
         Vector camera = gp.getPlayer().getCameraPosition();
         screen.setPosition(rect.subtract(camera).add(offset));
-        if (isVisibleOnScreen() && isVisible()) {
-            g2.drawImage(image, screen.x, screen.y, rect.w, rect.h, null);
-            if (drawCollisions) drawHitbox(g2);
-        }
+        g2.drawImage(image, screen.x, screen.y, rect.w, rect.h, null);
+        if (drawCollisions) drawHitbox(g2);
     }
 
     /**
@@ -82,7 +82,7 @@ public class Tile {
      * @param g2 the Graphics2D object used to render the hitbox
      */
     public void drawHitbox(Graphics2D g2) {
-        if (drawCollisions && !hitbox.getSize().isZero() && isVisible()) {
+        if (isVisible() && drawCollisions && !hitbox.getSize().isZero()) {
             g2.setColor(new Color(0,1.0f,1.0f,0.5f));
             g2.drawRect(screen.x + hitbox.x,screen.y + hitbox.y, hitbox.w, hitbox.h);
         }
@@ -139,7 +139,7 @@ public class Tile {
      * @return true if this object is above the specified tile, false otherwise.
      */
     public boolean isAbove(Tile tile) {
-        return getCenter().y > tile.getCenter().y;
+        return getCenter().y < tile.getCenter().y;
     }
 
     /**

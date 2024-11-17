@@ -40,10 +40,11 @@ public class EnemyGenerator {
      * @param dogsCount   The number of dogs to spawn.
      * @param cameraCount The number of cameras to spawn.
      */
-    public void spawnAll(int guardsCount, int dogsCount, int cameraCount) {
+    public void spawnAll(int guardsCount, int dogsCount, int cameraCount, int laserCount) {
         spawn(Guard.class, guardsCount);
         spawn(Dog.class, dogsCount);
         spawn(Camera.class, cameraCount);
+        spawn(Laser.class, laserCount);
     }
 
     /**
@@ -62,9 +63,7 @@ public class EnemyGenerator {
      */
     public void addEnemySpeed(int value) {
         for (Enemy enemy : generator.elements) {
-            if (enemy instanceof Guard || enemy instanceof Dog) {
-                enemy.addSpeed(value);
-            }
+            enemy.addSpeed(value);
         }
     }
 

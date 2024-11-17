@@ -14,7 +14,7 @@ import java.util.Random;
  */
 public class Enemy extends Character {
 
-    protected Timer attackCooldown = new Timer(1.0);
+    protected Timer attackCooldown = new Timer(1.25);
     protected int range = 0;
     protected int timeReduction = 0;
     protected Label attackLabel = new Label(ColorPalette.RED,true);
@@ -30,18 +30,9 @@ public class Enemy extends Character {
         attackLabel.setFont(gp.font);
     }
 
-    /**
-     * Retrieves the current movement speed of the enemy.
-     *
-     * @return the speed of the enemy
-     */
-    public int getSpeed() {
-        return speed;
-    }
-
     @Override
     public void update() {
-        if (isTouchingPlayer() && canAttack()) attack();
+        if (canAttack()) attack();
         super.update();
     }
     /**
@@ -58,7 +49,9 @@ public class Enemy extends Character {
      *
      * @return true if the cooldown period has passed, false otherwise
      */
-    public boolean canAttack() {return attackCooldown.isTimeUp() || gp.introFade > 0;}
+    public boolean canAttack() {
+        return attackCooldown.isTimeUp() && isTouchingPlayer();
+    }
 
     /**
      * Checks if the player is within the dog's chase range.
@@ -68,6 +61,11 @@ public class Enemy extends Character {
     public boolean isPlayerInRange() {
         Rect player = gp.getPlayer().getRect();
         return Math.abs(player.x - rect.x) < range && Math.abs(player.y - rect.y) <= range;
+    }
+
+    @Override
+    public void setSpeed(int speed) {
+        super.setSpeed(speed);
     }
     
 }

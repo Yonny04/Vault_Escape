@@ -5,6 +5,7 @@ import game.tile.entity.Entity;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.*;
 /**
@@ -22,7 +23,7 @@ public class ResourceLoader {
     public static BufferedImage loadImage(String path) {
         try {
             return ImageIO.read(ResourceLoader.class.getResourceAsStream(path));
-        } catch (Exception e) {e.printStackTrace();return null;}
+        } catch (Exception e) {return null;}
     }
 
     /**
@@ -59,7 +60,7 @@ public class ResourceLoader {
 
     /**
      * Loads a file to read from the given path. Loads
-     * .map|.anim|.animp files only.
+     * .map, .anim, .animp files only.
      * @param path the path to the file (including file format)
      * @return the loaded file to read, or null if the file could not be loaded
      */
@@ -72,42 +73,33 @@ public class ResourceLoader {
     }
 
     /**
+     * Loads the game font from the given path.
+     * @return the loaded font or null if the font could not be loaded
+     */
+    public static Font loadFont(int size) {
+        try {
+            String path = "/ui/royal-intonation.ttf";
+            InputStream stream = ResourceLoader.class.getResourceAsStream(path);
+            Font font = Font.createFont(Font.TRUETYPE_FONT,stream).deriveFont(Font.PLAIN,size);
+            return font;
+        } catch (Exception e) {return null;}
+    }
+
+    /**
      * Loads an animation from the given path.
      * @param name the name of the animation file
      * @return the loaded animation or null if the animation could not be loaded
      */
-    public static Animation loadAnimation(String name) {
+    public static void loadAnimation(AnimationPlayer animationPlayer, String name) {
         try {
             String globalPath = String.format("/animation/%s.anim",name);
             BufferedReader file = loadFile(globalPath);
             Animation animation = readAnimationFromFile(file);
             file.close();
-            return animation;
-        } catch (Exception e) {return null;}
+            animationPlayer.newAnimation(animation);
+        } catch (Exception e) {}
     }
 
-    /**
-     * Reads an Animation from the given file.
-     * @param file the file to read the Animation from
-     * @return the Animation read from the file or null if the Animation could not be read
-     */
-    private static Animation readAnimationFromFile(BufferedReader file) {
-        try {
-            file.readLine();
-            String name = file.readLine().split("::")[1];
-            int frames = Integer.parseInt(file.readLine());
-            int[] track = new int[frames];
-            String[] trackString = file.readLine().split(",");
-                for (int i = 0; i < frames; i++) {
-                    track[i] = Integer.parseInt(trackString[i]);
-                }
-            float duration = Float.parseFloat(file.readLine());
-            boolean loop = Boolean.parseBoolean(file.readLine());
-            file.readLine();
-            Animation animation = new Animation(name,track,frames,duration,loop);
-            return animation;
-        } catch (Exception e) {return null;}
-    }
     /**
      * Loads an AnimationPlayer from the given path and configures the given entity.
      * @param entity the entity to load the AnimationPlayer for
@@ -142,7 +134,30 @@ public class ResourceLoader {
     }
 
     /**
+     * Reads an Animation from the given file.
+     * @param file the file to read the Animation from
+     * @return the Animation read from the file or null if the Animation could not be read
+     */
+    private static Animation readAnimationFromFile(BufferedReader file) {
+        try {
+            file.readLine();
+            String name = file.readLine().split("::")[1];
+            int frames = Integer.parseInt(file.readLine());
+            int[] track = new int[frames];
+            String[] trackString = file.readLine().split(",");
+                for (int i = 0; i < frames; i++) {
+                    track[i] = Integer.parseInt(trackString[i]);
+                }
+            float duration = Float.parseFloat(file.readLine());
+            boolean loop = Boolean.parseBoolean(file.readLine());
+            file.readLine();
+            Animation animation = new Animation(name,track,frames,duration,loop);
+            return animation;
+        } catch (Exception e) {return null;}
+    }
+
+    /**
      * Enum for specifying the type of resource to load.
      */
-    public enum Resource {SFX,MUSIC,IMAGE,ANIMATION};
+    public enum Resource {SFX,MUSIC};
 }

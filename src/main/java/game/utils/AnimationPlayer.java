@@ -59,11 +59,11 @@ public class AnimationPlayer {
      * @param name     The name of the animation.
      * @param track    An array representing the frame sequence of the animation.
      * @param frames   The number of frames in the animation.
-     * @param duration The duration of the animation in seconds.
+     * @param speed    The speed at which the animation should play.
      * @param loop     Whether the animation should loop.
      */
-    public void newAnimation(String name, int[] track, int frames, float duration, boolean loop) {
-        Animation animation = new Animation(name, track, frames, duration, loop);
+    public void newAnimation(String name, int[] track, int frames, float speed, boolean loop) {
+        Animation animation = new Animation(name, track, frames, speed, loop);
         animations.put(name, animation);
     }
 
@@ -91,6 +91,10 @@ public class AnimationPlayer {
     public void stopAnimation() {
         if (isPlaying()) this.currentAnimation.stop();
         this.currentAnimation = null;
+    }
+
+    public void setAnimationSpeed(float speed) {
+        if (isPlaying()) currentAnimation.setSpeed(speed);
     }
 
     /**

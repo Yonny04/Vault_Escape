@@ -13,7 +13,6 @@ import game.utils.*;
 import javax.swing.JPanel;
 
 import java.awt.*;
-import java.io.InputStream;
 
 /**
  * Represents the main game panel where all game elements are drawn and updated, such as the player, enemies,
@@ -40,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Rewards
     private final RewardGenerator rewardGenerator = new RewardGenerator(this);
-    private final int VALUABLES_COUNT = 6;
+    private final int VALUABLES_COUNT = 5;
     private final int DIAMONDS_COUNT = 1;
 
     // Enemies
@@ -48,6 +47,7 @@ public class GamePanel extends JPanel implements Runnable {
     private static final int GUARDS_COUNT = 9;
     private static final int DOGS_COUNT = 3;
     private static final int CAMERA_COUNT = 4;
+    private static final int LASER_COUNT = 4;
 
     // In-Game UI
     public int introFade = 255;
@@ -62,8 +62,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Timer
     private Timer timer;
-    public static final double LEVEL_TIME = 61.0;
-    private int lastTime = 61;
+    public static final double LEVEL_TIME = 66.0;
+    private int lastTime = 68;
 
     // Thread
     private Thread gameThread;
@@ -71,7 +71,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // App reference and font resource
     public App app;
-    public Font font;
+    public Font font = ResourceLoader.loadFont(32);
 
     /**
      * Constructs the GamePanel, setting up game dimensions, components, resources, and input listeners.
@@ -85,7 +85,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyh);
         this.setFocusable(true);
-        this.loadResources();
         this.loadOverlayContainer();
     }
 
@@ -98,18 +97,6 @@ public class GamePanel extends JPanel implements Runnable {
         overlayContainer.addLabel(timerLabel);
         overlayContainer.addLabel(valuablesLabel);
         overlayContainer.addLabel(scoreLabel);
-    }
-
-    /**
-     * Loads the font resource and any other future global resources needed for the game UI.
-     */
-    private void loadResources() {
-        try {
-            InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
-            font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 32);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -216,7 +203,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void startGameThread() {
         timer = new Timer(LEVEL_TIME);
-        enemyGenerator.spawnAll(GUARDS_COUNT, DOGS_COUNT, CAMERA_COUNT);
+        enemyGenerator.spawnAll(GUARDS_COUNT, DOGS_COUNT, CAMERA_COUNT,LASER_COUNT);
         rewardGenerator.spawnAll(VALUABLES_COUNT,DIAMONDS_COUNT);
         gameThread = new Thread(this);
         gameThread.start();
@@ -258,7 +245,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public int getFinalScore() {
         if (timer.isTimeUp()) return player.getScore();
-        else return (int)getTimer().getTimeLeft() / 50 + 200 + player.getScore();
+        else return (int)getTimer().getTimeLeft() / 30 + 200 + player.getScore();
     }
 
     /**
@@ -329,15 +316,17 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Draw Time and Score Overlay Container
         String timeString = String.format("Time Left: %ds", timer.getSecondsLeft());
+        int valuablesCount = rewardGenerator.generator.getCountByType(Valuable.class);
         String valuablesString = String.format("Valuables Left: %d",
-            rewardGenerator.generator.getCountByType(Valuable.class));
+            valuablesCount);
+        if (valuablesCount == 0) valuablesString = "All Valuables Collected! Escape!";
         String scoreText = String.format("Score: %04d",player.getScore());
         overlayContainer.getLabel(0).setText(timeString);
         overlayContainer.getLabel(1).setText(valuablesString);
         overlayContainer.getLabel(2).setText(scoreText);
         overlayContainer.draw(g2);
 
-        if (sfx.isPlaying("alarm")) {
+        if (sfx.isPlaying("alarm") || sfx.isPlaying("laser") ) {
             g2.setColor(new Color(1.0f, 0.0f, 0.0f, 0.3f));
             g2.fillRect(0,0,SCREEN_SIZE.x,SCREEN_SIZE.y);
         }

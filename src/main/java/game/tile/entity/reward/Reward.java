@@ -70,14 +70,14 @@ public class Reward extends Entity {
     }
     /**
      * Draws the shadow below the entity at a calculated offset.
-     * This should be called before the main draw call to render beneath the entity.
+     * Keeps the shadow fixed as the reward moves up and down.
      *
      * @param g2 the Graphics2D object used for rendering
      */
     @Override
     public void drawShadow(Graphics2D g2) {
-        _shadow.setPosition(rect.x + 4, rect.y + 4*12 - (rect.y - oldRect.y)+16);
-        _shadow.draw(g2);
+        shadow.setPosition(rect.x + 4, rect.y + 4*12 - (rect.y - oldRect.y)+16);
+        shadow.draw(g2);
     }
 
     /**

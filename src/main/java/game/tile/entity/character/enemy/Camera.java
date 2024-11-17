@@ -1,10 +1,13 @@
 package game.tile.entity.character.enemy;
 
-import game.object.Vector;
+import game.object.*;
 import game.panel.GamePanel;
+import game.tile.Tile;
+import game.tile.entity.Entity;
 import game.utils.*;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Represents a Camera enemy entity in the game, which detects the player within a specified range.
@@ -12,6 +15,9 @@ import java.awt.*;
  * specific actions in the game, such as speeding up gameplay.
  */
 public class Camera extends Enemy {
+    private Entity spotlight;
+    private Timer spotlightTimer = new Timer(1.25);
+    private boolean spotlightOn = false;
 
     /**
      * Constructs a Camera object with specified game panel, position, and detection range.
@@ -21,20 +27,61 @@ public class Camera extends Enemy {
      */
     public Camera(GamePanel gp, Vector start) {
         super(gp, start);
-        this.range = 128;
-        getAnimationPlayer().setSpritesheet("camera", 2, 3);
-        getAnimationPlayer().newAnimation(ResourceLoader.loadAnimation("camera"));
-        getAnimationPlayer().playAnimation("move");
-        getAnimationPlayer().setFrame(0);
+        this.range = 96;
+        
+        shadow.hide();
         attackLabel.setColor(ColorPalette.PURPLE);
+        animationPlayer.setSpritesheet("camera",3,4);
+        animationPlayer.setFrame(0);
+        setLayer(Layer.TOP);
+        setupSpotlight();
+        setSpeed(3);
     }
+    
+    /**
+     * Sets up the spotlight for the camera entity, 
+     * which is the area that the camera can detect the player within.
+     */
+    private void setupSpotlight() {
+        spotlight = new Entity(gp,rect.getPosition());
+        spotlight.getShadow().hide();
+        spotlight.setLayer(Layer.ORDERED);
+        spotlight.setImage(ResourceLoader.loadSpritesheet("camera_spotlight"));
+        spotlight.setSize(new Vector(32,16).scale(Vector.SCALE));
+        spotlight.setHitbox(new Rect(0,-16,128,72));
+        spotlight.hide();
+        moveSpotlight();
+    }
+
+    private void moveSpotlight() {
+        Random random = new Random();
+        Vector next = new Vector(random.nextInt(-3,3),random.nextInt(0,3)+2).toGlobal();
+        next = next.add(spotlight.getSize().scale(0.5));
+        spotlight.setPosition(rect.add(next));
+    }
+
+    public Tile getSpotlight() {return spotlight;}
 
     @Override
     public void update() {
-        if (isPlayerInRange() && canAttack()) {
-            attack();
+        if (spotlightTimer.isTimeUp()) {
+            moveSpotlight();
+            toggleSpotlight();
+            int frame = spotlightOn ? 1:0;
+            getAnimationPlayer().setFrame(frame,direction.ordinal());
         }
         super.update();
+    }
+    
+    private void toggleSpotlight() {
+        spotlightOn = !spotlightOn;
+        spotlightTimer.start();
+        if (spotlight.getRect().x < rect.x) setDirection(Direction.LEFT);
+        if (spotlight.getRect().x > rect.x) setDirection(Direction.RIGHT);
+        if (Math.abs(spotlight.getRect().y-rect.y) > Math.abs(spotlight.getRect().x-rect.x-128)) setDirection(Direction.DOWN);
+        if (spotlightOn) spotlight.show();
+        else spotlight.hide();
+        spotlightTimer.setCountdownTime((double)4/speed);
     }
     /**
      * Draws the camera entity, including a red detection range indicator.
@@ -48,12 +95,17 @@ public class Camera extends Enemy {
             g2.setColor(Color.red);
             g2.drawOval(screen.x + rect.w / 2 - range, screen.y + rect.h / 2 - range, range * 2, range * 2);
         }
+        if (gp.introFade > 0) return;
         if ((double)(attackCooldown.getTimeLeft() / 1000.0) > 0.5 && !canAttack()) {
             attackLabel.setText(String.format("+1 Patrol",timeReduction));
             attackLabel.draw(g2,gp.getPlayer().getScreenPosition().subtract(new Vector(32,0)));
         }
     }
-   
+
+    @Override
+    public boolean canAttack() {
+        return (spotlightOn && spotlight.isTouchingPlayer() && attackCooldown.isTimeUp());
+    }
     /**
      * Executes the attack action for the entity. 
      * If the current animation frame is an odd number (indicating the red light is on), it plays an alarm sound,
@@ -61,11 +113,11 @@ public class Camera extends Enemy {
      */
     @Override
     public void attack() {
-        if (getAnimationPlayer().getFrame() % 2 == 1) { // When red light on
-            gp.getSFX().play("alarm");
-            gp.getEnemyGenerator().addEnemySpeed(1);
-            super.attack();
-        }
+        gp.getSFX().play("alarm");
+        gp.getSFX().loop(1);
+        spotlightTimer.start();
+        getAnimationPlayer().setFrame(2,direction.ordinal());
+        gp.getEnemyGenerator().addEnemySpeed(1);
+        super.attack();
     }
-
 }

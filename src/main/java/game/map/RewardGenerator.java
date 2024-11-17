@@ -14,7 +14,7 @@ import java.util.*;
 public class RewardGenerator {
     public Generator<Reward> generator;
 
-    private Timer bonusSpawnTimer = new Timer(10);
+    private Timer bonusSpawnTimer = new Timer(8);
 
     /**
      * Constructs a RewardGenerator with a specified game panel and tile generator.

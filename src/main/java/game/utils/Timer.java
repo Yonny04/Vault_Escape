@@ -63,4 +63,8 @@ public final class Timer {
     public void decreaseTime(int seconds) {
         this.countdownTime = Math.max(countdownTime - seconds * 1000, 0);
     }
+
+    public void setCountdownTime(double seconds) {
+        this.countdownTime = (long)Math.floor(seconds * 1000);
+    }
 }

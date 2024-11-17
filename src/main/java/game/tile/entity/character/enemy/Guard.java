@@ -2,6 +2,7 @@ package game.tile.entity.character.enemy;
 
 import game.object.Vector;
 import game.panel.GamePanel;
+import game.utils.Timer;
 
 import java.awt.Graphics2D;
 import java.util.Random;
@@ -13,9 +14,10 @@ import java.util.Random;
  */
 public class Guard extends Enemy {
     
-    private boolean isHorizontal; // Direction type: true if movement is horizontal, false if vertical
+    private boolean isHorizontal = new Random().nextBoolean(); // Direction type: true if movement is horizontal, false if vertical
     private boolean goingEnd = true;
-    private int timeReduction = 5;
+    private int timeReduction = 4;
+    private Timer wallHitCooldown = new Timer(0.15);
 
     /**
      * Constructs a Guard entity with a specified patrol range.
@@ -25,15 +27,8 @@ public class Guard extends Enemy {
      */
     public Guard(GamePanel gp, Vector start) {
         super(gp, start);
-        this.speed = 2;
-        setPath();
         getAnimationPlayer().setSpritesheet("guard", 4, 4);
-        getAnimationPlayer().setFrame(9);
-    }
-
-    public void setPath() {
-        Random random = new Random();
-        this.isHorizontal = random.nextBoolean();
+        setSpeed(2);
     }
     /**
      * Updates the guard's position along its patrol path. If the guard reaches the end of the path,
@@ -41,26 +36,40 @@ public class Guard extends Enemy {
      */
     @Override
     public void update() {
-        if (speed > 7) speed = 7;
-        
-        Vector old = rect.getPosition();
+        if (!wallHitCooldown.isTimeUp()) {
+            getAnimationPlayer().stopAnimation();
+            getAnimationPlayer().setFrame(1, direction.ordinal());
+            return;
+        }
         if (isHorizontal){
-            if (goingEnd) moveUnsafe(Direction.RIGHT);
-            else moveUnsafe(Direction.LEFT);
-            if (!canMove()) {turnAround(); rect.x = old.x;}
+            if (goingEnd) move(Direction.RIGHT);
+            else move(Direction.LEFT);
         } else {
-            if (goingEnd) moveUnsafe(Direction.DOWN);
-            else moveUnsafe(Direction.UP);
-            if (!canMove()) {turnAround(); rect.y = old.y;}
+            if (goingEnd) move(Direction.DOWN);
+            else move(Direction.UP);
+        }
+        
+        super.update();
+    }
+
+    @Override
+    public void move(Direction direction) {
+        Vector oldPosition = rect.getPosition();
+        moveUnsafe(direction);
+        if (!canMove()) {
+            turnAround();
+            setPosition(oldPosition);
         }
         getAnimationPlayer().playAnimation(direction.name());
-        super.update();
     }
 
     /**
      * Reverses the guard's direction along its patrol path.
      */
-    private void turnAround() {goingEnd = !goingEnd;}
+    private void turnAround() {
+        goingEnd = !goingEnd;
+        wallHitCooldown.start();
+    }
 
     /**
      * Draws the guard entity. With debug collisions enabled, the 
@@ -71,6 +80,7 @@ public class Guard extends Enemy {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
+        if (gp.introFade > 0) return;
         if ((double)(attackCooldown.getTimeLeft() / 1000.0) > 0.5 && !canAttack()) {
             attackLabel.setText(String.format("-%ds",timeReduction));
             attackLabel.draw(g2,gp.getPlayer().getScreenPosition());
@@ -82,5 +92,11 @@ public class Guard extends Enemy {
         gp.getSFX().play("hit");
         gp.getTimer().decreaseTime(timeReduction);
         super.attack();
+    }
+
+    @Override
+    public void setSpeed(int speed) {
+        wallHitCooldown.setCountdownTime(0.4/speed);
+        super.setSpeed(speed);
     }
 }

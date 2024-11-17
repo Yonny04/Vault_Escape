@@ -7,7 +7,7 @@ import game.tile.Tile;
 import game.tile.Tile.Layer;
 import game.tile.entity.Exit;
 import game.tile.entity.character.Player;
-import game.tile.entity.character.enemy.Enemy;
+import game.tile.entity.character.enemy.*;
 import game.tile.entity.reward.Reward;
 import game.utils.ResourceLoader;
 
@@ -19,6 +19,7 @@ import java.util.*;
 /**
  * Responsible for generating and managing the tiles in the game, including floors, walls, and available tiles for spawning.
  * Loads map data from resources and separates tiles based on their types and properties.
+ * Also handles drawing the tiles in the correct order to ensure proper layering in the game.
  */
 public class TileGenerator {
 
@@ -31,11 +32,18 @@ public class TileGenerator {
     public BufferedImage wallSheet;
 
     public List<Vector> emptyTiles = new ArrayList<>();
-    public List<Tile> wallTiles = new ArrayList<>();
-    public List<Tile> floorTiles = new ArrayList<>();
+    public Map<String, Tile> wallTiles = new HashMap<String, Tile>();
+    public Set<Tile> floorTiles = new HashSet<>();
+
+    private List<Tile> cameraTiles = new ArrayList<>();
+    private List<Tile> laserTiles = new ArrayList<>();
 
     private final static int[] _bottomWallNums = {
         2, 4, 6, 8, 9, 10, 12, 14, 16, 26, 34, 36, 38, 40, 74, 76, 78, 80};
+
+    private final static int[] _cameraWallNums = {1,3,5,7,13,15,25,51,52};
+
+    private final static int[] _laserWallNums = {2,4,6,8,9,10,14,16,26};
 
     /**
      * Constructs the TileGenerator, loading the spritesheets and map data from resources.
@@ -113,6 +121,20 @@ public class TileGenerator {
         return emptyTiles.get(randomIndex);
     }
 
+    public Vector nextCameraTile() { 
+        Random rand = new Random();
+        int randIndex = rand.nextInt(0, cameraTiles.size());
+        Tile wall = cameraTiles.remove(randIndex);
+        return wall.getPosition().add(new Vector(0, 16));
+    }
+
+    public Vector nextLaserTile() {
+        Random rand = new Random();
+        int randIndex = rand.nextInt(0, laserTiles.size());
+        Tile wall = laserTiles.remove(randIndex);
+        return wall.getPosition();
+    }
+
     /**
      * Uses up a random available tile in the map for entity spawning.
      *
@@ -172,11 +194,12 @@ public class TileGenerator {
         tile.setImage(getWallTileImage(tileNumber));
         tile.setLayer(Layer.BOTTOM);
         tile.getHitbox().setSize(tile.getSize().scale(0.8));
+        tile.getHitbox().setPosition(8,0);
         // Vault Door
         if (tileNumber == 75) {
             if (exit == null){
                 exit = new Exit(gp,rect.getPosition());
-                wallTiles.add(exit);
+                wallTiles.put(rect.getUnitString(),exit);
                 exit.setLayer(Layer.ORDERED);
             }
             return;
@@ -184,34 +207,31 @@ public class TileGenerator {
         // Doors and Upper Pillar (no collision)
         if (tileNumber >= 17 && tileNumber <= 25) {
             tile.setCollisionMask(false);
-            wallTiles.add(tile);
+            wallTiles.put(rect.getUnitString(),tile);
             if (tileNumber == 18 || tileNumber == 20) tile.setLayer(Layer.ORDERED);
             else tile.setLayer(Layer.TOP);
             return;
         }
 
         boolean isBottomTile = false;
-        for (int num : _bottomWallNums) {
-            if (tileNumber == num) {
-                isBottomTile = true;
-                break;
-            }
-        }
+        for (int num : _bottomWallNums) if (tileNumber == num) {isBottomTile = true;break;}
+        for (int num : _cameraWallNums) if (tileNumber == num) {cameraTiles.add(tile);break;}
+        for (int num : _laserWallNums) {if (tileNumber == num) {laserTiles.add(tile);break;}}
+        
         if (isBottomTile) {
-            wallTiles.add(tile);
             if (tileNumber == 26) { // Bottom Pillar
                 tile.getHitbox().setRect(new Rect(16,16,24,16));
                 tile.setLayer(Layer.ORDERED);
             } else if (tileNumber == 74) {
-                tile.getHitbox().setRect(new Rect(0,16,32,8));
+                tile.getHitbox().setRect(new Rect(0,16,48,8));
             } else tile.setLayer(Layer.BOTTOM);
         } else {
-            wallTiles.add(tile);
             if (tileNumber != 48) tile.setLayer(Layer.TOP);
             else tile.setLayer(Layer.BOTTOM);
         }
+        wallTiles.put(rect.getUnitString(),tile);
     }
-    
+
     /**
      * Draws all tiles and entities in the game panel, managing their draw order.
      *
@@ -225,18 +245,29 @@ public class TileGenerator {
 
     /**
      * Draws the bottom layer of tiles, including floor tiles and wall tiles with Layer.BOTTOM.
-     *
+     * Also draws shadows for enemies, rewards, and the player.
      * @param g2 The Graphics2D object used for drawing.
      */
     private void drawBottom(Graphics2D g2) {
-        for (Tile floor : floorTiles) {
-            floor.draw(g2);
-        }
-        for (Tile wall : wallTiles) {
+        List<Enemy> enemies = gp.getEnemyGenerator().getEnemies();
+        List<Reward> rewards = gp.getRewardGenerator().getRewards();
+        Player player = gp.getPlayer();
+        for (Tile wall : getScreenTiles()) {
             if (wall.layer == Layer.BOTTOM) {
                 wall.draw(g2);
             }
         }
+        for (Reward reward : rewards) {
+            reward.drawShadow(g2);
+        }
+        for (Enemy enemy : enemies) {
+            if (enemy instanceof Camera) {
+                Camera camera = (Camera) enemy;
+                camera.getSpotlight().draw(g2);
+            }
+            enemy.drawShadow(g2);
+        }
+        player.drawShadow(g2);
     }
 
     /**
@@ -251,28 +282,31 @@ public class TileGenerator {
         Player player = gp.getPlayer();
         
         for (Enemy enemy : enemies) {
-            if (player.isAbove(enemy)) enemy.draw(g2);
+            if (!player.isAbove(enemy) && enemy.layer == Layer.ORDERED) enemy.draw(g2);
+            if (enemy instanceof Laser) ((Laser)enemy).drawLaser(g2);
         }
         for (Reward reward : rewards) {
-            if (player.isAbove(reward)) reward.draw(g2);
+            if (!player.isAbove(reward)) reward.draw(g2);
         }
-        for (Tile wall : wallTiles) {
-            if (wall.layer == Layer.ORDERED && player.isAbove(wall)) wall.draw(g2);
+        for (Tile wall : getScreenTiles()) {
+            if (wall.layer == Layer.ORDERED && !player.isAbove(wall)) wall.draw(g2);
         }
         if (exit != null && player.isAbove(exit)) exit.draw(g2);
         
         player.draw(g2);
         
+        for (Tile wall : getScreenTiles()) {
+            if (wall.layer == Layer.ORDERED && player.isAbove(wall)) wall.draw(g2);
+        }
+
         for (Enemy enemy : enemies) {
-            if (!player.isAbove(enemy)) enemy.draw(g2);
+            if (player.isAbove(enemy)) enemy.draw(g2);
         }
         for (Reward reward : rewards) {
-            if (!player.isAbove(reward)) reward.draw(g2);
+            if (player.isAbove(reward)) reward.draw(g2);
         }
-        for (Tile wall : wallTiles) {
-            if (wall.layer == Layer.ORDERED && !player.isAbove(wall)) wall.draw(g2);
-        }
-        if (exit != null && !player.isAbove(exit)) exit.draw(g2);
+        
+        if (exit != null && player.isAbove(exit)) exit.draw(g2);
     }
 
     /**
@@ -281,11 +315,31 @@ public class TileGenerator {
      * @param g2 The Graphics2D object used for drawing.
      */
     private void drawTop(Graphics2D g2) {
-        for (Tile wall : wallTiles) {
+        List<Enemy> enemies = gp.getEnemyGenerator().getEnemies();
+        for (Tile wall : wallTiles.values()) {
             if (wall.layer == Layer.TOP) {
                 wall.draw(g2);
             }
         }
+        for (Enemy enemy : enemies) {
+            if (enemy.layer == Layer.TOP) enemy.draw(g2);
+        }
+    }
+
+    /**
+     * Updates the camera entities in the game panel.
+     *
+     * @return a list of tiles that are currently visible on the screen
+     */
+    private List<Tile> getScreenTiles() {
+        List<Tile> screenTiles = new ArrayList<>();
+        for (Tile floor : floorTiles) {
+            if (floor.isVisibleOnScreen()) screenTiles.add(floor);
+        }
+        for (Tile wall : wallTiles.values()) {
+            if (wall.isVisibleOnScreen() || wall instanceof Exit) screenTiles.add(wall);
+        }
+        return screenTiles;
     }
 
 }

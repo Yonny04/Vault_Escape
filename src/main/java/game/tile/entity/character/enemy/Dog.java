@@ -25,11 +25,11 @@ public class Dog extends Enemy {
      */
     public Dog(GamePanel gp, Vector start) {
         super(gp, start);
-        this.speed = 3;
+        this.maxSpeed = 6;
+        setSpeed(3);
         this.range = 172;
         next.x = next.y = 0;
         getAnimationPlayer().setSpritesheet("dog", 4, 4);
-        getAnimationPlayer().setFrame(1);
     }
 
     /**
@@ -40,7 +40,7 @@ public class Dog extends Enemy {
     public void update() {
         if (speed > 5) speed = 5;
         if (!biteCooldown.isTimeUp()) {
-            getAnimationPlayer().stopAnimation(); 
+            idle();
             return;
         }
         if (isPlayerInRange()) {
@@ -69,7 +69,7 @@ public class Dog extends Enemy {
             if (next.x > 0) move(Direction.RIGHT);
             else if (next.x < 0) move(Direction.LEFT);
             getAnimationPlayer().playAnimation(direction.name());
-        } else getAnimationPlayer().setFrame(1,direction.ordinal());
+        } else idle();
     }
 
     /**
@@ -82,10 +82,10 @@ public class Dog extends Enemy {
         Vector delta = player.subtract(getPosition());
 
         
-        if (delta.x > 0) move(Direction.RIGHT);
-        else if (delta.x < 0) move(Direction.LEFT);
-        if (delta.y > 0) move(Direction.DOWN);
-        else if (delta.y < 0) move(Direction.UP);
+        if (delta.x > 1) move(Direction.RIGHT);
+        else if (delta.x < 1) move(Direction.LEFT);
+        if (delta.y > 1) move(Direction.DOWN);
+        else if (delta.y < 1) move(Direction.UP);
 
         if (Math.abs(delta.x) > Math.abs(delta.y)) {
             if (delta.x > 0) setDirection(Direction.RIGHT);
@@ -110,6 +110,7 @@ public class Dog extends Enemy {
             g2.drawOval(screen.x + rect.w/2 - range, 
                 screen.y + rect.h/2 - range, range * 2, range * 2);
         }
+        if (gp.introFade > 0) return;
         if ((double)(attackCooldown.getTimeLeft() / 1000.0) > 0.5 && !canAttack()) {
             attackLabel.setText(String.format("-%ds",timeReduction));
             attackLabel.draw(g2,gp.getPlayer().getScreenPosition());
@@ -118,7 +119,7 @@ public class Dog extends Enemy {
 
     @Override
     public void attack() {
-        if (speed > 4) this.speed = 4;
+        setSpeed(Math.max(speed-1,4));
         gp.getSFX().play("bite");
         gp.getTimer().decreaseTime(timeReduction);
         biteCooldown.start();

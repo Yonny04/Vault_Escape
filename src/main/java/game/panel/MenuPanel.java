@@ -1,19 +1,20 @@
 package game.panel;
 
+import game.App;
 import game.audio.Music;
+import game.utils.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 
 /**
  * A custom JPanel that displays the main menu of the game, including buttons to start the game,
  * view best scores, and exit. The panel includes a background image, custom font, and button styling.
  */
 public class MenuPanel extends JPanel {
+    private App app;
     private Image background; // Background image for the menu
     private Font font; // Custom font for menu buttons and title
     public Music music = new Music();
@@ -25,9 +26,11 @@ public class MenuPanel extends JPanel {
      * @param bestScoresListener the ActionListener for the best scores button
      * @param exitListener the ActionListener for the exit button
      */
-    public MenuPanel(ActionListener startListener, ActionListener bestScoresListener, ActionListener instructionListener, ActionListener exitListener) {
+    public MenuPanel(App app, ActionListener startListener, ActionListener bestScoresListener, ActionListener instructionListener, ActionListener exitListener) {
+        this.app = app;
         this.setLayout(null);
-        this.loadResources();
+        background = ResourceLoader.loadSpritesheet("background");
+        font = ResourceLoader.loadFont(24);
         music.play("music");
 
         JButton buttonStart = new JButton("Start");
@@ -57,28 +60,14 @@ public class MenuPanel extends JPanel {
     }
 
     /**
-     * Loads the custom font and background image for the menu panel.
-     */
-    private void loadResources() {
-        try {
-            InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
-            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background.png");
-            background = ImageIO.read(backgroundStream);
-            font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 16);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Applies custom styling to a JButton, including font, background color, and foreground color.
      *
      * @param button the JButton to style
      */
     private void styleButton(JButton button) {
         button.setFont(font);
-        button.setBackground(new Color(82, 45, 61));
-        button.setForeground(Color.GRAY);
+        button.setBackground(ColorPalette.GREY);
+        button.setForeground(ColorPalette.WHITE);
         button.setFocusPainted(false);
     }
 

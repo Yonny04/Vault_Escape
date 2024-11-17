@@ -9,7 +9,7 @@ import game.utils.*;
  * Bonus rewards provide additional points to the player when collected.
  */
 public class Diamond extends Reward {
-    private Timer spawnDuration = new Timer(12);
+    private Timer spawnDuration = new Timer(11);
 
     /**
      * Constructs a Diamond with a specified position, point value, and spawn time.
@@ -18,7 +18,7 @@ public class Diamond extends Reward {
      * @param start the starting position
      */
     public Diamond(GamePanel gp, Vector start) {
-        super(gp, start, 150);
+        super(gp, start, 200);
         scoreLabel.setColor(ColorPalette.LIGHT_PURPLE);
     }
 

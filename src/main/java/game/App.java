@@ -1,5 +1,6 @@
 package game;
 
+import game.audio.*;
 import game.panel.*;
 
 import javax.swing.JFrame;
@@ -16,6 +17,9 @@ public class App extends JFrame {
     private InstructionsPanel ip; // The instructions panel
     private BestScoresPanel bsp; // The best scores panel
 
+    protected Music music = new Music();
+    protected SFX sfx = new SFX();
+
     /**
      * Constructs the main application window, initializing the menu panel and setting
      * up the JFrame properties.
@@ -23,11 +27,11 @@ public class App extends JFrame {
     public App() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1280, 768);
-        setResizable(false);
         setTitle("Vault Escape");
+        setResizable(false);
         setLocationRelativeTo(null);
         
-        mp = new MenuPanel(
+        mp = new MenuPanel(this,
             e -> startGame(),  // Start game action listener
             e -> showBestScores(), // Show best scores action listener
             e -> showInstructions(), // Show instructions action listener

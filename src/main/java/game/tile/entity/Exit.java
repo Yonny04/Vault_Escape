@@ -23,16 +23,10 @@ public class Exit extends Entity {
         this.rect.w *= 2;
         this.rect.h *= 2;
         hitbox.setSize(rect.getSize());
+        shadow.hide();
         ResourceLoader.loadAnimationPlayer(this, "exit");
         getAnimationPlayer().setFrame(0);
     }
-
-    /**
-     * Overrides the drawShadow to remove it from the Exit Door.
-     * @param g2 the Graphics2D object used for rendering
-     */
-    @Override
-    public void drawShadow(Graphics2D g2) {}
 
     /**
      * Updates the exit door's sprite state. It will open after all regular

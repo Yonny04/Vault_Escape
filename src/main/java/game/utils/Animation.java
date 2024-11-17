@@ -21,14 +21,14 @@ public class Animation {
      * @param name      The name of the animation.
      * @param track     An array representing the frame sequence of the animation.
      * @param frames    The number of frames in the animation.
-     * @param duration  The duration of the animation in seconds.
+     * @param speed     The speed of the animation.
      * @param loop      Whether the animation should loop.
      */
-    public Animation(String name, int[] track, int frames, float duration, boolean loop) {
+    public Animation(String name, int[] track, int frames, float speed, boolean loop) {
         this.name = name;
         this.track = track;
         this.frames = frames;
-        this.duration = duration;
+        this.duration = speed;
         this.loop = loop;
         this.frameInterval = duration / (float)frames / 3.0f;
     }
@@ -79,5 +79,10 @@ public class Animation {
     public void stop() {
         isPlaying = false;
         frame = 0.0f;
+    }
+
+    public void setSpeed(float speed) {
+        this.duration = speed;
+        this.frameInterval = duration / (float)frames / 3.0f;
     }
 }

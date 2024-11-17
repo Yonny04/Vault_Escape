@@ -166,19 +166,26 @@ public class Vector {
     }
 
     /**
-     * Converts the current vector to tile coordinates.
+     * Converts the current vector to tile coordinates string.
      * 
-     * @return a new Vector2 object that is the tile representation of the vector
+     * @return a string representation of the tile coordinates
      */
-    public Vector toTile() {
-        return new Vector(x / TILE_SIZE.x, y / TILE_SIZE.y);
+    public String getUnitString() {
+        Vector tileVector = new Vector(x / TILE_SIZE.x, y / TILE_SIZE.y);
+        return String.format("%d, %d",tileVector.x,tileVector.y);
     }
-
+    
     public int distanceTo(Vector vector) {
         int diffY = (int)Math.pow((double)Math.abs(vector.y-y),2.0);
         int diffX = (int)Math.pow((double)Math.abs(vector.x-x),2.0);
         return (int)Math.round(Math.sqrt(diffY + diffX));
         
     }
+
+    @Override
+    public int hashCode() {
+        return x * 31 + y;
+    }
 }
+
 

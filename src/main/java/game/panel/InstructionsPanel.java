@@ -1,15 +1,17 @@
 package game.panel;
 
-import javax.imageio.ImageIO;
+import game.App;
+import game.utils.ResourceLoader;
+
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 
 public class InstructionsPanel extends JPanel{
     private Image background;
     private Font font;
+    public App app;
 
     /**
      * Constructs a InstructionsOverlay with instructions how to play the game.
@@ -17,8 +19,9 @@ public class InstructionsPanel extends JPanel{
      */
     public InstructionsPanel(ActionListener backListener) {
         this.setLayout(null);
-        loadResources();
+        font = ResourceLoader.loadFont(32);
 
+        background = ResourceLoader.loadSpritesheet("background");
         JLabel instructionsLabel = new JLabel("1. Use WASD to move!");
         styleLabel(instructionsLabel);
         instructionsLabel.setBounds(120, 250, 500, 100);
@@ -39,21 +42,6 @@ public class InstructionsPanel extends JPanel{
         backButton.setBounds(500, 500, 200, 50);
         backButton.addActionListener(backListener);
         this.add(backButton);
-    }
-
-    /**
-     * Loads the custom font for the overlay from resources.
-     * This font is used for displaying text in the overlay.
-     */
-    private void loadResources() {
-        try {
-            InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
-            InputStream backgroundStream = getClass().getResourceAsStream("/menu/background.png");
-            background = ImageIO.read(backgroundStream);
-            font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 32);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
