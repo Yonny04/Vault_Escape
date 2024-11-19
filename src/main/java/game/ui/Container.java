@@ -3,6 +3,7 @@ package game.ui;
 import game.object.Rect;
 import game.object.Vector;
 import game.panel.GamePanel;
+import game.utils.ResourceLoader;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,17 +16,19 @@ import java.util.List;
 public class Container extends Rect {
     GamePanel gp;
     Font font;
+    int fontSize;
 
     /**
      * Enum to define the possible alignments for labels: LEFT, TOP, BOTTOM.
      */
-    enum Alignment {LEFT, TOP, BOTTOM}
+    public enum Alignment {LEFT, CENTER, TOP, BOTTOM}
     
     Alignment horizontalAlignment = Alignment.LEFT;
     Alignment verticalAlignment = Alignment.BOTTOM;
 
-    int leftMargin = 48, rightMargin = 48, topMargin = 48, bottomMargin = 48;
+    int leftMargin = 48, rightMargin = 48, topMargin = -32, bottomMargin = 48;
     int separation = 48;
+    boolean isPanel = false; // Background panel for container
 
     List<Label> labels = new ArrayList<>();
 
@@ -44,6 +47,10 @@ public class Container extends Rect {
      * @param g2 The Graphics2D object used for drawing.
      */
     public void draw(Graphics2D g2) {
+        if (isPanel) {
+            g2.setColor(new Color(0,0,0,123));
+            g2.fillRect(x,y,w,h);
+        }
         Vector v = new Vector();
         startVector(v);
 
@@ -58,17 +65,30 @@ public class Container extends Rect {
                 v.y -= separation;
                 label.draw(g2, v);
             }
+        } else if (verticalAlignment == Alignment.CENTER) {
+            int totalHeight = separation * labels.size();
+            v.y -= totalHeight / 2;
+            for (Label label : labels) {
+                if (horizontalAlignment == Alignment.CENTER) {
+                    v.x = gp.SCREEN_SIZE.x/2 - label.getWidth()/2;
+                }
+                label.draw(g2, v);
+                v.y += separation;
+            }
         }
     }
 
     /**
      * Sets the font for the labels in this container.
      *
-     * @param font The font to set for the labels.
+     * @param size The font size to set for the labels.
      */
-    public void setFont(Font font) {
-        this.font = font;
+    public void setFont(int size) {
+        this.fontSize = size;
+        this.font = ResourceLoader.loadFont(size);
     }
+
+    public void setSeparation(int separation) {this.separation = separation;}
 
     /**
      * Adds a label to the container and sets its font.
@@ -78,7 +98,12 @@ public class Container extends Rect {
     public void addLabel(Label label) {
         label.index = labels.size();
         labels.add(label);
-        label.setFont(font);
+        label.setFont(fontSize);
+    }
+
+    public void addPanel(Rect panel) {
+        isPanel = true;
+        setRect(panel);
     }
 
     /**
@@ -101,6 +126,9 @@ public class Container extends Rect {
             case LEFT:
                 v.x = leftMargin;
                 break;
+            case CENTER:
+                v.x = gp.SCREEN_SIZE.x / 2;
+                break;
             default:
                 break;
         }
@@ -108,10 +136,23 @@ public class Container extends Rect {
             case TOP:
                 v.y = topMargin;
                 break;
+            case CENTER:
+                v.y = gp.SCREEN_SIZE.y / 2 + topMargin - bottomMargin;
+                break;
             case BOTTOM:
                 v.y = gp.SCREEN_SIZE.y - bottomMargin;
             default:
                 break;
         }
+    }
+
+    /**
+     * Sets the alignment for the container.
+     * @param hAlignment The horizontal alignment to set.
+     * @param vAlignment The vertical alignment to set.
+     */
+    public void setAlignment(Alignment hAlignment, Alignment vAlignment) {
+        this.horizontalAlignment = hAlignment;
+        this.verticalAlignment = vAlignment;
     }
 }

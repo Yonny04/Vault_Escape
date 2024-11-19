@@ -1,4 +1,4 @@
-package game.map;
+package game.level;
 
 import game.object.Rect;
 import game.object.Vector;
@@ -17,26 +17,31 @@ import java.io.BufferedReader;
 import java.util.*;
 
 /**
- * Responsible for generating and managing the tiles in the game, including floors, walls, and available tiles for spawning.
- * Loads map data from resources and separates tiles based on their types and properties.
- * Also handles drawing the tiles in the correct order to ensure proper layering in the game.
+ * Responsible for generating and managing the tiles in the game, 
+ * including floors, walls, and available tiles for spawning.
+ * Loads map data from resources and separates tiles based on their 
+ * types and properties. Also handles drawing the tiles in the correct 
+ * order to ensure proper layering in the game.
  */
-public class TileGenerator {
+public class TileManager {
 
     GamePanel gp;
-    TileGenerator tg;
     Random random;
     public Exit exit; // Exit door
 
-    public BufferedImage floorSheet;
-    public BufferedImage wallSheet;
+    private BufferedImage floorSheet;
+    private BufferedImage wallSheet;
 
-    public List<Vector> emptyTiles = new ArrayList<>();
-    public Map<String, Tile> wallTiles = new HashMap<String, Tile>();
-    public Set<Tile> floorTiles = new HashSet<>();
+    private List<Vector> emptyTiles = new ArrayList<>();
+    private Map<String, Tile> wallTiles = new HashMap<String, Tile>();
+    private Set<Tile> floorTiles = new HashSet<>();
 
     private List<Tile> cameraTiles = new ArrayList<>();
     private List<Tile> laserTiles = new ArrayList<>();
+
+    // Map properties
+    public final Vector MAP_TILE = new Vector(40,40); // Map Size (in tiles)
+    public final Vector MAP_SIZE = MAP_TILE.toGlobal(); // Map Size (in pixels)
 
     private final static int[] _bottomWallNums = {
         2, 4, 6, 8, 9, 10, 12, 14, 16, 26, 34, 36, 38, 40, 74, 76, 78, 80};
@@ -46,39 +51,27 @@ public class TileGenerator {
     private final static int[] _laserWallNums = {2,4,6,8,9,10,14,16,26};
 
     /**
-     * Constructs the TileGenerator, loading the spritesheets and map data from resources.
+     * Constructs the TileManager, loading the spritesheets and map data from resources.
      *
-     * @param gp the game panel associated with this tile generator
+     * @param gp the game panel associated with this tile manager
      */
-    public TileGenerator(GamePanel gp) {
+    public TileManager(GamePanel gp) {
         this.gp = gp;
-        setTileSpritesheet();
-        loadMap();
-    }
-
-    /**
-     * Loads the spritesheets for floor and wall tiles from resources.
-     */
-    public void setTileSpritesheet() {
-        try {
-            wallSheet = ResourceLoader.loadSpritesheet("wall");
-            floorSheet = ResourceLoader.loadSpritesheet("floor");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        wallSheet = ResourceLoader.loadSpritesheet("wall");
+        floorSheet = ResourceLoader.loadSpritesheet("floor");
     }
 
     /**
      * Loads the map data from text files and generates floor and wall tiles based on the map layout.
+     * @param reader the BufferedReader object used to read the map data
      */
-    public void loadMap() {
+    public void loadMap(BufferedReader reader, int colTiles, int rowTiles) {
         try {
-            BufferedReader reader = ResourceLoader.loadFile("/map/floor1.map");
-            for (int row = 0; row < gp.MAP_TILE.y; row++) {
+            for (int row = 0; row < rowTiles; row++) {
                 String line = reader.readLine();
                 String[] numberStrings = line.split(";");
     
-                for (int col = 0; col < gp.MAP_TILE.x; col++) {
+                for (int col = 0; col < colTiles; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
                     if (tileNumber > 0) {
                         Vector position = new Vector(col, row).toGlobal();
@@ -87,14 +80,12 @@ public class TileGenerator {
                     }
                 }
             }
-            reader.close();
-            reader = ResourceLoader.loadFile("/map/wall1.map");
-    
-            for (int row = 0; row < gp.MAP_TILE.y; row++) {
+            reader.readLine(); // Skip empty line
+            for (int row = 0; row < rowTiles; row++) {
                 String line = reader.readLine();
                 String[] numberStrings = line.split(";");
     
-                for (int col = 0; col < gp.MAP_TILE.x; col++) {
+                for (int col = 0; col < colTiles; col++) {
                     int tileNumber = Integer.parseInt(numberStrings[col]);
                     Vector pos = new Vector(col,row).toGlobal();
                     if (tileNumber > 0) {
@@ -105,8 +96,9 @@ public class TileGenerator {
                     }
                 }
             }
-            reader.close();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -133,6 +125,10 @@ public class TileGenerator {
         int randIndex = rand.nextInt(0, laserTiles.size());
         Tile wall = laserTiles.remove(randIndex);
         return wall.getPosition();
+    }
+
+    public Vector getPlayerTile() {
+        return exit.getPosition().add(new Vector(32,128));
     }
 
     /**
@@ -196,6 +192,8 @@ public class TileGenerator {
         tile.getHitbox().setSize(tile.getSize().scale(0.8));
         tile.getHitbox().setPosition(8,0);
         // Vault Door
+
+        if (tileNumber == 53) return;
         if (tileNumber == 75) {
             if (exit == null){
                 exit = new Exit(gp,rect.getPosition());
@@ -337,9 +335,14 @@ public class TileGenerator {
             if (floor.isVisibleOnScreen()) screenTiles.add(floor);
         }
         for (Tile wall : wallTiles.values()) {
-            if (wall.isVisibleOnScreen() || wall instanceof Exit) screenTiles.add(wall);
+            if (wall.isVisibleOnScreen()) screenTiles.add(wall);
         }
+        if (exit != null) screenTiles.add(exit);
         return screenTiles;
     }
+
+    public Map<String, Tile> getWallTiles() {return wallTiles;}
+
+    public Set<Tile> getFloorTiles() {return floorTiles;}
 
 }

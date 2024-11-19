@@ -2,9 +2,10 @@ package game.panel;
 
 import game.App;
 import game.audio.*;
-import game.map.*;
+import game.level.*;
 import game.object.Vector;
 import game.tile.entity.character.Player;
+import game.tile.entity.character.enemy.*;
 import game.tile.entity.reward.Valuable;
 import game.ui.Container;
 import game.ui.Label;
@@ -24,46 +25,31 @@ public class GamePanel extends JPanel implements Runnable {
     public final Vector SCREEN_DIM = new Vector(20,12); // Screen Size (in tiles)
     public final Vector SCREEN_SIZE = SCREEN_DIM.toGlobal(); // Screen Size (in pixels)
 
-    // Map properties
-    public final Vector MAP_TILE = new Vector(40,40); // Map Size (in tiles)
-    public final Vector MAP_SIZE = MAP_TILE.toGlobal(); // Map Size (in pixels)
-
     // Frames per second for game loop
     public final int FPS = 60;
 
+    public Level level;
+    private int levelScore = 0;
+
     // Game components
-    private final KeyDetector keyh = new KeyDetector();
-    private TileGenerator tileGenerator = new TileGenerator(this);
-    private final Vector playerSpawnPos = new Vector(33,3).toGlobal();
-    private final Player player = new Player(this, playerSpawnPos,keyh);
+    private final KeyDetector keyh;
+    private TileManager tileManager;
+    private final Player player;
 
-    // Rewards
-    private final RewardGenerator rewardGenerator = new RewardGenerator(this);
-    private final int VALUABLES_COUNT = 5;
-    private final int DIAMONDS_COUNT = 1;
-
-    // Enemies
-    private final EnemyGenerator enemyGenerator = new EnemyGenerator(this);
-    private static final int GUARDS_COUNT = 9;
-    private static final int DOGS_COUNT = 3;
-    private static final int CAMERA_COUNT = 4;
-    private static final int LASER_COUNT = 4;
+    // Generators
+    private final RewardGenerator rewardGenerator;
+    private final EnemyGenerator enemyGenerator;
 
     // In-Game UI
-    public int introFade = 255;
+    public int introFade = 300;
     private Container overlayContainer = new Container(this);
+    private Label levelLabel = new Label(ColorPalette.WHITE,true);
     private Label timerLabel = new Label(ColorPalette.WHITE,true);
     private Label valuablesLabel = new Label(ColorPalette.YELLOW,true);
     private Label scoreLabel = new Label(ColorPalette.LIGHT_PURPLE,true);
 
-    //Music Components
-    private Music music = new Music();
-    private SFX sfx = new SFX();
-
     // Timer
     private Timer timer;
-    public static final double LEVEL_TIME = 66.0;
-    private int lastTime = 68;
 
     // Thread
     private Thread gameThread;
@@ -71,21 +57,28 @@ public class GamePanel extends JPanel implements Runnable {
 
     // App reference and font resource
     public App app;
-    public Font font = ResourceLoader.loadFont(32);
 
     /**
      * Constructs the GamePanel, setting up game dimensions, components, resources, and input listeners.
      *
      * @param app the main application instance
      */
-    public GamePanel(App app) {
+    public GamePanel(App app, int levelNumber) {
         this.app = app;
-        this.setSize(SCREEN_SIZE.x, SCREEN_SIZE.y);
-        this.setBackground(ColorPalette.PURPLE);
-        this.setDoubleBuffered(true);
-        this.addKeyListener(keyh);
-        this.setFocusable(true);
-        this.loadOverlayContainer();
+        keyh = new KeyDetector();
+        rewardGenerator = new RewardGenerator(this);
+        enemyGenerator = new EnemyGenerator(this);
+        tileManager = new TileManager(this);
+        level = new Level(this, levelNumber);
+        player = new Player(this, new Vector(0,0), keyh);
+        lastTime = (int)level.TIME_LIMIT;
+
+        setSize(SCREEN_SIZE.x, SCREEN_SIZE.y);
+        setBackground(ColorPalette.PURPLE);
+        setDoubleBuffered(true);
+        addKeyListener(keyh);
+        setFocusable(true);
+        loadOverlayContainer();
     }
 
     /**
@@ -93,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
      * This method initializes the overlay container by adding the timer, valuables, and score labels.
      */
     private void loadOverlayContainer() {
-        overlayContainer.setFont(font);
+        overlayContainer.setFont(32);
         overlayContainer.addLabel(timerLabel);
         overlayContainer.addLabel(valuablesLabel);
         overlayContainer.addLabel(scoreLabel);
@@ -104,7 +97,7 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @return the tile generator for managing game map tiles
      */
-    public TileGenerator getTileGenerator() {return tileGenerator;}
+    public TileManager getTileManager() {return tileManager;}
 
     /**
      * Retrieves the reward generator instance.
@@ -124,25 +117,33 @@ public class GamePanel extends JPanel implements Runnable {
      * Gets the backround music (Music) object.
      * @return the Music object
      */
-    public Music getMusic() {return music;}
+    public Music getMusic() {return app.music;}
 
     /**
      * Gets the sound effects (SFX) object.
      * @return the SFX object
      */
-    public SFX getSFX() {return sfx;}
+    public SFX getSFX() {return app.sfx;}
+
+    /**
+     * Starts the game by initializing the game panel, setting it as the content pane,
+     * @return the game panel
+     */
+    public boolean isRunning() {return gameThread != null;}
 
     /**
      * Stops the game upon escaping the vault
      */
     public void completeGame(boolean isWin) {
         gameThread = null;
-        music.stop();
-        if (isWin) {
-            sfx.play("game_complete");
-            app.updateBestScoreAfterGame(getFinalScore());
+        getMusic().stop();
+        if (isWin) getSFX().play("game_complete");
+        else {
+            getSFX().play("game_over"); 
+            getSFX().play("alarm"); 
+            getSFX().loop(2);
         }
-        else {sfx.play("game_over"); sfx.play("alarm"); sfx.loop(2);}
+        app.addLevelScore();
         updateGameOverScreen(isWin);
         showGameOverScreen();
     }
@@ -157,19 +158,17 @@ public class GamePanel extends JPanel implements Runnable {
      */
     private void updateGameOverScreen(boolean isWin) {
         // If there is an existing overlay, remove it from the App's content pane
-        if (gameOverOverlay != null) {
-            app.remove(gameOverOverlay);
-        }
+        if (gameOverOverlay != null) app.remove(gameOverOverlay);
 
         // Create a new GameOverOverlay instance
-        gameOverOverlay = new GameOverOverlay(
-                player,
-                isWin,
-                (int)timer.getTimeLeft(),
-                getFinalScore(),
-                e -> {hideGameOverScreen();app.startGame();},
-                e -> {hideGameOverScreen();app.backToMenu();},
-                e -> System.exit(0)
+        gameOverOverlay = new GameOverOverlay(app, isWin,
+                e -> {hideGameOverScreen();
+                    if (isWin) app.nextLevel();
+                    else app.restartGame();},
+                e -> {hideGameOverScreen();
+                    app.backToMenu();
+                    getMusic().play("music");},
+                e -> {app.addHighScore();System.exit(0);}
         );
 
         gameOverOverlay.setBounds(0, 0, app.getWidth(), app.getHeight());
@@ -195,16 +194,20 @@ public class GamePanel extends JPanel implements Runnable {
      * This effectively removes the overlay from view without removing it from
      * the application frame, allowing it to be shown again later if needed.
      */
-    private void hideGameOverScreen() {
-        gameOverOverlay.setVisible(false);
-    }
+    private void hideGameOverScreen() {gameOverOverlay.setVisible(false);}
+
     /**
      * Starts the game thread, initializing the timer and generating enemies and rewards.
      */
     public void startGameThread() {
-        timer = new Timer(LEVEL_TIME);
-        enemyGenerator.spawnAll(GUARDS_COUNT, DOGS_COUNT, CAMERA_COUNT,LASER_COUNT);
-        rewardGenerator.spawnAll(VALUABLES_COUNT,DIAMONDS_COUNT);
+        timer = new Timer(level.TIME_LIMIT);
+        enemyGenerator.spawn(Guard.class, level.GUARDS_COUNT);
+        enemyGenerator.spawn(Dog.class, level.DOGS_COUNT);
+        enemyGenerator.spawn(Camera.class, level.CAMERA_COUNT);
+        enemyGenerator.spawn(Laser.class, level.LASER_COUNT);
+
+        rewardGenerator.spawn(Valuable.class, level.VALUABLES_COUNT);
+
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -217,13 +220,9 @@ public class GamePanel extends JPanel implements Runnable {
         double drawInterval = 1000000000 / FPS;
         double nextDrawTime = System.nanoTime() + drawInterval;
 
-        while (gameThread != null) {
+        while (isRunning()) {
             update();
             repaint();
-
-            if (timer.isTimeUp()) {
-                completeGame(false);
-            }
 
             try {
                 double remainingTime = nextDrawTime - System.nanoTime();
@@ -231,9 +230,9 @@ public class GamePanel extends JPanel implements Runnable {
                 if (remainingTime < 0) remainingTime = 0;
                 Thread.sleep((long) remainingTime);
                 nextDrawTime += drawInterval;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            } catch (InterruptedException e) {}
+            
+            if (timer.isTimeUp()) completeGame(false);
         }
     }
 
@@ -243,32 +242,46 @@ public class GamePanel extends JPanel implements Runnable {
      * 
      * @return the final score as an integer
      */
-    public int getFinalScore() {
-        if (timer.isTimeUp()) return player.getScore();
-        else return (int)getTimer().getTimeLeft() / 30 + 200 + player.getScore();
+    public int getTotalScore() {
+        return getTimeScore() + getLevelScore();
     }
+
+    public int getTimeScore() {
+        return (int)(getTimer().getTimeLeft()/30) + 100;
+    }
+
+    /**
+     * Retrieves the current score of the player.
+     *
+     * @return the player's score
+     */
+    public int getLevelScore() {return levelScore;}
+
+    /**
+     * Adds a specified number of points to the player's score.
+     *
+     * @param points the number of points to add to the score
+     */
+    public void addLevelScore(int points) {levelScore += points;}
 
     /**
      * Retrieves the timer instance.
      *
      * @return the timer managing the game's countdown
      */
-    public Timer getTimer() {
-        return timer;
-    }
+    public Timer getTimer() {return timer;}
 
     /**
      * Retrieves the player instance.
      *
      * @return the player entity
      */
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() {return player;}
 
     /**
      * Updates the state of the player, rewards, and enemies. Checks if the timer has expired.
      */
+    private int lastTime;
     public void update() {
         player.update();
         rewardGenerator.update(player);
@@ -277,28 +290,32 @@ public class GamePanel extends JPanel implements Runnable {
         // Gametime Logic (music changes + speed increase + countdown)
         int currentTime = (int)timer.getTimeLeft() / 1000;
         if (lastTime != currentTime) {
-            if (lastTime <= LEVEL_TIME && lastTime > 30 && !music.isPlaying("60")) {
-                music.play("60");
+            if (lastTime <= level.TIME_LIMIT && lastTime > level.TIME_LIMIT/2 
+                    && !getMusic().isPlaying("60")) {
+                getMusic().play("60");
             }
-            else if (lastTime <= 31 && lastTime > 15 && !music.isPlaying("30")) {
-                music.play("30");
-                sfx.play("time_tick");
+            else if (lastTime <= level.TIME_LIMIT/3 && lastTime > level.TIME_LIMIT/4 
+                    && !getMusic().isPlaying("30")) {
+                getMusic().play("30");
+                getSFX().play("time_tick");
                 enemyGenerator.addEnemySpeed(1);
             }
-            else if (lastTime <= 16 && lastTime > 0 && !music.isPlaying("15")) {
-                music.play("15");
-                sfx.play("time_tick");
+            else if (lastTime <= level.TIME_LIMIT/5 && lastTime > 0 
+                    && !getMusic().isPlaying("15")) {
+                getMusic().play("15");
+                getSFX().play("time_tick");
                 timerLabel.setColor(ColorPalette.RED);
                 enemyGenerator.addEnemySpeed(1);
                 player.addSpeed(1);
             }
-            if (lastTime <= 10) sfx.play("time_tick");
+            if (lastTime <= 10) getSFX().play("time_tick");
             lastTime = currentTime;
         }
         
     }
 
     private double _fadeLerp = 0.5;
+    private int scoreScreen = 0;
     /**
      * Paints all game elements onto the screen, including the background, 
      * player, enemies, rewards, and UI elements.
@@ -312,21 +329,23 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(Color.WHITE);
 
         // Draw Tiles and Entities
-        tileGenerator.draw(g2);
+        tileManager.draw(g2);
 
         // Draw Time and Score Overlay Container
+
+        if (scoreScreen < levelScore)scoreScreen++;
         String timeString = String.format("Time Left: %ds", timer.getSecondsLeft());
         int valuablesCount = rewardGenerator.generator.getCountByType(Valuable.class);
-        String valuablesString = String.format("Valuables Left: %d",
+        String valuablesString = String.format("Valuables Left: %02d",
             valuablesCount);
         if (valuablesCount == 0) valuablesString = "All Valuables Collected! Escape!";
-        String scoreText = String.format("Score: %04d",player.getScore());
+        String scoreText = String.format("Level Score: %06d",scoreScreen);
         overlayContainer.getLabel(0).setText(timeString);
         overlayContainer.getLabel(1).setText(valuablesString);
         overlayContainer.getLabel(2).setText(scoreText);
         overlayContainer.draw(g2);
 
-        if (sfx.isPlaying("alarm") || sfx.isPlaying("laser") ) {
+        if (app.sfx.isPlaying("alarm") || app.sfx.isPlaying("laser") ) {
             g2.setColor(new Color(1.0f, 0.0f, 0.0f, 0.3f));
             g2.fillRect(0,0,SCREEN_SIZE.x,SCREEN_SIZE.y);
         }
@@ -334,9 +353,12 @@ public class GamePanel extends JPanel implements Runnable {
         if (introFade > 0) {
             timer.start();
             
-            g2.setColor(new Color(89, 81, 120,introFade));
+            g2.setColor(new Color(89, 81, 120,Math.min(introFade,255)));
             g2.fillRect(0,0,SCREEN_SIZE.x,SCREEN_SIZE.y);
             introFade = (int)Math.round((double)introFade - 8.0 * _fadeLerp);
+
+            levelLabel.setText(String.format("LEVEL %02d",level.levelNumber));
+            levelLabel.draw(g2, new Vector(SCREEN_SIZE.x / 2 - 64, SCREEN_SIZE.y / 2));
         }
         g2.dispose();
     }

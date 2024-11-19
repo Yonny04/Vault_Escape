@@ -114,7 +114,6 @@ public class Camera extends Enemy {
     @Override
     public void attack() {
         gp.getSFX().play("alarm");
-        gp.getSFX().loop(1);
         spotlightTimer.start();
         getAnimationPlayer().setFrame(2,direction.ordinal());
         gp.getEnemyGenerator().addEnemySpeed(1);

@@ -1,4 +1,4 @@
-package game.map;
+package game.level;
 
 import game.panel.GamePanel;
 import game.tile.entity.character.Player;
@@ -36,17 +36,6 @@ public class RewardGenerator {
         spawnDiamond();
         checkRewardCollection(player);
         removeExpiredRewards();
-    }
-
-    /**
-     * Spawn a specified number of valuables and diamonds.
-     *
-     * @param valuables the number of valuables to generate
-     * @param diamonds the number of diamonds to generate
-     */
-    public void spawnAll(int valuables,int diamonds) {
-        generator.spawn(Valuable.class, valuables);
-        generator.spawn(Diamond.class, diamonds);
     }
 
     /**

@@ -1,7 +1,7 @@
 package game.ui;
 
 import game.object.*;
-import game.utils.ColorPalette;
+import game.utils.*;
 
 import java.awt.*;
 
@@ -10,12 +10,13 @@ import java.awt.*;
  * various properties such as color, visibility, and shadow.
  */
 public class Label extends Rect {
-    String text = "";
+    public String text = "";
     Color color = ColorPalette.WHITE;
     boolean visible = true;
     boolean hasShadow = false;
     boolean displayInt = false;
     Font font;
+    public int fontSize;
     public int index = 0;
 
     /**
@@ -26,7 +27,9 @@ public class Label extends Rect {
      */
     public Label(Color color, boolean shadow) {
         setColor(color);
+        setSize(new Vector());
         if (shadow) enableShadow();
+        
     }
 
     /**
@@ -39,9 +42,6 @@ public class Label extends Rect {
         if (isVisible()) {
             if (font != null) g2.setFont(font);
             setPosition(screen);
-            // FontMetrics metrics = g2.getFontMetrics(font);
-            // this.w = metrics.stringWidth(text);
-            // this.h = metrics.getHeight();
             if (hasShadow) {
                 g2.setColor(ColorPalette.SHADOW);
                 g2.drawString(text, screen.x, screen.y + 4);
@@ -67,6 +67,7 @@ public class Label extends Rect {
      */
     public void setText(String text) {
         this.text = text;
+        setSize(fontSize/2*text.length(), fontSize/2);
     }
 
     /**
@@ -74,8 +75,9 @@ public class Label extends Rect {
      *
      * @param font The font to set for the label.
      */
-    public void setFont(Font font) {
-        this.font = font;
+    public void setFont(int size) {
+        this.fontSize = size;
+        this.font = ResourceLoader.loadFont(size);
     }
 
     /**

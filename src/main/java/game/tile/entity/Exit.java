@@ -22,8 +22,9 @@ public class Exit extends Entity {
         super(gp,start);
         this.rect.w *= 2;
         this.rect.h *= 2;
-        hitbox.setSize(rect.getSize());
         shadow.hide();
+        hitbox.setPosition(16,16);
+        hitbox.setSize(rect.getSize().scale(0.8));
         ResourceLoader.loadAnimationPlayer(this, "exit");
         getAnimationPlayer().setFrame(0);
     }
@@ -36,7 +37,8 @@ public class Exit extends Entity {
     public void draw(Graphics2D g2) {
         if (!gp.getRewardGenerator().hasValuablesLeft() && !_open) {
             getAnimationPlayer().setFrame(1);
-            hitbox.setSize(rect.scale(0.5));
+            hitbox.setSize(rect.getSize().scale(0.4));
+            hitbox.setPosition(32,32);
             gp.getSFX().play("exit_open");
             _open = true;
         }

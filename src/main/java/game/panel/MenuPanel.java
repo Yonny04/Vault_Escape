@@ -1,7 +1,6 @@
 package game.panel;
 
 import game.App;
-import game.audio.Music;
 import game.utils.*;
 
 import javax.swing.*;
@@ -14,10 +13,8 @@ import java.awt.event.ActionListener;
  * view best scores, and exit. The panel includes a background image, custom font, and button styling.
  */
 public class MenuPanel extends JPanel {
-    private App app;
     private Image background; // Background image for the menu
     private Font font; // Custom font for menu buttons and title
-    public Music music = new Music();
 
     /**
      * Constructs the MenuPanel with specified action listeners for each button.
@@ -27,28 +24,27 @@ public class MenuPanel extends JPanel {
      * @param exitListener the ActionListener for the exit button
      */
     public MenuPanel(App app, ActionListener startListener, ActionListener bestScoresListener, ActionListener instructionListener, ActionListener exitListener) {
-        this.app = app;
         this.setLayout(null);
         background = ResourceLoader.loadSpritesheet("background");
         font = ResourceLoader.loadFont(24);
-        music.play("music");
+        if (!app.music.isPlaying("music")) app.music.play("music");
 
-        JButton buttonStart = new JButton("Start");
+        JButton buttonStart = new JButton("START");
         styleButton(buttonStart);
         buttonStart.setBounds(500, 300, 200, 50);
         buttonStart.addActionListener(startListener);
 
-        JButton buttonBestScores = new JButton("Best Scores");
+        JButton buttonBestScores = new JButton("HIGH SCORES");
         styleButton(buttonBestScores);
         buttonBestScores.setBounds(500, 370, 200, 50);
         buttonBestScores.addActionListener(bestScoresListener);
 
-        JButton buttonInstructions = new JButton("Instructions");
+        JButton buttonInstructions = new JButton("TUTORIAL");
         styleButton(buttonInstructions);
         buttonInstructions.setBounds(500, 440, 200, 50);
         buttonInstructions.addActionListener(instructionListener);
 
-        JButton buttonExit = new JButton("Exit");
+        JButton buttonExit = new JButton("EXIT");
         styleButton(buttonExit);
         buttonExit.setBounds(500, 510, 200, 50);
         buttonExit.addActionListener(exitListener);

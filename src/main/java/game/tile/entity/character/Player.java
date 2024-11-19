@@ -13,10 +13,10 @@ import java.util.Random;
  */
 public class Player extends Character {
     private KeyDetector keyh; // Key detector to manage player input
-    private int score = 0; // Player's current score
     private Vector camera = new Vector();
     private Vector cameraOffset = new Vector();
     private double cameraLerp = 0.064;
+    private Timer cameraShakeTimer = new Timer(0.2);
 
     /**
      * Constructs a Player entity with a specified game panel and key detector for movement input.
@@ -28,12 +28,11 @@ public class Player extends Character {
     public Player(GamePanel gp, Vector start, KeyDetector keyh) {
         super(gp,start);
         this.keyh = keyh;
-        this.speed = 5;
-        setPosition(start);
+        setSpeed(4);
         ResourceLoader.loadAnimationPlayer(this, "player");
-        setDirection(Direction.DOWN);
         camera.setPosition(rect);
         cameraOffset.setPosition(gp.SCREEN_SIZE.subtract(Vector.TILE_SIZE).scale(0.5));
+        setPosition(gp.getTileManager().getPlayerTile());
     }
 
     /**
@@ -51,20 +50,6 @@ public class Player extends Character {
     public Vector getCameraOffset() {return cameraOffset;}
     
     /**
-     * Retrieves the current score of the player.
-     *
-     * @return the player's score
-     */
-    public int getScore() {return score;}
-
-    /**
-     * Adds a specified number of points to the player's score.
-     *
-     * @param points the number of points to add to the score
-     */
-    public void addScore(int points) {score += points;}
-    
-    /**
      * Checks if the current sprite is touching an exit tile.
      * Iterates through all the wall tiles and checks for collisions.
      * If a wall tile is an instance of Exit, returns true.
@@ -73,7 +58,7 @@ public class Player extends Character {
      */
     public boolean canEscape() {
         if (gp.getRewardGenerator().hasValuablesLeft()) return false;
-        for (Tile wall : gp.getTileGenerator().wallTiles.values()) {
+        for (Tile wall : gp.getTileManager().getWallTiles().values()) {
             if (isTouching(wall)) {
                 if (wall instanceof Exit) {
                     return true;
@@ -121,18 +106,22 @@ public class Player extends Character {
      * Otherwise, the camera smoothly follows the target rectangle using linear interpolation.
      */
     private void updateCamera() {
-        if (gp.getSFX().isPlaying("bite") || gp.getSFX().isPlaying("hit")) {
+        if (!cameraShakeTimer.isTimeUp() && gp.introFade <= 0) {
             Random r = new Random();
             int d1 = r.nextInt(2);
             int d2 = r.nextInt(2);
             if (d1 == 0) d1 = -1;
             if (d2 == 0) d2 = -1;
-            Vector shakeOffset = new Vector(d1,d2).scale(r.nextInt(8,10));
+            Vector shakeOffset = new Vector(d1,d2).scale(8);
             camera = camera.add(shakeOffset);
         } else {
             Vector deltaCamera = rect.subtract(camera).scale(cameraLerp);
             camera = camera.add(deltaCamera);
         }
+    }
+
+    public void shakeCamera() {
+        cameraShakeTimer.start();
     }
     
 }

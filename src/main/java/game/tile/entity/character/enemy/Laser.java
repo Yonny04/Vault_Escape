@@ -10,6 +10,10 @@ import game.utils.Timer;
 import java.awt.Graphics2D;
 import java.util.*;
 
+/**
+ * Represents a Laser enemy entity in the game, which 
+ * emits a damaging laser beam in a horizontal or vertical direction.
+ */
 public class Laser extends Enemy {
     private boolean isHorizontal = new Random().nextBoolean();
     public List<Entity> laserTiles = new ArrayList<>();
@@ -18,10 +22,9 @@ public class Laser extends Enemy {
     private Timer laserTimer = new Timer(2);
 
     /**
-     * Constructs a Camera object with specified game panel, position, and detection range.
-     *
+     * Constructs a Laser object with the specified game panel and starting position.
      * @param gp the game panel associated with this entity
-     * @param start the camera's starting position
+     * @param start the starting position
      */
     public Laser(GamePanel gp, Vector start) {
         super(gp, start);
@@ -35,18 +38,28 @@ public class Laser extends Enemy {
         createLaser();
     }
 
+    /**
+     * Creates the laser tiles that make up the laser beam.
+     */
     private void createLaser() {
+        Map<String, Tile> wallTiles = gp.getTileManager().getWallTiles();
         Vector offset = new Vector(0, 64);
         Vector position = getPosition().add(offset);
-        while (!gp.getTileGenerator().wallTiles.containsKey(position.getUnitString())) {
-                Entity laserTile = new Entity(gp, position);
-                position = position.add(offset);
-                laserTile.getAnimationPlayer().setSpritesheet("laser", 3, 4);
-                laserTile.getAnimationPlayer().setFrame(2, 3);
-                laserTiles.add(laserTile);
+        String unit = position.getUnitString();
+        while (!wallTiles.containsKey(unit)) {
+            createLaserTile(position);
+            position = position.add(offset);
+            unit = position.getUnitString();
         }
+        createLaserTile(position);
+    }
+
+    /**
+     * Creates a single laser tile at the specified position and offset.
+     * @param position the position of the laser tile
+     */
+    private void createLaserTile(Vector position) {
         Entity laserTile = new Entity(gp, position);
-        position = position.add(offset);
         laserTile.getAnimationPlayer().setSpritesheet("laser", 3, 4);
         laserTile.getAnimationPlayer().setFrame(2, 3);
         laserTiles.add(laserTile);
@@ -77,7 +90,6 @@ public class Laser extends Enemy {
     @Override
     public void attack() {
         gp.getSFX().play("laser");
-        gp.getSFX().loop(1);
         laserTimer.start();
         gp.getTimer().decreaseTime(timeReduction);
         super.attack();
@@ -95,6 +107,10 @@ public class Laser extends Enemy {
         
     }
 
+    /**
+     * Draws the laser entity, including the laser tiles.
+     * @param g2 the Graphics2D object used to draw the laser entity
+     */
     public void drawLaser(Graphics2D g2) {
         if (!laserOn) return;
         for (Tile tile : laserTiles) {

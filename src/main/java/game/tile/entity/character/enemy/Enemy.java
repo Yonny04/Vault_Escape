@@ -27,7 +27,7 @@ public class Enemy extends Character {
      */
     public Enemy(GamePanel gp, Vector start) {
         super(gp, start);
-        attackLabel.setFont(gp.font);
+        attackLabel.setFont(32);
     }
 
     @Override
@@ -41,6 +41,7 @@ public class Enemy extends Character {
      */
     public void attack() {
         attackCooldown.start();
+        gp.getPlayer().shakeCamera();
     }
 
     /**

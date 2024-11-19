@@ -16,8 +16,8 @@ public class Guard extends Enemy {
     
     private boolean isHorizontal = new Random().nextBoolean(); // Direction type: true if movement is horizontal, false if vertical
     private boolean goingEnd = true;
-    private int timeReduction = 4;
-    private Timer wallHitCooldown = new Timer(0.15);
+    private int timeReduction = 3;
+    private Timer wallHitCooldown = new Timer(0.4);
 
     /**
      * Constructs a Guard entity with a specified patrol range.
@@ -96,7 +96,7 @@ public class Guard extends Enemy {
 
     @Override
     public void setSpeed(int speed) {
-        wallHitCooldown.setCountdownTime(0.4/speed);
+        wallHitCooldown.setCountdownTime(1.0/speed);
         super.setSpeed(speed);
     }
 }

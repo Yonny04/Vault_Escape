@@ -31,7 +31,7 @@ public class Reward extends Entity {
         this.points = points;
         setRewardImage();
         oldRect = rect.add(new Vector());
-        scoreLabel.setFont(gp.font);
+        scoreLabel.setFont(32);
     }
 
     /**
@@ -46,12 +46,19 @@ public class Reward extends Entity {
 
     }
 
+    /**
+     * Grants the reward points to the player and plays the pickup animation.
+     */
     public void pickup() {
-        gp.getPlayer().addScore(points);
+        gp.addLevelScore(points);
         getAnimationPlayer().playAnimation("pickup");
     }
 
     double i = 0;
+    /*
+     * Updates the reward entity, moving it up and down in a 
+     * sine wave pattern when the pickup animation is not playing.
+     */
     @Override
     public void update() {
         i += Math.PI / 20.0;
@@ -59,6 +66,9 @@ public class Reward extends Entity {
         super.update();
     }
 
+    /**
+     * Draws the reward entity and the score label above it when the pickup animation is playing.
+     */
     @Override
     public void draw(Graphics2D g2) {
         if (getAnimationPlayer().isPlaying()) { //Pickup animation

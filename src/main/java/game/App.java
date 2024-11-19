@@ -3,7 +3,9 @@ package game;
 import game.audio.*;
 import game.panel.*;
 
-import javax.swing.JFrame;
+import javax.swing.*;
+
+import java.awt.event.*;
 
 /**
  * Main application class for VaultEscape, handling the primary game window and
@@ -12,20 +14,25 @@ import javax.swing.JFrame;
  */
 public class App extends JFrame {
 
-    private GamePanel gp; // The main game panel
-    private MenuPanel mp; // The main menu panel
+    public GamePanel gp; // The main game panel
+    public MenuPanel mp; // The main menu panel
     private InstructionsPanel ip; // The instructions panel
     private BestScoresPanel bsp; // The best scores panel
 
-    protected Music music = new Music();
-    protected SFX sfx = new SFX();
+    public int currentLevel = 1;
+    public final int MAX_LEVEL = 4;
+    public int currentScore = 0;
+
+    public Music music = new Music();
+    public SFX sfx = new SFX();
 
     /**
      * Constructs the main application window, initializing the menu panel and setting
      * up the JFrame properties.
      */
     public App() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        App frame = this;
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(1280, 768);
         setTitle("Vault Escape");
         setResizable(false);
@@ -42,6 +49,19 @@ public class App extends JFrame {
 
         setContentPane(mp);
         setVisible(true);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if(JOptionPane.showConfirmDialog(frame, "Are you sure?") 
+                        == JOptionPane.OK_OPTION){
+                    frame.setVisible(false);
+                    frame.dispose();
+                    if (gp != null && !gp.isRunning()) addHighScore();
+                    System.exit(0);
+                }
+            }
+        });
     }
 
     /**
@@ -49,8 +69,8 @@ public class App extends JFrame {
      * and starting the game thread.
      */
     public void startGame() {
-        gp = new GamePanel(this);
-        mp.music.stop();
+        music.stop();
+        gp = new GamePanel(this,currentLevel);
         setContentPane(gp);
         revalidate();
         repaint();
@@ -58,13 +78,31 @@ public class App extends JFrame {
         gp.startGameThread();
     }
 
+    public void restartGame() {
+        addHighScore();
+        currentLevel = 1;
+        currentScore = 0;
+        startGame();
+    }
+    /**
+     * Method to notify the App of game completion and update the best scores.
+     */
+    public void nextLevel() {
+        currentLevel++;
+        startGame();
+    }
+
     /**
      * Method to notify the App of game completion and update the best scores.
      *
      * @param score the final score to add to BestScoresPanel
      */
-    public void updateBestScoreAfterGame(int score) {
-        bsp.addNewScore(score);     
+    public void addHighScore() {
+        bsp.addNewScore(currentScore);     
+    }
+
+    public void addLevelScore() {
+        currentScore += gp.getLevelScore() + gp.getTimeScore();
     }
 
     /**
@@ -87,8 +125,10 @@ public class App extends JFrame {
      * Returns to the main menu by setting the menu panel as the content pane.
      */
     public void backToMenu() {
+        addHighScore();
+        currentLevel = 1;
+        currentScore = 0;
         setContentPane(mp);
-        mp.music.play("music");
         revalidate();
         repaint();
     }

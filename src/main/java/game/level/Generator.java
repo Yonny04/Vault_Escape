@@ -1,4 +1,4 @@
-package game.map;
+package game.level;
 
 import game.object.Vector;
 import game.panel.GamePanel;
@@ -36,12 +36,12 @@ public class Generator<T extends Tile> {
         try {
             for (int i = 0; i < count; i++) {
                 Class<?>[] args = new Class[]{GamePanel.class, Vector.class};
-                Vector tile = gp.getTileGenerator().nextEmptyTile();
+                Vector tile = gp.getTileManager().nextEmptyTile();
                 if (type == Camera.class) {
-                    tile = gp.getTileGenerator().nextCameraTile();
+                    tile = gp.getTileManager().nextCameraTile();
                 }
                 else if (type == Laser.class) {
-                    tile = gp.getTileGenerator().nextLaserTile();
+                    tile = gp.getTileManager().nextLaserTile();
                 }
                 T element = type.getDeclaredConstructor(args).newInstance(gp, tile);
                 elements.add(element);

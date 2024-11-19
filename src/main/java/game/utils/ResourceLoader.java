@@ -86,9 +86,9 @@ public class ResourceLoader {
     }
 
     /**
-     * Loads an animation from the given path.
+     * Loads an animation from the given path into the given AnimationPlayer.
+     * @param animationPlayer the AnimationPlayer to load the animation into
      * @param name the name of the animation file
-     * @return the loaded animation or null if the animation could not be loaded
      */
     public static void loadAnimation(AnimationPlayer animationPlayer, String name) {
         try {

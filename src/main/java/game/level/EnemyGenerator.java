@@ -1,8 +1,8 @@
-package game.map;
+package game.level;
 
 import game.panel.GamePanel;
 import game.tile.entity.character.Player;
-import game.tile.entity.character.enemy.*;
+import game.tile.entity.character.enemy.Enemy;
 
 import java.util.List;
 
@@ -31,20 +31,6 @@ public class EnemyGenerator {
      */
     public void spawn(Class<? extends Enemy> type, int count) {
         generator.spawn(type, count);
-    }
-
-    /**
-     * Spawns the specified number of guards, dogs, and cameras.
-     *
-     * @param guardsCount The number of guards to spawn.
-     * @param dogsCount   The number of dogs to spawn.
-     * @param cameraCount The number of cameras to spawn.
-     */
-    public void spawnAll(int guardsCount, int dogsCount, int cameraCount, int laserCount) {
-        spawn(Guard.class, guardsCount);
-        spawn(Dog.class, dogsCount);
-        spawn(Camera.class, cameraCount);
-        spawn(Laser.class, laserCount);
     }
 
     /**

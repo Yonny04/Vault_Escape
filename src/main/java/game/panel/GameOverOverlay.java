@@ -1,85 +1,76 @@
 package game.panel;
 
-import game.tile.entity.character.Player;
+import game.App;
+import game.object.Rect;
+import game.ui.Container;
+import game.ui.Container.Alignment;
+import game.ui.Label;
+import game.utils.*;
 
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 
 /**
  * A JPanel that displays the Game Over overlay, showing the final score and options
  * to restart the game, return to the main menu, or exit the application.
  */
 public class GameOverOverlay extends JPanel {
-    private Font font;
+    private App app;
+    private Container container;
     /**
      * Constructs a GameOverOverlay with specified action listeners for buttons.
      *
-     * @param player the Player object containing the player's score
-     * @param restartListener the ActionListener for the restart button
+     * @param app the main application object
+     * @param isWin true if the game was won, false if the game was lost
+     * @param levelListener the ActionListener for the restart/next level button
      * @param menuListener the ActionListener for the main menu button
      * @param exitListener the ActionListener for the exit button
      */
-    public GameOverOverlay(Player player, boolean isWin, int timeLeft, int totalScore, ActionListener restartListener, ActionListener menuListener, ActionListener exitListener) {
+    public GameOverOverlay(App app, boolean isWin, ActionListener levelListener, ActionListener menuListener, ActionListener exitListener) {
+        this.app = app;
         this.setLayout(null);
-        loadResources();
+        
+        String titleText = isWin ? "YOU ESCAPED!" : "ARRESTED!";
+        Label titleLabel = new Label(isWin ? ColorPalette.GREEN : ColorPalette.RED, true);
+        Label lastScoreLabel = new Label(ColorPalette.PURPLE, true);
+        Label levelScoreLabel = new Label(ColorPalette.LIGHT_PURPLE, true);
+        Label timeBonusLabel = new Label(ColorPalette.WHITE, true);
+        Label currentScoreLabel = new Label(ColorPalette.YELLOW, true);
+        container = new Container(app.gp);
+        container.setAlignment(Alignment.CENTER, Alignment.CENTER);
+        container.setFont(32);
+        container.setSeparation(64);
+        container.addPanel(new Rect(app.gp.SCREEN_SIZE.x/2-64*4, app.gp.SCREEN_SIZE.y/2-64*5, 64*8-16, 64*10));
+        container.addLabel(titleLabel);
+        container.getLabel(0).setFont(48);
+        container.addLabel(lastScoreLabel);
+        container.addLabel(levelScoreLabel);
+        container.addLabel(timeBonusLabel);
+        container.addLabel(currentScoreLabel);
+        container.getLabel(0).setText(titleText);
+        
+        String levelButtonText = isWin ? "NEXT LEVEL" : "RESTART";
+        if (app.currentLevel < app.MAX_LEVEL) {
+            JButton levelButton = new JButton(levelButtonText);
+            styleButton(levelButton);
+            levelButton.setBounds(500, 450, 250, 50);
+            levelButton.addActionListener(levelListener);
+            this.add(levelButton);
+        }
 
-        String title = isWin ? "Victory!" : "Time is up!";
-
-        JLabel gameOverLabel = new JLabel(title);
-        styleLabel(gameOverLabel);
-        gameOverLabel.setBounds(450, 50, 300, 100);
-        this.add(gameOverLabel);
-
-        JLabel scoreLabel = new JLabel("Your score: " + player.getScore() );
-        styleLabel(scoreLabel);
-        scoreLabel.setBounds(410, 150, 400, 100);
-        this.add(scoreLabel);
-
-        int bonusScore = isWin ? (timeLeft / 50 + 200) : 0;
-        JLabel bonusScoreLabel = new JLabel("Time Bonus: " + bonusScore);
-        styleLabel(bonusScoreLabel);
-        bonusScoreLabel.setBounds(310, 250, 600, 100);
-        this.add(bonusScoreLabel);
-
-        JLabel totalScoreLabel = new JLabel("Total score: " + totalScore);
-        styleLabel(totalScoreLabel);
-        totalScoreLabel.setBounds(410, 350, 400, 100);
-        this.add(totalScoreLabel);
-
-        JButton restartButton = new JButton("Restart");
-        styleButton(restartButton);
-        restartButton.setBounds(500, 500, 200, 50);
-        restartButton.addActionListener(restartListener);
-        this.add(restartButton);
-
-        JButton menuButton = new JButton("Main Menu");
+        JButton menuButton = new JButton("BACK TO MENU");
         styleButton(menuButton);
-        menuButton.setBounds(500, 550, 200, 50);
+        menuButton.setBounds(500, 500, 250, 50);
         menuButton.addActionListener(menuListener);
         this.add(menuButton);
 
-        JButton exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("EXIT");
         styleButton(exitButton);
-        exitButton.setBounds(500, 600, 200, 50);
+        exitButton.setBounds(500, 550, 250, 50);
         exitButton.addActionListener(exitListener);
         this.add(exitButton);
-    }
-
-
-    /**
-     * Loads the custom font for the overlay from resources.
-     * This font is used for displaying text in the overlay.
-     */
-    private void loadResources() {
-        try {
-            InputStream fontStream = getClass().getResourceAsStream("/ui/royal-intonation.ttf");
-            font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 32);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -88,23 +79,13 @@ public class GameOverOverlay extends JPanel {
      * @param button the JButton to style
      */
     private void styleButton(JButton button) {
-        button.setFont(font);
-        button.setBackground(new Color(82, 45, 61));
-        button.setForeground(Color.GRAY);
+        button.setFont(ResourceLoader.loadFont(32));
+        button.setBackground(ColorPalette.GREY);
+        button.setForeground(ColorPalette.WHITE);
         button.setFocusPainted(false);
     }
 
-    /**
-     * Styles a JLabel with custom font and colors, centering the text.
-     *
-     * @param label the JLabel to style
-     */
-    private void styleLabel(JLabel label) {
-        label.setFont(font.deriveFont(Font.BOLD, 48));
-        label.setForeground(Color.WHITE);
-        label.setHorizontalAlignment(SwingConstants.CENTER); // Center the label text
-    }
-
+    private int screenScore = 0; 
     /**
      * Paints the background of the overlay with a semi-transparent color,
      * covering the entire area to create a modal effect.
@@ -114,7 +95,15 @@ public class GameOverOverlay extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(new Color(0, 0, 0, 100)); // Semi-transparent black
-        g.fillRect(400, 100, 400, 500); // Cover the entire area
+
+        String lastScoreText = String.format("LAST SCORE: %06d", app.currentScore - app.gp.getTimeScore() -app.gp.getLevelScore());
+        String levelScoreText = String.format("LEVEL SCORE: +%d", app.gp.getLevelScore());
+        String timeBonusText = String.format("TIME BONUS: +%d", app.gp.getTimeScore());
+        String currentScoreText = String.format("CURRENT SCORE: %06d", app.currentScore);
+        container.getLabel(1).setText(lastScoreText);
+        container.getLabel(2).setText(levelScoreText);
+        container.getLabel(3).setText(timeBonusText);
+        container.getLabel(4).setText(currentScoreText);
+        container.draw((Graphics2D)g);
     }
 }

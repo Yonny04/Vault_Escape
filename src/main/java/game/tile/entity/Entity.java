@@ -67,7 +67,7 @@ public class Entity extends Tile {
     }
 
     public boolean isTouchingWall() {
-        Map<String, Tile> walls = gp.getTileGenerator().wallTiles;
+        Map<String, Tile> walls = gp.getTileManager().getWallTiles();
         for (int i=-1; i<=1; i++) {
             for (int j=-1; j<=1; j++) {
                 String unit = rect.add(new Vector(i*64, j*64)).getUnitString();

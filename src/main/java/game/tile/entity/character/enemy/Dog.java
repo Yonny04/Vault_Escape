@@ -15,7 +15,7 @@ public class Dog extends Enemy {
     int timer = 0;
     private Vector next = new Vector();
     private Timer biteCooldown = new Timer(0.4);
-    int timeReduction = 3;
+    int timeReduction = 1;
 
     /**
      * Constructs a Dog object with a specified game panel and start position.
@@ -25,7 +25,7 @@ public class Dog extends Enemy {
      */
     public Dog(GamePanel gp, Vector start) {
         super(gp, start);
-        this.maxSpeed = 6;
+        this.maxSpeed = 5;
         setSpeed(3);
         this.range = 172;
         next.x = next.y = 0;
@@ -38,7 +38,6 @@ public class Dog extends Enemy {
      */
     @Override
     public void update() {
-        if (speed > 5) speed = 5;
         if (!biteCooldown.isTimeUp()) {
             idle();
             return;
@@ -119,7 +118,7 @@ public class Dog extends Enemy {
 
     @Override
     public void attack() {
-        setSpeed(Math.max(speed-1,4));
+        setSpeed(Math.max(speed-1,2));
         gp.getSFX().play("bite");
         gp.getTimer().decreaseTime(timeReduction);
         biteCooldown.start();

@@ -36,7 +36,7 @@ public class Tile {
         this.hitbox = new Rect();
         this.screen = new Vector();
         setPosition(start);
-        hitbox.setSize(getSize().scale(0.6));
+        hitbox.setSize(getSize().scale(0.5));
         hitbox.setPosition(hitbox.getSize().scale(0.4));
     }
 
