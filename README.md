@@ -1,6 +1,12 @@
 ## CMPT276 Project Group 12
 # Vault Escape
 
+## Instructions
+- Prerequisites: Ensure you have Maven `3.9.9` and JDK `17` installed and properly configured.
+- Build: Clone the repository. Then, open the repo folder in a terminal and run `mvn clean install`.
+- Test: Test the project by running `mvn test`.
+- Run: Open the .jar executable found at `{repository-folder}/target/vault-escape-0.6.jar`.
+
 ## Controls
 - **WASD** or **Arrow Keys** to Move.
 - **Left Click** to Interact with Buttons.
@@ -19,6 +25,9 @@ Dogs will wander around. Be careful, these dogs do bite. Come too close and they
 ### Cameras
 Getting caught on camera will make all the guards go crazy. Oh, and dogs too.
 
+### Lasers
+Avoid 'em at all costs. They hurt... at least I think they do.
+
 ### Valuables
 - **Golden Valuables:** Required to escape the vault.
 - **Lucky Diamonds:** They appear for a limited time and offer extra points.
@@ -26,7 +35,7 @@ Getting caught on camera will make all the guards go crazy. Oh, and dogs too.
 ## Game Rules
 
 1. **Collect All Golden Valuables:** To escape the vault, you must collect all the golden valuables.
-2. **Avoid Getting Caught:** Avoid being detected by guards and dogs.
+2. **Avoid Getting Caught:** Avoid being detected by enemies.
 3. **Exit the Vault:** After collecting all golden valuables, proceed to the vault exit before the time ends.
 4. **Game Over:** Failing to collect the gold valuables will result in game over.
 
