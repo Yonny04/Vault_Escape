@@ -1,6 +1,6 @@
 package game.object;
 
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +10,7 @@ public class TestRect {
     private Rect rect3;
     private Vector vector;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vector = new Vector(3, 4);
         rect1 = new Rect(5, 6);
