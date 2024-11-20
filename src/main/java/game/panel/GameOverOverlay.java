@@ -85,7 +85,6 @@ public class GameOverOverlay extends JPanel {
         button.setFocusPainted(false);
     }
 
-    private int screenScore = 0; 
     /**
      * Paints the background of the overlay with a semi-transparent color,
      * covering the entire area to create a modal effect.
