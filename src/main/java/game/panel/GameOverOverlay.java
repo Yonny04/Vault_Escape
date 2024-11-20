@@ -38,11 +38,11 @@ public class GameOverOverlay extends JPanel {
         Label levelScoreLabel = new Label(ColorPalette.LIGHT_PURPLE, true);
         Label timeBonusLabel = new Label(ColorPalette.WHITE, true);
         Label currentScoreLabel = new Label(ColorPalette.YELLOW, true);
-        container = new Container(app.gp);
+        container = new Container();
         container.setAlignment(Alignment.CENTER, Alignment.CENTER);
         container.setFont(32);
         container.setSeparation(64);
-        container.addPanel(new Rect(app.gp.SCREEN_SIZE.x/2-64*4, app.gp.SCREEN_SIZE.y/2-64*5, 64*8-16, 64*10));
+        container.addPanel(new Rect(1280/2-64*4, 768/2-64*5, 64*8-16, 64*9));
         container.addLabel(titleLabel);
         container.getLabel(0).setFont(48);
         container.addLabel(lastScoreLabel);
@@ -55,20 +55,20 @@ public class GameOverOverlay extends JPanel {
         if (app.currentLevel < app.MAX_LEVEL) {
             JButton levelButton = new JButton(levelButtonText);
             styleButton(levelButton);
-            levelButton.setBounds(500, 450, 250, 50);
+            levelButton.setBounds(1280/2-125, 450, 250, 50);
             levelButton.addActionListener(levelListener);
             this.add(levelButton);
         }
 
         JButton menuButton = new JButton("BACK TO MENU");
         styleButton(menuButton);
-        menuButton.setBounds(500, 500, 250, 50);
+        menuButton.setBounds(1280/2-125, 500, 250, 50);
         menuButton.addActionListener(menuListener);
         this.add(menuButton);
 
         JButton exitButton = new JButton("EXIT");
         styleButton(exitButton);
-        exitButton.setBounds(500, 550, 250, 50);
+        exitButton.setBounds(1280/2-125, 550, 250, 50);
         exitButton.addActionListener(exitListener);
         this.add(exitButton);
     }

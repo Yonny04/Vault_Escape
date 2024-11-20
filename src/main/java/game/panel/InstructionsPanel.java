@@ -1,17 +1,36 @@
 package game.panel;
 
 import game.App;
-import game.utils.ResourceLoader;
+import game.object.Rect;
+import game.ui.Container;
+import game.ui.Container.Alignment;
+import game.ui.Label;
+import game.utils.*;
 
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 public class InstructionsPanel extends JPanel{
-    private Image background;
+    private BufferedImage background;
     private Font font;
+    private Container container = new Container();
     public App app;
+
+    int instructionCount = 6;
+    String[] instructions = {
+        "Use WASD to move.",
+        "Collect all the valuables, then escape!",
+        "GUARDS've had a long shift. Don't disturb their path.",
+        "DOGS do bite. Come too close and they'll chase you.",
+        "Sightings from CAMERAS increase speed. Avoid the light.",
+        "Dont touch LASERS. They hurt... I think.",
+    };
+    Color[] instructionColors = {
+        ColorPalette.WHITE,ColorPalette.YELLOW,ColorPalette.BLUE,
+        ColorPalette.RED,ColorPalette.LIGHT_PURPLE,ColorPalette.MAGENTA,};
 
     /**
      * Constructs a InstructionsOverlay with instructions how to play the game.
@@ -21,25 +40,19 @@ public class InstructionsPanel extends JPanel{
         this.setLayout(null);
         font = ResourceLoader.loadFont(32);
 
-        background = ResourceLoader.loadSpritesheet("background");
-        JLabel instructionsLabel = new JLabel("1. Use WASD to move!");
-        styleLabel(instructionsLabel);
-        instructionsLabel.setBounds(120, 250, 500, 100);
-        this.add(instructionsLabel);
-
-        JLabel goalsLabel = new JLabel("2. Collect 5 rewards and head to exit to win!");
-        styleLabel(goalsLabel);
-        goalsLabel.setBounds(120, 300, 1000, 100);
-        this.add(goalsLabel);
-
-        JLabel enemyLabel = new JLabel("3. Be aware of guards and avoid them at all cost!");
-        styleLabel(enemyLabel);
-        enemyLabel.setBounds(120, 355, 1100, 100);
-        this.add(enemyLabel);
-
-        JButton backButton = new JButton("Back");
+        background = ResourceLoader.loadSpritesheet("parallax").getSubimage(0, 0, 360, 180);
+        
+        container.setFont(36);
+        for (int i = 0; i < instructionCount; i++) {
+            Label instructionLabel = new Label(instructionColors[i], true);
+            container.addLabel(instructionLabel);
+        }
+        container.setAlignment(Alignment.CENTER, Alignment.CENTER);
+        container.addPanel(new Rect(1280/2-64*8, 0, 64*16-16, 768));
+        container.separation = 64;
+        JButton backButton = new JButton("BACK TO MENU");
         styleButton(backButton);
-        backButton.setBounds(500, 500, 200, 50);
+        backButton.setBounds(1280/2-125, 768-150, 250, 50);
         backButton.addActionListener(backListener);
         this.add(backButton);
     }
@@ -51,20 +64,9 @@ public class InstructionsPanel extends JPanel{
      */
     private void styleButton(JButton button) {
         button.setFont(font);
-        button.setBackground(new Color(82, 45, 61));
-        button.setForeground(Color.GRAY);
+        button.setBackground(ColorPalette.GREY);
+        button.setForeground(ColorPalette.WHITE);
         button.setFocusPainted(false);
-    }
-
-    /**
-     * Styles a JLabel with custom font and colors, centering the text.
-     *
-     * @param label the JLabel to style
-     */
-    private void styleLabel(JLabel label) {
-        label.setFont(font.deriveFont(Font.BOLD, 48));
-        label.setForeground(Color.WHITE);
-        label.setHorizontalAlignment(SwingConstants.CENTER); // Center the label text
     }
 
     /**
@@ -77,12 +79,10 @@ public class InstructionsPanel extends JPanel{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        for (int i=0; i<instructionCount; i++) {
+            container.getLabel(i).setText(instructions[i]);
+        }
         g2.drawImage(background, 0, 0, getWidth(), getHeight(), this);
-        g2.setFont(font.deriveFont(Font.PLAIN, 64));
-        g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
-        g2.drawString("Vault Escape", 420, 210);
-        GradientPaint gradient = new GradientPaint(100, 0, new Color(220, 180, 60), 50, 400, new Color(154, 145, 169));
-        g2.setPaint(gradient);
-        g2.drawString("Vault Escape", 420, 200);
+        container.draw(g2);
     }
 }

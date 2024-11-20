@@ -1,5 +1,7 @@
 package game.panel;
 
+import game.utils.ColorPalette;
+
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -48,9 +50,9 @@ public class BestScoresPanel extends JPanel {
      * @return a JLabel component styled as title 
      */
     private JLabel createTitle() {
-        JLabel title = new JLabel("Best Scores", SwingConstants.CENTER);
+        JLabel title = new JLabel("HIGH SCORES", SwingConstants.CENTER);
         title.setFont(font.deriveFont(48f));
-        title.setForeground(Color.WHITE);
+        title.setForeground(ColorPalette.LIGHT_PURPLE);
         return title;
     }
     /**
@@ -80,7 +82,7 @@ public class BestScoresPanel extends JPanel {
      */
 
     private JButton createBackButton(ActionListener backListener) {
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JButton("BACK TO MENU");
         styleButton(backButton);
         backButton.addActionListener(backListener);
         return backButton;
@@ -238,9 +240,9 @@ public class BestScoresPanel extends JPanel {
      * @param button the JButton to style
      */
     private void styleButton(JButton button) {
-        button.setFont(font.deriveFont(20f));
-        button.setBackground(new Color(50, 50, 50));
-        button.setForeground(Color.WHITE);
+        button.setFont(font.deriveFont(32f));
+        button.setBackground(ColorPalette.GREY);
+        button.setForeground(ColorPalette.WHITE);
         button.setFocusPainted(false);
         button.setOpaque(true);
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));

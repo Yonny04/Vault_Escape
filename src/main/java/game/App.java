@@ -39,10 +39,10 @@ public class App extends JFrame {
         setLocationRelativeTo(null);
         
         mp = new MenuPanel(this,
-            e -> startGame(),  // Start game action listener
-            e -> showBestScores(), // Show best scores action listener
-            e -> showInstructions(), // Show instructions action listener
-            e -> System.exit(0) // Exit action listener
+            e -> {startGame();},  // Start game action listener
+            e -> {showBestScores();}, // Show best scores action listener
+            e -> {showInstructions();}, // Show instructions action listener
+            e -> {System.exit(0);} // Exit action listener
         );
         bsp = new BestScoresPanel(e -> backToMenu());
         ip = new InstructionsPanel(e -> backToMenu());
@@ -69,6 +69,8 @@ public class App extends JFrame {
      * and starting the game thread.
      */
     public void startGame() {
+        if (mp.menuThread != null) mp.menuThread = null;
+        sfx.play("confirm");
         music.stop();
         gp = new GamePanel(this,currentLevel);
         setContentPane(gp);
@@ -109,6 +111,7 @@ public class App extends JFrame {
      * Displays the best scores panel.
      */
     private void showBestScores() {
+        sfx.play("select");
         bsp.updateTable();
         setContentPane(bsp);
         revalidate();
@@ -116,6 +119,7 @@ public class App extends JFrame {
     }
 
     private void showInstructions() {
+        sfx.play("select");
         setContentPane(ip);
         revalidate();
         repaint();
@@ -125,6 +129,8 @@ public class App extends JFrame {
      * Returns to the main menu by setting the menu panel as the content pane.
      */
     public void backToMenu() {
+        if (mp.menuThread == null) mp.startMenuThread();
+        sfx.play("back");
         addHighScore();
         currentLevel = 1;
         currentScore = 0;

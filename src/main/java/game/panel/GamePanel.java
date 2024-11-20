@@ -42,7 +42,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // In-Game UI
     public int introFade = 300;
-    private Container overlayContainer = new Container(this);
+    private Container overlayContainer = new Container();
     private Label levelLabel = new Label(ColorPalette.WHITE,true);
     private Label timerLabel = new Label(ColorPalette.WHITE,true);
     private Label valuablesLabel = new Label(ColorPalette.YELLOW,true);

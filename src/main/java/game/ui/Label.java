@@ -67,7 +67,7 @@ public class Label extends Rect {
      */
     public void setText(String text) {
         this.text = text;
-        setSize(fontSize/2*text.length(), fontSize/2);
+        setSize(fontSize/2*text.length()-text.length()*2, fontSize/2);
     }
 
     /**

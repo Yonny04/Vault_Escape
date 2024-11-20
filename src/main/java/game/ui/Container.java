@@ -2,7 +2,6 @@ package game.ui;
 
 import game.object.Rect;
 import game.object.Vector;
-import game.panel.GamePanel;
 import game.utils.ResourceLoader;
 
 import java.awt.*;
@@ -14,7 +13,6 @@ import java.util.List;
  * It supports different alignments and margins for positioning the labels.
  */
 public class Container extends Rect {
-    GamePanel gp;
     Font font;
     int fontSize;
 
@@ -26,20 +24,16 @@ public class Container extends Rect {
     Alignment horizontalAlignment = Alignment.LEFT;
     Alignment verticalAlignment = Alignment.BOTTOM;
 
-    int leftMargin = 48, rightMargin = 48, topMargin = -32, bottomMargin = 48;
-    int separation = 48;
+    public int leftMargin = 48, rightMargin = 48, topMargin = -32, bottomMargin = 48;
+    public int separation = 48;
     boolean isPanel = false; // Background panel for container
 
     List<Label> labels = new ArrayList<>();
 
     /**
-     * Constructs a Container with the specified game panel.
-     *
-     * @param gp The game panel associated with this container.
+     * Constructs a Container.
      */
-    public Container(GamePanel gp) {
-        this.gp = gp;
-    }
+    public Container() {}
 
     /**
      * Draws the labels within the container at their respective positions based on alignment.
@@ -70,7 +64,7 @@ public class Container extends Rect {
             v.y -= totalHeight / 2;
             for (Label label : labels) {
                 if (horizontalAlignment == Alignment.CENTER) {
-                    v.x = gp.SCREEN_SIZE.x/2 - label.getWidth()/2;
+                    v.x = 1280/2 - label.getWidth()/2;
                 }
                 label.draw(g2, v);
                 v.y += separation;
@@ -127,7 +121,7 @@ public class Container extends Rect {
                 v.x = leftMargin;
                 break;
             case CENTER:
-                v.x = gp.SCREEN_SIZE.x / 2;
+                v.x = 1280 / 2;
                 break;
             default:
                 break;
@@ -137,10 +131,10 @@ public class Container extends Rect {
                 v.y = topMargin;
                 break;
             case CENTER:
-                v.y = gp.SCREEN_SIZE.y / 2 + topMargin - bottomMargin;
+                v.y = 768 / 2 + topMargin - bottomMargin;
                 break;
             case BOTTOM:
-                v.y = gp.SCREEN_SIZE.y - bottomMargin;
+                v.y = 768 - bottomMargin;
             default:
                 break;
         }
