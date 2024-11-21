@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 
 class BestScoresPanelTest {
-    private static final String TEST_FILE_PATH = "test_best_scores.json";
+    private static final String TEST_FILE_PATH = "/resources/test_best_scores.json";
     private BestScoresPanel bestScoresPanel;
 
     @BeforeEach
@@ -31,7 +31,7 @@ class BestScoresPanelTest {
         List<Integer> scores = bestScoresPanel.loadTopScores();
         assertTrue(scores.isEmpty());
     }
-    
+
     @Test
     void testLoadScoresFromValidFile() {
         writeToFile(TEST_FILE_PATH, "{\"scores\": [300, 200, 100]}");

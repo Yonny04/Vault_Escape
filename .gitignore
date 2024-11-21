@@ -1,3 +1,5 @@
+/target/
+
 # VSCode specific ignores
 .vscode/*
 
@@ -10,3 +12,10 @@ target/*
 
 # Best Scores ignore
 best_scores.json
+
+# Eclipse specific ignores
+.settings/
+.classpath
+.project
+
+
