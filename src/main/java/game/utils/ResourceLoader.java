@@ -86,21 +86,6 @@ public class ResourceLoader {
     }
 
     /**
-     * Loads an animation from the given path into the given AnimationPlayer.
-     * @param animationPlayer the AnimationPlayer to load the animation into
-     * @param name the name of the animation file
-     */
-    public static void loadAnimation(AnimationPlayer animationPlayer, String name) {
-        try {
-            String globalPath = String.format("/animation/%s.anim",name);
-            BufferedReader file = loadFile(globalPath);
-            Animation animation = readAnimationFromFile(file);
-            file.close();
-            animationPlayer.newAnimation(animation);
-        } catch (Exception e) {}
-    }
-
-    /**
      * Loads an AnimationPlayer from the given path and configures the given entity.
      * @param entity the entity to load the AnimationPlayer for
      * @param name the name of the AnimationPlayer file
