@@ -17,10 +17,10 @@ import java.util.List;
  * and custom fonts and colors.
  */
 public class BestScoresPanel extends JPanel {
-    private static final String SCORES_FILE_PATH = "best_scores.json";
+    protected static String SCORES_FILE_PATH = "best_scores.json";
     private Font font;
     private JTable scoresTable;
-    private List<Integer> topScores;
+    protected List<Integer> topScores;
 
     /**
      * Constructs the BestScoresPanel with a specified action listener for the back button.
@@ -93,7 +93,7 @@ public class BestScoresPanel extends JPanel {
      *
      * @return a list of the top 5 scores
      */
-    private List<Integer> loadTopScores() {
+    protected List<Integer> loadTopScores() {
         List<Integer> scores = new ArrayList<>();
         File file = new File(SCORES_FILE_PATH);
 
@@ -177,7 +177,7 @@ public class BestScoresPanel extends JPanel {
     /**
      * Returns the top scores as a 2D array for display in the table.
      */
-    private String[][] getTopScores() {
+    protected String[][] getTopScores() {
         String[][] data = new String[5][2];
         for (int i = 0; i < 5; i++) {
             data[i][0] = String.valueOf(i + 1);
