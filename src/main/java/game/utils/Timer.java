@@ -6,7 +6,7 @@ package game.utils;
  */
 public final class Timer {
     private long startTime; // Start time of the countdown
-    private long countdownTime; // Total countdown time in milliseconds
+    public long countdownTime; // Total countdown time in milliseconds
 
     /**
      * Constructs a Timer with a specified countdown duration in seconds.
@@ -22,7 +22,7 @@ public final class Timer {
      * Starts or restarts the timer by setting the start time to the current system time.
      */
     public void start() {
-        this.startTime = System.currentTimeMillis();
+        this.startTime = (System.currentTimeMillis()*1000)/1000;
     }
 
     /**
@@ -32,7 +32,7 @@ public final class Timer {
      */
     public long getTimeLeft() {
         long elapsedTime = System.currentTimeMillis() - startTime;
-        long timeLeft = countdownTime - elapsedTime;
+        long timeLeft = (countdownTime - elapsedTime);
         return Math.max(timeLeft, 0);
     }
 
@@ -42,7 +42,7 @@ public final class Timer {
      * @return a formatted int of the remaining time in seconds
      */
     public int getSecondsLeft() {
-        long seconds = getTimeLeft() / 1000;
+        double seconds = getTimeLeft() / 1000;
         return (int)seconds;
     }
 
