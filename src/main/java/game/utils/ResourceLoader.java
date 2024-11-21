@@ -59,8 +59,8 @@ public class ResourceLoader {
     }
 
     /**
-     * Loads a file to read from the given path. Loads
-     * .map, .anim, .animp files only.
+     * Loads a game file to read from the given path.
+     * WARNING: This method loads .level and .animp files ONLY.
      * @param path the path to the file (including file format)
      * @return the loaded file to read, or null if the file could not be loaded
      */

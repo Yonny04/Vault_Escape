@@ -82,6 +82,7 @@ public class AnimationPlayer {
             else currentAnimation.stop();
         }
         this.currentAnimation = animations.get(name);
+        if (this.currentAnimation == null) return;
         this.currentAnimation.start();
     }
 

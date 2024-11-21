@@ -18,13 +18,14 @@ public class TestResourceLoader {
     private static final String TEST_ANIMATION_PLAYER_NAME = "player";
     private static final String TEST_MUSIC_PATH = "music";
     private static final String TEST_SFX_PATH = "select";
-    private static final String TEST_FILE_PATH = "/map/floor1.map";
+    private static final String TEST_FILE_PATH = "/level/1.level";
 
     @BeforeEach
     public void setUp() {
         entity = new Entity(null, new Vector());
         entity.setAnimationPlayer(null);
         resourceLoader = new ResourceLoader() {};
+        ColorPalette colorPalette = new ColorPalette() {}; // for constructor
     }
 
     @Test
@@ -43,7 +44,7 @@ public class TestResourceLoader {
     }
 
     @Test
-    public void testLoadMap() {
+    public void testLoadFile() {
         assertNotNull(ResourceLoader.loadFile(TEST_FILE_PATH));
     }
 
