@@ -8,28 +8,12 @@ import java.io.*;
 public class ResourceSaver {
 
     /**
-     * Saves an animation to the given path. (custom file format .ani)
-     * @param animation the animation to save
-     * @param name the name of the animation
-     * @return true if the animation was saved successfully, false otherwise
-     */
-    public static boolean saveAnimation(Animation animation, String name) {
-        try {
-            String globalPath = String.format("src/main/resources/animation/%s.anim",name);
-            BufferedWriter file = new BufferedWriter(new FileWriter(globalPath));
-            writeAnimationToFile(animation, file);
-            file.close();
-            return true;
-        } catch (Exception e) {return false;}
-    }
-
-    /**
      * Writes an animation to a file.
      * @param animation the animation to write
      * @param file the file to write to, does not close it
      * @return true if the animation was written successfully, false otherwise
      */
-    private static boolean writeAnimationToFile(Animation animation, BufferedWriter file) {
+    public static boolean writeAnimationToFile(Animation animation, BufferedWriter file) {
         try {
             file.write(String.format("[ANIMATION]\n.anim::%s",animation.name));
             file.write(String.format("\n%d\n",animation.frames));
@@ -57,9 +41,11 @@ public class ResourceSaver {
             
             boolean hasSheet = animationPlayer.sheetName != null;
             file.write(String.format("[ANIMATION_PLAYER]\n.animp::%b",hasSheet));
-            file.write(String.format("\n%s",animationPlayer.sheetName));
-            file.write(String.format("\n%d,%d",
+            if (hasSheet) {
+                file.write(String.format("\n%s",animationPlayer.sheetName));
+                file.write(String.format("\n%d,%d",
                 animationPlayer.sheetDim.x,animationPlayer.sheetDim.y));
+            }
             
             file.write(String.format("\n%d\n",animationPlayer.getAnimations().size()));
             for (String key : animationPlayer.getAnimations().keySet()) {

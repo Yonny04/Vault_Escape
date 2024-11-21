@@ -59,8 +59,8 @@ public class ResourceLoader {
     }
 
     /**
-     * Loads a file to read from the given path. Loads
-     * .map, .anim, .animp files only.
+     * Loads a game file to read from the given path.
+     * WARNING: This method loads .level and .animp files ONLY.
      * @param path the path to the file (including file format)
      * @return the loaded file to read, or null if the file could not be loaded
      */
@@ -83,21 +83,6 @@ public class ResourceLoader {
             Font font = Font.createFont(Font.TRUETYPE_FONT,stream).deriveFont(Font.PLAIN,size);
             return font;
         } catch (Exception e) {return null;}
-    }
-
-    /**
-     * Loads an animation from the given path into the given AnimationPlayer.
-     * @param animationPlayer the AnimationPlayer to load the animation into
-     * @param name the name of the animation file
-     */
-    public static void loadAnimation(AnimationPlayer animationPlayer, String name) {
-        try {
-            String globalPath = String.format("/animation/%s.anim",name);
-            BufferedReader file = loadFile(globalPath);
-            Animation animation = readAnimationFromFile(file);
-            file.close();
-            animationPlayer.newAnimation(animation);
-        } catch (Exception e) {}
     }
 
     /**
