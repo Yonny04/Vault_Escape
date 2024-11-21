@@ -186,6 +186,7 @@ public class GamePanel extends JPanel implements Runnable {
      * This method also updates the component order to ensure the overlay is rendered on top.
      */
     private void showGameOverScreen() {
+        gameOverOverlay.setVisible(false);
         gameOverOverlay.setVisible(true);
     }
 
@@ -334,16 +335,16 @@ public class GamePanel extends JPanel implements Runnable {
         // Draw Time and Score Overlay Container
 
         if (scoreScreen < levelScore)scoreScreen++;
-        String timeString = String.format("Time Left: %ds", timer.getSecondsLeft());
-        int valuablesCount = rewardGenerator.generator.getCountByType(Valuable.class);
-        String valuablesString = String.format("Valuables Left: %02d",
+            String timeString = String.format("Time Left: %ds", timer.getSecondsLeft());
+            int valuablesCount = rewardGenerator.generator.getCountByType(Valuable.class);
+            String valuablesString = String.format("Valuables Left: %02d",
             valuablesCount);
         if (valuablesCount == 0) valuablesString = "All Valuables Collected! Escape!";
-        String scoreText = String.format("Level Score: %06d",scoreScreen);
-        overlayContainer.getLabel(0).setText(timeString);
-        overlayContainer.getLabel(1).setText(valuablesString);
-        overlayContainer.getLabel(2).setText(scoreText);
-        overlayContainer.draw(g2);
+            String scoreText = String.format("Level Score: %06d",scoreScreen);
+            overlayContainer.getLabel(0).setText(timeString);
+            overlayContainer.getLabel(1).setText(valuablesString);
+            overlayContainer.getLabel(2).setText(scoreText);
+            overlayContainer.draw(g2);
 
         if (app.sfx.isPlaying("alarm") || app.sfx.isPlaying("laser") ) {
             g2.setColor(new Color(1.0f, 0.0f, 0.0f, 0.3f));
