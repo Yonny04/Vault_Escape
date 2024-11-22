@@ -1,4 +1,4 @@
-package game;
+package game.audio;
 
 import game.audio.Music;
 import game.audio.SFX;
