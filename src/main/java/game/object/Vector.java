@@ -181,11 +181,6 @@ public class Vector {
         return (int)Math.round(Math.sqrt(diffY + diffX));
         
     }
-
-    @Override
-    public int hashCode() {
-        return x * 31 + y;
-    }
 }
 
 

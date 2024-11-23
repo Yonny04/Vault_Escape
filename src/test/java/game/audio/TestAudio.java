@@ -1,14 +1,10 @@
 package game.audio;
 
-import game.audio.Music;
-import game.audio.SFX;
 import game.utils.ResourceLoader;
 import game.utils.ResourceLoader.Resource;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import javax.sound.sampled.Clip;
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,7 +53,7 @@ class TestAudio {
     void testSFXLoop() {
         String sfxName = "alarm";
         sfx.play(sfxName);
-        assertDoesNotThrow(() -> sfx.loop(3), "break");
+        assertDoesNotThrow(() -> sfx.loop(2), "break");
     }
 
     @Test

@@ -41,7 +41,12 @@ public class TestVector {
 
     @Test
     public void testEquals() {
-        assertTrue(vector1.equals(vector2));
+        assertTrue(vector1.equals(new Vector(3,4)));
+        assertFalse(vector1.equals(new Vector(3,2)));
+    }
+
+    @Test
+    public void testNotEquals() {
         assertFalse(vector1.equals(vector3));
     }
 
@@ -93,15 +98,14 @@ public class TestVector {
 
     @Test
     public void testGreaterThan() {
-        assertFalse(vector3.greaterThan(vector1));
+        assertFalse(vector1.greaterThan(new Vector(2,4)));
         assertTrue(vector1.greaterThan(vector3));
-        
     }
 
     @Test
     public void testLessThan() {
-        assertTrue(vector3.lessThan(vector1));
-        assertFalse(vector4.lessThan(vector3));
+        assertFalse(vector1.lessThan(new Vector(4,3)));
+        assertTrue(vector3.lessThan(vector4));
     }
 
     @Test

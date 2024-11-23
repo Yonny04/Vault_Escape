@@ -14,8 +14,6 @@ public class TestTileManager {
     public void setUp() {
         gp = new GamePanel(null,1);
         tm = gp.getTileManager();
-
-        tm.loadMap(null, 0, 0);
     }
 
     @Test

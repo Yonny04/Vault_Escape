@@ -248,7 +248,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public int getTimeScore() {
-        return (int)(getTimer().getTimeLeft()/30) + 100;
+        return (int)(getTimer().getSecondsLeft()*30)+100;
     }
 
     /**
@@ -334,17 +334,17 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Draw Time and Score Overlay Container
 
-        if (scoreScreen < levelScore)scoreScreen++;
-            String timeString = String.format("Time Left: %ds", timer.getSecondsLeft());
-            int valuablesCount = rewardGenerator.generator.getCountByType(Valuable.class);
-            String valuablesString = String.format("Valuables Left: %02d",
+        if (scoreScreen < levelScore) scoreScreen++;
+        String timeString = String.format("Time Left: %ds", timer.getSecondsLeft());
+        int valuablesCount = rewardGenerator.generator.getCountByType(Valuable.class);
+        String valuablesString = String.format("Valuables Left: %02d",
             valuablesCount);
         if (valuablesCount == 0) valuablesString = "All Valuables Collected! Escape!";
-            String scoreText = String.format("Level Score: %06d",scoreScreen);
-            overlayContainer.getLabel(0).setText(timeString);
-            overlayContainer.getLabel(1).setText(valuablesString);
-            overlayContainer.getLabel(2).setText(scoreText);
-            overlayContainer.draw(g2);
+        String scoreText = String.format("Level Score: %06d",scoreScreen);
+        overlayContainer.getLabel(0).setText(timeString);
+        overlayContainer.getLabel(1).setText(valuablesString);
+        overlayContainer.getLabel(2).setText(scoreText);
+        overlayContainer.draw(g2);
 
         if (app.sfx.isPlaying("alarm") || app.sfx.isPlaying("laser") ) {
             g2.setColor(new Color(1.0f, 0.0f, 0.0f, 0.3f));
@@ -352,8 +352,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         if (introFade > 0) {
-            timer.start();
-            
             g2.setColor(new Color(89, 81, 120,Math.min(introFade,255)));
             g2.fillRect(0,0,SCREEN_SIZE.x,SCREEN_SIZE.y);
             introFade = (int)Math.round((double)introFade - 8.0 * _fadeLerp);

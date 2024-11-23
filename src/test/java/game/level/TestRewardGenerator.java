@@ -71,6 +71,7 @@ class TestRewardGenerator {
 
     @Test
     public void testGetValuableCount() {
+        rewardGenerator.spawn(Diamond.class, 1);
         rewardGenerator.spawn(Valuable.class, 2);
         assertEquals(2, rewardGenerator.getValuableCount());
     }
