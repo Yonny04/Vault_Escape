@@ -1,5 +1,11 @@
 package game.tile.entity.character.enemy;
 
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.Tile;
@@ -7,15 +13,12 @@ import game.tile.entity.Entity;
 import game.utils.ColorPalette;
 import game.utils.Timer;
 
-import java.awt.Graphics2D;
-import java.util.*;
-
 /**
  * Represents a Laser enemy entity in the game, which 
  * emits a damaging laser beam in a horizontal or vertical direction.
  */
 public class Laser extends Enemy {
-    private boolean isHorizontal = new Random().nextBoolean();
+    public boolean isHorizontal = new Random().nextBoolean();
     public List<Entity> laserTiles = new ArrayList<>();
     private boolean laserOn = false;
 
