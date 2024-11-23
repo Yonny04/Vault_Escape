@@ -14,16 +14,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestEnemyGenerator {
 
     private EnemyGenerator enemyGenerator;
-    private GamePanel gamePanel;
+    private GamePanel gp;
 
     @BeforeEach
-    void reset() {
-        gamePanel = new GamePanel(null, 1);
-        enemyGenerator = new EnemyGenerator(gamePanel);
+    public void reset() {
+        gp = new GamePanel(null, 1);
+        enemyGenerator = new EnemyGenerator(gp);
     }
 
     @Test
-    void testSpawnEnemies() {
+    public void testSpawnGuards() {
         enemyGenerator.spawn(Guard.class, 5);
         List<Enemy> enemies = enemyGenerator.getEnemies();
         assertEquals(5, enemies.size());
@@ -33,7 +33,37 @@ class TestEnemyGenerator {
     }
 
     @Test
-    void testUpdateEnemies() {
+    public void testSpawnDogs() {
+        enemyGenerator.spawn(Dog.class, 2);
+        List<Enemy> enemies = enemyGenerator.getEnemies();
+        assertEquals(2, enemies.size());
+        for (Enemy enemy : enemies) {
+            assertTrue(enemy instanceof Dog);
+        }
+    }
+
+    @Test
+    public void testSpawnCameras() {
+        enemyGenerator.spawn(Camera.class, 3);
+        List<Enemy> enemies = enemyGenerator.getEnemies();
+        assertEquals(3, enemies.size());
+        for (Enemy enemy : enemies) {
+            assertTrue(enemy instanceof Camera);
+        }
+    }
+
+    @Test
+    public void testSpawnLasers() {
+        enemyGenerator.spawn(Laser.class, 4);
+        List<Enemy> enemies = enemyGenerator.getEnemies();
+        assertEquals(4, enemies.size());
+        for (Enemy enemy : enemies) {
+            assertTrue(enemy instanceof Laser);
+        }
+    }
+
+    @Test
+    public void testUpdateEnemies() {
         enemyGenerator.spawn(Guard.class, 3);
         enemyGenerator.update();
         List<Enemy> enemies = enemyGenerator.getEnemies();
@@ -43,7 +73,7 @@ class TestEnemyGenerator {
     }
 
     @Test
-    void testAddSpeed() {
+    public void testAddSpeed() {
         enemyGenerator.spawn(Guard.class, 3);
         enemyGenerator.addEnemySpeed(3);
         for (Enemy enemy : enemyGenerator.getEnemies()) {
@@ -52,7 +82,7 @@ class TestEnemyGenerator {
     }
 
     @Test
-    void testGetEnemies() {
+    public void testGetEnemies() {
         enemyGenerator.spawn(Guard.class, 2);
         List<Enemy> enemies = enemyGenerator.getEnemies();
         assertEquals(2, enemies.size());

@@ -46,9 +46,7 @@ public class Generator<T extends Tile> {
                 T element = type.getDeclaredConstructor(args).newInstance(gp, tile);
                 elements.add(element);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 
     /**
