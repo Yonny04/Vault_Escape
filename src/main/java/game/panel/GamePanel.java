@@ -1,19 +1,30 @@
 package game.panel;
 
-import game.App;
-import game.audio.*;
-import game.level.*;
-import game.object.Vector;
-import game.tile.entity.character.Player;
-import game.tile.entity.character.enemy.*;
-import game.tile.entity.reward.Valuable;
-import game.ui.Container;
-import game.ui.Label;
-import game.utils.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import java.awt.*;
+import game.App;
+import game.audio.Music;
+import game.audio.SFX;
+import game.level.EnemyGenerator;
+import game.level.Level;
+import game.level.RewardGenerator;
+import game.level.TileManager;
+import game.object.Vector;
+import game.tile.entity.character.Player;
+import game.tile.entity.character.enemy.Camera;
+import game.tile.entity.character.enemy.Dog;
+import game.tile.entity.character.enemy.Guard;
+import game.tile.entity.character.enemy.Laser;
+import game.tile.entity.reward.Valuable;
+import game.ui.Container;
+import game.ui.Label;
+import game.utils.ColorPalette;
+import game.utils.KeyDetector;
+import game.utils.Timer;
 
 /**
  * Represents the main game panel where all game elements are drawn and updated, such as the player, enemies,

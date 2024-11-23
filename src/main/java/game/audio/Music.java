@@ -1,9 +1,9 @@
 package game.audio;
 
+import javax.sound.sampled.Clip;
+
 import game.utils.ResourceLoader;
 import game.utils.ResourceLoader.Resource;
-
-import javax.sound.sampled.Clip;
 
 /**
  * The Music class handles background music for an application.
