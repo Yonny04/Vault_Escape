@@ -1,6 +1,7 @@
 package game.utils;
 
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * Detects keyboard input for movement controls, specifically for 'W', 'A', 'S', and 'D' keys.

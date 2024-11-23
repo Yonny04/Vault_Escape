@@ -1,22 +1,24 @@
 package game.tile.entity.character;
 
+import java.util.Random;
+
 import game.object.Vector;
 import game.panel.GamePanel;
 import game.tile.Tile;
 import game.tile.entity.Exit;
-import game.utils.*;
-
-import java.util.Random;
+import game.utils.KeyDetector;
+import game.utils.ResourceLoader;
+import game.utils.Timer;
 /**
  * Represents the player character in the game, allowing for movement, scoring, and interaction with the game environment.
  * The Player class utilizes input from a KeyDetector to manage movement and animations.
  */
 public class Player extends Character {
-    private KeyDetector keyh; // Key detector to manage player input
+    private final KeyDetector keyh; // Key detector to manage player input
     private Vector camera = new Vector();
-    private Vector cameraOffset = new Vector();
-    private double cameraLerp = 0.064;
-    private Timer cameraShakeTimer = new Timer(0.2);
+    private final Vector cameraOffset = new Vector();
+    private final double cameraLerp = 0.064;
+    private final Timer cameraShakeTimer = new Timer(0.2);
 
     /**
      * Constructs a Player entity with a specified game panel and key detector for movement input.
