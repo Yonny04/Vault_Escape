@@ -5,7 +5,7 @@
 - Prerequisites: Ensure you have Maven `3.9.9` and JDK `17` installed and properly configured.
 - Build: Clone the repository. Then, open the repo folder in a terminal and run `mvn clean install`.
 - Test: Test the project by running `mvn test`.
-- Run: Open the .jar executable found at `{repository-folder}/target/vault-escape-0.6.jar`.
+- Run: Open the .jar executable found at `{repository-folder}/target/vault-escape-0.7.jar`.
 
 ## Controls
 - **WASD** or **Arrow Keys** to Move.
