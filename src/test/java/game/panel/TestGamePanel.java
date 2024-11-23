@@ -1,17 +1,14 @@
 package game.panel;
 
-import org.junit.jupiter.api.*;
+import game.App;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestGamePanel {
     
-    GamePanel gp;
-
-    @BeforeEach 
-    public void setUp() {
-        gp = new GamePanel(null,1);
-    }
+    static App app = new App(false);
+    GamePanel gp = new GamePanel(app,1);
 
     @Test
     public void testGetTimer() {
