@@ -1,7 +1,6 @@
 package game.utils;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
 /**
  * Detects keyboard input for movement controls, specifically for 'W', 'A', 'S', and 'D' keys.
@@ -17,9 +16,7 @@ public class KeyDetector implements KeyListener {
      * @param e the key event triggered when a key is typed
      */
     @Override
-    public void keyTyped(KeyEvent e) {
-        // Not used
-    }
+    public void keyTyped(KeyEvent e) {}
 
     /**
      * Updates the movement flags when a key is pressed. Sets the corresponding flag to true

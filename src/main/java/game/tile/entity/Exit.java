@@ -4,6 +4,8 @@ import game.object.Vector;
 import game.panel.GamePanel;
 import game.utils.ResourceLoader;
 
+import java.awt.Graphics2D;
+
 /**
  * Represents the exit door that the player will reach upon
  * collecting all the regular rewards.
@@ -36,6 +38,12 @@ public class Exit extends Entity {
             openExit();
         }
         super.update();
+    }
+
+    @Override
+    public void draw(Graphics2D g2) {
+        update();
+        super.draw(g2);
     }
     
     /**

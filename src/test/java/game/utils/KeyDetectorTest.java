@@ -1,12 +1,12 @@
 package game.utils;
 
-import java.awt.event.KeyEvent;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.JPanel;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
+import java.awt.event.KeyEvent;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KeyDetectorTest {
 
@@ -55,6 +55,12 @@ public class KeyDetectorTest {
         assertFalse(keyh.right);
     }
 
+    @Test
+    public void testKeyDetectorTestKeyTyped() {
+        KeyDetector keyh = new KeyDetector();
+        KeyEvent key = new KeyEvent(mockComponent, KeyEvent.KEY_TYPED, System.currentTimeMillis(), 0, KeyEvent.VK_UNDEFINED, ' ');
+        keyh.keyTyped(key);
+    }
 
     @Test
     public void testKeyPressAndReleaseArrow() {

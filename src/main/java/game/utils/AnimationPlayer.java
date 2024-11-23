@@ -137,9 +137,7 @@ public class AnimationPlayer {
             sheetName = name;
             sheetDim = new Vector(tilesX, tilesY);
             frameSize = new Vector(sheet.getWidth() / sheetDim.x, sheet.getHeight() / sheetDim.y);
-        } catch (Exception e) {
-            e.printStackTrace();  // Consider adding this for debugging
-        }
+        } catch (Exception e) {}
     }
 
     /**
