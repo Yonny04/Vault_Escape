@@ -62,7 +62,10 @@ public class Reward extends Entity {
     @Override
     public void update() {
         i += Math.PI / 20.0;
-        if (!getAnimationPlayer().isPlaying()) rect.y = rect.y + (int)Math.round(Math.sin(i));
+        if (!getAnimationPlayer().isPlaying()) {
+            if (isTouchingPlayer()) pickup();
+            rect.y = rect.y + (int)Math.round(Math.sin(i));
+        }
         super.update();
     }
 

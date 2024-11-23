@@ -285,8 +285,8 @@ public class GamePanel extends JPanel implements Runnable {
     private int lastTime;
     public void update() {
         player.update();
-        rewardGenerator.update(player);
-        enemyGenerator.update(player);
+        rewardGenerator.update();
+        enemyGenerator.update();
 
         // Gametime Logic (music changes + speed increase + countdown)
         int currentTime = (int)timer.getTimeLeft() / 1000;

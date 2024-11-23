@@ -1,11 +1,8 @@
 package game.level;
 
 import game.panel.GamePanel;
-import game.tile.entity.character.enemy.Enemy;
-import game.tile.entity.character.enemy.Guard;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import game.tile.entity.character.enemy.*;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -38,7 +35,7 @@ class TestEnemyGenerator {
     @Test
     void testUpdateEnemies() {
         enemyGenerator.spawn(Guard.class, 3);
-        enemyGenerator.update(null);
+        enemyGenerator.update();
         List<Enemy> enemies = enemyGenerator.getEnemies();
         for (Enemy enemy : enemies) {
             assertNotNull(enemy);

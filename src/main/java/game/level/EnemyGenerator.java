@@ -1,7 +1,6 @@
 package game.level;
 
 import game.panel.GamePanel;
-import game.tile.entity.character.Player;
 import game.tile.entity.character.enemy.Enemy;
 
 import java.util.List;
@@ -36,9 +35,8 @@ public class EnemyGenerator {
     /**
      * Updates the state of all enemies and checks for collisions with the player.
      *
-     * @param player The player object to check for collisions.
      */
-    public void update(Player player) {
+    public void update() {
         generator.update();
     }
 

@@ -49,8 +49,6 @@ public class Level {
             Vector mapSize = new Vector(Integer.parseInt(mapString[0]), Integer.parseInt(mapString[1]));
             gp.getTileManager().loadMap(reader, mapSize.x,mapSize.y);
             reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 }

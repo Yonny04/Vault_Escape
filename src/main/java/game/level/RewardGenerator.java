@@ -1,7 +1,6 @@
 package game.level;
 
 import game.panel.GamePanel;
-import game.tile.entity.character.Player;
 import game.tile.entity.reward.*;
 import game.utils.Timer;
 
@@ -31,10 +30,9 @@ public class RewardGenerator {
      *
      * @param player the player entity for checking reward collection
      */
-    public void update(Player player) {
+    public void update() {
         generator.update();
         spawnDiamond();
-        checkRewardCollection(player);
         removeExpiredRewards();
     }
 
@@ -63,28 +61,11 @@ public class RewardGenerator {
      */
     public void removeExpiredRewards() {
         for (Iterator<Reward> it = generator.elements.iterator(); it.hasNext();) {
-                Reward reward = it.next();
-                if (reward instanceof Diamond) {
-                    if (((Diamond)reward).getTimer().isTimeUp()) it.remove();
-                }
-                if (reward.getAnimationPlayer().finished()) {
-                    it.remove();
-                }
-        }
-    }
-
-    /**
-     * Checks if the player has collected any rewards by touching them, and adds points
-     * to the player's score if a bonus reward is collected.
-     *
-     * @param player the player entity for checking reward collection
-     */
-    public void checkRewardCollection(Player player) {
-        for (Iterator<Reward> it = generator.elements.iterator(); it.hasNext();) {
             Reward reward = it.next();
-            if (reward.isTouchingPlayer()) {
-                if (!reward.getAnimationPlayer().isPlaying()) reward.pickup();
+            if (reward instanceof Diamond) {
+                if (((Diamond)reward).getTimer().isTimeUp()) it.remove();
             }
+            if (reward.getAnimationPlayer().finished()) it.remove();
         }
     }
 
@@ -104,12 +85,7 @@ public class RewardGenerator {
      * @return the size of the regular rewards list
      */
     public boolean hasValuablesLeft() {
-        for (Reward reward : generator.elements) {
-            if (reward instanceof Valuable) {
-                return true;
-            }
-        }
-        return false;
+        return getValuableCount() > 0;
     }
 
     /**
@@ -120,4 +96,10 @@ public class RewardGenerator {
     public List<Reward> getRewards() {
         return generator.elements;
     }
+
+    /**
+     * Returns the bonus spawn timer for this generator.
+     * @return the bonus spawn timer
+     */
+    public Timer getBonusSpawnTimer() {return bonusSpawnTimer;}
 }
