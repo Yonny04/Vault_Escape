@@ -61,7 +61,7 @@ public class Enemy extends Character {
      */
     public boolean isPlayerInRange() {
         Rect player = gp.getPlayer().getRect();
-        return Math.abs(player.x - rect.x) < range && Math.abs(player.y - rect.y) <= range;
+        return Math.abs(player.x - rect.x) <= range && Math.abs(player.y - rect.y) <= range;
     }
 
     @Override

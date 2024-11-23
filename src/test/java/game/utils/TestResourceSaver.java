@@ -16,11 +16,10 @@ public class TestResourceSaver {
     }
 
     @Test
-    public void testSaveAnimationPlayer() {
+    public void testSaveAnimationPlayerFromEntity() {
         AnimationPlayer animp = entity.getAnimationPlayer();
         assertTrue(ResourceSaver.saveAnimationPlayer(animp,"test"));
         
-
         ResourceLoader.loadAnimationPlayer(entity,"test");
         AnimationPlayer animp2 = entity.getAnimationPlayer();
         assertEquals(animp.sheetName, animp2.sheetName);
@@ -30,34 +29,40 @@ public class TestResourceSaver {
     }
 
     @Test
-    public void testWriteAnimationToFile() {
-        boolean result = false;
-        AnimationPlayer animationPlayer = entity.getAnimationPlayer();
-        animationPlayer.newAnimation("test", new int[]{0,1}, 2, 0.0f, true);
-        try {
-            String globalPath = String.format("src/main/resources/animation/test.animp");
-            BufferedWriter file = new BufferedWriter(new FileWriter(globalPath));
-            
-            boolean hasSheet = animationPlayer.sheetName != null;
-            file.write(String.format("[ANIMATION_PLAYER]\n.animp::%b",hasSheet));
-            if (hasSheet) {
-                file.write(String.format("\n%s",animationPlayer.sheetName));
-                file.write(String.format("\n%d,%d",
-                animationPlayer.sheetDim.x,animationPlayer.sheetDim.y));
-            }
-            
-            file.write(String.format("\n%d\n",animationPlayer.getAnimations().size()));
-            for (String key : animationPlayer.getAnimations().keySet()) {
-                ResourceSaver.writeAnimationToFile(animationPlayer.getAnimations().get(key), file);
-            }
-            file.write("/.animp\n");
-            file.close();
-            result = true;
-        } catch (Exception e) {result = false;}
-        assertTrue(result);
-        
-        File file = new File("src/main/resources/animation/test.animp");
+    public void testSaveAnimationPlayerNull() {
+        AnimationPlayer animp = entity.getAnimationPlayer();
+        assertFalse(ResourceSaver.saveAnimationPlayer(null,"test2"));
+
+        ResourceLoader.loadAnimationPlayer(entity,"test2");
+        AnimationPlayer animp2 = entity.getAnimationPlayer();
+        assertEquals(animp.sheetName, animp2.sheetName);
+        assertEquals(animp.getAnimations().size(), animp2.getAnimations().size());
+        File file = new File("src/main/resources/animation/test2.animp");
         assertTrue(file.delete());
+    }
+
+    @Test
+    public void testSaveAnimationPlayerWithSheet() {
+        AnimationPlayer animationPlayer = entity.getAnimationPlayer();
+        animationPlayer.setSpritesheet("player", 3, 3);
+        animationPlayer.newAnimation("test3", new int[]{0,1}, 2, 0.0f, true);
+        assertTrue(ResourceSaver.saveAnimationPlayer(animationPlayer, "test3"));
+        File file = new File("src/main/resources/animation/test3.animp");
+        assertTrue(file.delete());
+    }
+
+    @Test
+    public void testWriteAnimationToFile() {
+        try {
+            String globalPath = "src/main/resources/animation/test4.animp";
+            BufferedWriter file = new BufferedWriter(new FileWriter(globalPath));
+            Animation animation = new Animation("test4", new int[]{0,1}, 2, 0.0f, true);
+            assertTrue(ResourceSaver.writeAnimationToFile(animation, file));
+            file.close();
+            File file2 = new File("src/main/resources/animation/test4.animp");
+            assertTrue(file2.delete());
+        }
+        catch (Exception e) {fail();}
     }
 
 }

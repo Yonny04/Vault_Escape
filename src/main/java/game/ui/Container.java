@@ -115,7 +115,7 @@ public class Container extends Rect {
      *
      * @param v The vector to initialize with the starting position.
      */
-    private void startVector(Vector v) {
+    public void startVector(Vector v) {
         switch (horizontalAlignment) {
             case LEFT:
                 v.x = leftMargin;

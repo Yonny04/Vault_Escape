@@ -30,7 +30,9 @@ public class App extends JFrame {
      * Constructs the main application window, initializing the menu panel and setting
      * up the JFrame properties.
      */
-    public App() {
+    public App(boolean displayGame) {
+        if (!displayGame) return;
+
         App frame = this;
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(1280, 768);
@@ -145,6 +147,6 @@ public class App extends JFrame {
      * @param args command-line arguments (not used)
      */
     public static void main(String[] args) {
-        new App();
+        new App(true);
     }
 }

@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestResourceLoader {
     private Entity entity;
-    private ResourceLoader resourceLoader;
     private static final String TEST_IMAGE_PATH = "/spritesheet/parallax.png";
     private static final String TEST_SPRITESHEET_NAME = "parallax";
     private static final String TEST_ANIMATION_PLAYER_NAME = "player";
@@ -24,8 +23,8 @@ public class TestResourceLoader {
     public void setUp() {
         entity = new Entity(null, new Vector());
         entity.setAnimationPlayer(null);
-        resourceLoader = new ResourceLoader() {};
-        ColorPalette colorPalette = new ColorPalette() {}; // for constructor
+        @SuppressWarnings("unused") ResourceLoader resourceLoader = new ResourceLoader() {};
+        @SuppressWarnings("unused") ColorPalette colorPalette = new ColorPalette() {}; // for constructor
     }
 
     @Test

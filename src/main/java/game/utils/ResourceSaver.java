@@ -38,7 +38,10 @@ public class ResourceSaver {
         try {
             String globalPath = String.format("src/main/resources/animation/%s.animp",name);
             BufferedWriter file = new BufferedWriter(new FileWriter(globalPath));
-            
+            if (animationPlayer == null) {
+                file.close();
+                return false;
+            }
             boolean hasSheet = animationPlayer.sheetName != null;
             file.write(String.format("[ANIMATION_PLAYER]\n.animp::%b",hasSheet));
             if (hasSheet) {

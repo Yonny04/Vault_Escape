@@ -121,7 +121,7 @@ public class AnimationPlayer {
      */
     public int getFrame() {
         if (isPlaying()) return currentAnimation.getFrame();
-        return 0;
+        return this.currentFrame;
     }
 
     /**
@@ -148,6 +148,7 @@ public class AnimationPlayer {
      * @param frame The index of the tile in the spritesheet (counted left to right, top to bottom).
      */
     public void setFrame(int frame) {
+        this.currentFrame = frame;
         int coordX = frame % sheetDim.x;
         int coordY = frame / sheetDim.y;
         if (sheetDim.y != 1) {
@@ -167,6 +168,7 @@ public class AnimationPlayer {
      * @param frameY The y-coordinate of the tile in the spritesheet.
      */
     public void setFrame(int frameX, int frameY) {
+        this.currentFrame = frameX + frameY * sheetDim.x;
         BufferedImage currentFrame = sheet.getSubimage(frameX * frameSize.x, 
                 frameY * frameSize.y, frameSize.x, frameSize.y);
         if (entity != null) entity.setImage(currentFrame);

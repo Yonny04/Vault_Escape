@@ -29,6 +29,7 @@ class TestAudio {
         assertNotNull(clip);
         music.play(musicName);
         assertTrue(music.isPlaying(musicName));
+        music.stop();
     }
     
     @Test
@@ -41,19 +42,21 @@ class TestAudio {
 
     @Test
     void testSFXPlay() throws InterruptedException {
-        String sfxName = "alarm";
+        String sfxName = "back";
         Clip clip = ResourceLoader.loadAudio(Resource.SFX, sfxName);
         assertNotNull(clip);
 
         sfx.play(sfxName);
-        Thread.sleep(100);
+        Thread.sleep(2);
         assertTrue(sfx.isPlaying(sfxName));
+        sfx.stop();
     }
     @Test
     void testSFXLoop() {
-        String sfxName = "alarm";
+        String sfxName = "back";
         sfx.play(sfxName);
-        assertDoesNotThrow(() -> sfx.loop(2), "break");
+        sfx.loop(1);
+        sfx.stop();
     }
 
     @Test

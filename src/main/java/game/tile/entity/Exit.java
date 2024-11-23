@@ -4,14 +4,12 @@ import game.object.Vector;
 import game.panel.GamePanel;
 import game.utils.ResourceLoader;
 
-import java.awt.Graphics2D;
-
 /**
  * Represents the exit door that the player will reach upon
  * collecting all the regular rewards.
  */
 public class Exit extends Entity {
-    private boolean _open = false; 
+    private boolean isOpen = false; 
     
     /**
      * Constructor for Exit Door, and starting position (top-left)
@@ -28,20 +26,27 @@ public class Exit extends Entity {
         ResourceLoader.loadAnimationPlayer(this, "exit");
         getAnimationPlayer().setFrame(0);
     }
-
     /**
      * Updates the exit door's sprite state. It will open after all regular
      * rewards are collected.
      */
     @Override
-    public void draw(Graphics2D g2) {
-        if (!gp.getRewardGenerator().hasValuablesLeft() && !_open) {
-            getAnimationPlayer().setFrame(1);
-            hitbox.setSize(rect.getSize().scale(0.4));
-            hitbox.setPosition(32,32);
-            gp.getSFX().play("exit_open");
-            _open = true;
+    public void update() {
+        if (!gp.getRewardGenerator().hasValuablesLeft() && !isOpen) {
+            openExit();
         }
-        super.draw(g2);
+        super.update();
+    }
+    
+    /**
+     * Opens the exit door, changing its sprite to the open door.
+     * Also plays the exit door opening sound effect.
+     */
+    public void openExit() {
+        isOpen = true;
+        getAnimationPlayer().setFrame(1);
+        hitbox.setSize(rect.getSize().scale(0.4));
+        hitbox.setPosition(32,32);
+        gp.getSFX().play("exit_open");   
     }
 }

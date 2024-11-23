@@ -72,7 +72,7 @@ public class Tile {
         Vector offset = gp.getPlayer().getCameraOffset();
         Vector camera = gp.getPlayer().getCameraPosition();
         screen.setPosition(rect.subtract(camera).add(offset));
-        g2.drawImage(image, screen.x, screen.y, rect.w, rect.h, null);
+        if (g2 != null) g2.drawImage(image, screen.x, screen.y, rect.w, rect.h, null);
         if (drawCollisions) drawHitbox(g2);
     }
 
@@ -83,6 +83,7 @@ public class Tile {
      */
     public void drawHitbox(Graphics2D g2) {
         if (isVisible() && drawCollisions && !hitbox.getSize().isZero()) {
+            if (g2 == null) return; 
             g2.setColor(new Color(0,1.0f,1.0f,0.5f));
             g2.drawRect(screen.x + hitbox.x,screen.y + hitbox.y, hitbox.w, hitbox.h);
         }

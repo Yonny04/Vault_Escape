@@ -5,7 +5,9 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestGamePanel {
+    
     GamePanel gp;
+
     @BeforeEach 
     public void setUp() {
         gp = new GamePanel(null,1);
@@ -47,5 +49,9 @@ public class TestGamePanel {
         assertEquals(((gp.level.TIME_LIMIT)*30+100)+100, gp.getTotalScore());
     }
 
+    @Test
+    public void testGetPlayer() {
+        assertNotNull(gp.getPlayer());
+    }
 
 }
