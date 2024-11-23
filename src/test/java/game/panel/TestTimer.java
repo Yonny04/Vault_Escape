@@ -20,21 +20,20 @@ public class TestTimer {
 
     @Test
     public void TestInitialTime(){
-        assertTrue(Math.abs(10000 - timer.getTimeLeft()) <= 2);
+        assertTrue(Math.abs(10 - timer.getSecondsLeft()) == 0);
 
     }
 
     @Test
     public void TestDecreaseTime(){
         timer.decreaseTime(5);
-        assertTrue(Math.abs(5000 - timer.getTimeLeft()) <= 2);
-
+        assertTrue(Math.abs(10 - timer.getSecondsLeft()) == 5);
     }
 
     @Test 
     public void TestTimeSeconds(){
         timer.decreaseTime(2);
-        assertTrue(Math.abs(8000 - timer.getTimeLeft()) <= 3);
+        assertTrue(Math.abs(10 - timer.getSecondsLeft()) == 2);
 
     }
 
@@ -47,6 +46,6 @@ public class TestTimer {
     @Test
     public void TestNewTimer(){
         timer.setCountdownTime(9);
-        assertTrue(Math.abs(9000 - timer.getTimeLeft()) <= 3);
+        assertTrue(Math.abs(9 - timer.getSecondsLeft()) == 1);
     }
 }
