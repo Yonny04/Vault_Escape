@@ -91,14 +91,10 @@ public class TileManager {
                     if (tileNumber > 0) {
                         Rect rect = new Rect(pos);
                         createWallTile(rect, tileNumber); // Create wall
-                    } else if (tileNumber == 0) {
-                        emptyTiles.add(pos); // Available Vector2 Position
-                    }
+                    } else if (tileNumber == 0) emptyTiles.add(pos); // Available Vector2 Position
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 
     /**
@@ -329,7 +325,7 @@ public class TileManager {
      *
      * @return a list of tiles that are currently visible on the screen
      */
-    private List<Tile> getScreenTiles() {
+    public List<Tile> getScreenTiles() {
         List<Tile> screenTiles = new ArrayList<>();
         for (Tile floor : floorTiles) {
             if (floor.isVisibleOnScreen()) screenTiles.add(floor);

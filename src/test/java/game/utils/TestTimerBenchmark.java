@@ -1,21 +1,18 @@
-package game.panel;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package game.utils;
 
 import org.junit.jupiter.api.*;
 
-import game.utils.Timer;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.Assert.*;
 
+public class TestTimerBenchmark {
 
-public class TestTimer {
-
-    Timer timer = new Timer(10);
+    Timer timer;
 
     @BeforeEach
     public void setUpTimer(){
-        timer.start();
+        timer = new Timer(10);
     }
 
     @Test
@@ -38,7 +35,7 @@ public class TestTimer {
     }
 
     @Test
-    public void TestTimeIsUP(){
+    public void TestTimeIsUp(){
         timer.decreaseTime(10);
         assertEquals(true, timer.isTimeUp());
     }
@@ -46,6 +43,6 @@ public class TestTimer {
     @Test
     public void TestNewTimer(){
         timer.setCountdownTime(9);
-        assertTrue(Math.abs(9 - timer.getSecondsLeft()) == 1);
+        assertTrue(Math.abs(timer.getSecondsLeft()) == 9);
     }
 }
