@@ -190,10 +190,11 @@ public class BestScoresPanel extends JPanel {
      * Returns the top scores as a 2D array for display in the table.
      */
     protected String[][] getTopScores() {
+        final String DEFAULT_SCORE = "000";
         String[][] data = new String[5][2];
         for (int i = 0; i < 5; i++) {
             data[i][0] = String.valueOf(i + 1);
-            data[i][1] = (i < topScores.size()) ? String.valueOf(topScores.get(i)) : "000";
+            data[i][1] = (i < topScores.size()) ? String.valueOf(topScores.get(i)) : DEFAULT_SCORE;
         }
         return data;
     }
