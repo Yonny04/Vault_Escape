@@ -221,30 +221,47 @@ public class BestScoresPanel extends JPanel {
      * @param table the JTable to style
      */
     private void styleTable(JTable table) {
+        styleRowAndFont(table);
+        styleColumnWidths(table);
+        styleCenterRenderer(table);
+        styleHeaderStyle(table);
+        styleGrid(table);
+    }
+    
+    private void styleRowAndFont(JTable table) {
         table.setRowHeight(80);
         table.setFont(font.deriveFont(34f));
-
-        table.getColumnModel().getColumn(0).setPreferredWidth(100); 
+    }
+    
+    private void styleColumnWidths(JTable table) {
+        table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(200);
-
+    }
+    
+    private void styleCenterRenderer(JTable table) {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         centerRenderer.setForeground(Color.WHITE);
         table.setDefaultRenderer(Object.class, centerRenderer);
-
+    }
+    
+    private void styleHeaderStyle(JTable table) {
         JTableHeader header = table.getTableHeader();
+        
         header.setFont(font.deriveFont(26f));
         header.setBackground(Color.BLACK);
         header.setForeground(Color.WHITE);
-
+    
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer();
-        headerRenderer.setHorizontalAlignment(JLabel.CENTER); 
+        headerRenderer.setHorizontalAlignment(JLabel.CENTER);
         headerRenderer.setForeground(Color.WHITE);
         headerRenderer.setBackground(Color.BLACK);
-        
+
         table.getColumnModel().getColumn(0).setHeaderRenderer(headerRenderer);
         table.getColumnModel().getColumn(1).setHeaderRenderer(headerRenderer);
-
+    }
+    
+    private void styleGrid(JTable table) {
         table.setShowGrid(false);
         table.setBackground(Color.BLACK);
     }
