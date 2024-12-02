@@ -88,6 +88,17 @@ public class BestScoresPanel extends JPanel {
         return backButton;
     }
 
+
+    private String readFileContent(File file) throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String s;
+            while ((s = reader.readLine()) != null) {
+                content.append(s);
+            }
+        }
+        return content.toString().trim();
+    }
     /**
      * Loads the top scores from a JSON file and returns them as a list.
      *
@@ -96,15 +107,9 @@ public class BestScoresPanel extends JPanel {
     protected List<Integer> loadTopScores() {
         List<Integer> scores = new ArrayList<>();
         File file = new File(SCORES_FILE_PATH);
-
         if (file.exists()) {
-            try (FileReader reader = new FileReader(file)) {
-                StringBuilder content = new StringBuilder();
-                int c;
-                while ((c = reader.read()) != -1) {
-                    content.append((char) c);
-                }
-                String jsonContent = content.toString().trim();
+            try  {
+                String jsonContent = readFileContent(file);
                 if (jsonContent.startsWith("{") && jsonContent.endsWith("}")) {
                     int start = jsonContent.indexOf("[") + 1;
                     int end = jsonContent.indexOf("]");
