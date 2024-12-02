@@ -99,6 +99,22 @@ public class BestScoresPanel extends JPanel {
         }
         return content.toString().trim();
     }
+
+    private List<Integer> parseToJson(String content) {
+        List<Integer> scores = new ArrayList<>();
+        if (content.startsWith("{") && content.endsWith("}")) {
+            int start = content.indexOf("[") + 1;
+            int end = content.indexOf("]");
+            if (start > 0 && end > start) {
+                String[] scoreStrings = content.substring(start, end).split(",");
+                for (String scoreStr : scoreStrings) {
+                    scores.add(Integer.parseInt(scoreStr.trim()));
+                }
+            }
+        }
+        return scores;
+    }
+    
     /**
      * Loads the top scores from a JSON file and returns them as a list.
      *
@@ -110,16 +126,7 @@ public class BestScoresPanel extends JPanel {
         if (file.exists()) {
             try  {
                 String jsonContent = readFileContent(file);
-                if (jsonContent.startsWith("{") && jsonContent.endsWith("}")) {
-                    int start = jsonContent.indexOf("[") + 1;
-                    int end = jsonContent.indexOf("]");
-                    if (start > 0 && end > start) {
-                        String[] scoreStrings = jsonContent.substring(start, end).split(",");
-                        for (String scoreStr : scoreStrings) {
-                            scores.add(Integer.parseInt(scoreStr.trim()));
-                        }
-                    }
-                }
+                scores = parseToJson(jsonContent);
                 scores.sort(Collections.reverseOrder());
                 if (scores.size() > 5) {
                     scores = scores.subList(0, 5);
