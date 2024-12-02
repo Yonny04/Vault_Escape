@@ -180,10 +180,12 @@ public class BestScoresPanel extends JPanel {
     public void updateTable() {
         String[][] data = getTopScores();
         for (int i = 0; i < 5; i++) {
-            scoresTable.setValueAt(data[i][1], i, 1);
+            updateTableRow(i, data[i][1]);
         }
-        scoresTable.revalidate();
-        scoresTable.repaint();
+    }
+
+    private void updateTableRow(int row, String value) {
+        scoresTable.setValueAt(value, row, 1);
     }
 
     /**
