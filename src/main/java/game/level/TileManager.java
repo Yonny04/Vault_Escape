@@ -94,7 +94,10 @@ public class TileManager {
                     } else if (tileNumber == 0) emptyTiles.add(pos); // Available Vector2 Position
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error loading map data", e);
+        }
     }
 
     /**
@@ -243,26 +246,27 @@ public class TileManager {
      * @param g2 The Graphics2D object used for drawing.
      */
     private void drawBottom(Graphics2D g2) {
-        List<Enemy> enemies = gp.getEnemyGenerator().getEnemies();
-        List<Reward> rewards = gp.getRewardGenerator().getRewards();
-        Player player = gp.getPlayer();
+        drawWallTiles(g2, Layer.BOTTOM);
+        drawEntityShadows(g2);
+    }
+    
+    private void drawWallTiles(Graphics2D g2, Layer layer) {
         for (Tile wall : getScreenTiles()) {
-            if (wall.layer == Layer.BOTTOM) {
-                wall.draw(g2);
-            }
+            if (wall.layer == layer) wall.draw(g2);
         }
-        for (Reward reward : rewards) {
-            reward.drawShadow(g2);
-        }
-        for (Enemy enemy : enemies) {
-            if (enemy instanceof Camera) {
-                Camera camera = (Camera) enemy;
-                camera.getSpotlight().draw(g2);
-            }
+    }
+    
+    private void drawEntityShadows(Graphics2D g2) {
+        for (Enemy enemy : gp.getEnemyGenerator().getEnemies()) {
+            if (enemy instanceof Camera) ((Camera) enemy).getSpotlight().draw(g2);
             enemy.drawShadow(g2);
         }
-        player.drawShadow(g2);
+        for (Reward reward : gp.getRewardGenerator().getRewards()) {
+            reward.drawShadow(g2);
+        }
+        gp.getPlayer().drawShadow(g2);
     }
+    
 
     /**
      * Draws tiles and entities in a specific order to ensure correct visual layering.

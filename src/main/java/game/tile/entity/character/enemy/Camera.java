@@ -9,14 +9,26 @@ import game.utils.*;
 import java.awt.*;
 import java.util.Random;
 
+
+
+
 /**
  * Represents a Camera enemy entity in the game, which detects the player within a specified range.
  * When the player enters the detection range, the camera can trigger a detection event, causing
  * specific actions in the game, such as speeding up gameplay.
  */
 public class Camera extends Enemy {
+    // constants
+    private static final int DEFAULT_DETECTION_RANGE = 96;
+    private static final double SPOTLIGHT_TIMER_DURATION = 1.25;
+    private static final int SPOTLIGHT_WIDTH = 128;
+    private static final int SPOTLIGHT_HEIGHT = 72;
+    private static final int SPOTLIGHT_OFFSET_X = 32;
+    private static final int SPOTLIGHT_OFFSET_Y = 16;
+    private static final int CAMERA_SPEED = 3;
+    
     private Entity spotlight;
-    private Timer spotlightTimer = new Timer(1.25);
+    private Timer spotlightTimer = new Timer(SPOTLIGHT_TIMER_DURATION);
     private boolean spotlightOn = false;
 
     /**
@@ -27,7 +39,7 @@ public class Camera extends Enemy {
      */
     public Camera(GamePanel gp, Vector start) {
         super(gp, start);
-        this.range = 96;
+        this.range = DEFAULT_DETECTION_RANGE;
         
         shadow.hide();
         attackLabel.setColor(ColorPalette.PURPLE);
@@ -35,7 +47,7 @@ public class Camera extends Enemy {
         animationPlayer.setFrame(0);
         setLayer(Layer.TOP);
         setupSpotlight();
-        setSpeed(3);
+        setSpeed(CAMERA_SPEED);
     }
     
     /**
@@ -47,8 +59,8 @@ public class Camera extends Enemy {
         spotlight.getShadow().hide();
         spotlight.setLayer(Layer.ORDERED);
         spotlight.setImage(ResourceLoader.loadSpritesheet("camera_spotlight"));
-        spotlight.setSize(new Vector(32,16).scale(Vector.SCALE));
-        spotlight.setHitbox(new Rect(0,-16,128,72));
+        spotlight.setSize(new Vector(SPOTLIGHT_OFFSET_X ,SPOTLIGHT_OFFSET_Y).scale(Vector.SCALE));
+        spotlight.setHitbox(new Rect(0,-16,SPOTLIGHT_WIDTH ,SPOTLIGHT_HEIGHT));
         spotlight.hide();
         moveSpotlight();
     }
