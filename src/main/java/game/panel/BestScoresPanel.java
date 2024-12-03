@@ -88,6 +88,33 @@ public class BestScoresPanel extends JPanel {
         return backButton;
     }
 
+
+    private String readFileContent(File file) throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String s;
+            while ((s = reader.readLine()) != null) {
+                content.append(s);
+            }
+        }
+        return content.toString().trim();
+    }
+
+    private List<Integer> parseToJson(String content) {
+        List<Integer> scores = new ArrayList<>();
+        if (content.startsWith("{") && content.endsWith("}")) {
+            int start = content.indexOf("[") + 1;
+            int end = content.indexOf("]");
+            if (start > 0 && end > start) {
+                String[] scoreStrings = content.substring(start, end).split(",");
+                for (String scoreStr : scoreStrings) {
+                    scores.add(Integer.parseInt(scoreStr.trim()));
+                }
+            }
+        }
+        return scores;
+    }
+    
     /**
      * Loads the top scores from a JSON file and returns them as a list.
      *
@@ -96,25 +123,10 @@ public class BestScoresPanel extends JPanel {
     protected List<Integer> loadTopScores() {
         List<Integer> scores = new ArrayList<>();
         File file = new File(SCORES_FILE_PATH);
-
         if (file.exists()) {
-            try (FileReader reader = new FileReader(file)) {
-                StringBuilder content = new StringBuilder();
-                int c;
-                while ((c = reader.read()) != -1) {
-                    content.append((char) c);
-                }
-                String jsonContent = content.toString().trim();
-                if (jsonContent.startsWith("{") && jsonContent.endsWith("}")) {
-                    int start = jsonContent.indexOf("[") + 1;
-                    int end = jsonContent.indexOf("]");
-                    if (start > 0 && end > start) {
-                        String[] scoreStrings = jsonContent.substring(start, end).split(",");
-                        for (String scoreStr : scoreStrings) {
-                            scores.add(Integer.parseInt(scoreStr.trim()));
-                        }
-                    }
-                }
+            try  {
+                String jsonContent = readFileContent(file);
+                scores = parseToJson(jsonContent);
                 scores.sort(Collections.reverseOrder());
                 if (scores.size() > 5) {
                     scores = scores.subList(0, 5);
@@ -168,20 +180,23 @@ public class BestScoresPanel extends JPanel {
     public void updateTable() {
         String[][] data = getTopScores();
         for (int i = 0; i < 5; i++) {
-            scoresTable.setValueAt(data[i][1], i, 1);
+            updateTableRow(i, data[i][1]);
         }
-        scoresTable.revalidate();
-        scoresTable.repaint();
+    }
+
+    private void updateTableRow(int row, String value) {
+        scoresTable.setValueAt(value, row, 1);
     }
 
     /**
      * Returns the top scores as a 2D array for display in the table.
      */
     protected String[][] getTopScores() {
+        final String DEFAULT_SCORE = "000";
         String[][] data = new String[5][2];
         for (int i = 0; i < 5; i++) {
             data[i][0] = String.valueOf(i + 1);
-            data[i][1] = (i < topScores.size()) ? String.valueOf(topScores.get(i)) : "000";
+            data[i][1] = (i < topScores.size()) ? String.valueOf(topScores.get(i)) : DEFAULT_SCORE;
         }
         return data;
     }
@@ -206,30 +221,47 @@ public class BestScoresPanel extends JPanel {
      * @param table the JTable to style
      */
     private void styleTable(JTable table) {
+        styleRowAndFont(table);
+        styleColumnWidths(table);
+        styleCenterRenderer(table);
+        styleHeaderStyle(table);
+        styleGrid(table);
+    }
+    
+    private void styleRowAndFont(JTable table) {
         table.setRowHeight(80);
         table.setFont(font.deriveFont(34f));
-
-        table.getColumnModel().getColumn(0).setPreferredWidth(100); 
+    }
+    
+    private void styleColumnWidths(JTable table) {
+        table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(200);
-
+    }
+    
+    private void styleCenterRenderer(JTable table) {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         centerRenderer.setForeground(Color.WHITE);
         table.setDefaultRenderer(Object.class, centerRenderer);
-
+    }
+    
+    private void styleHeaderStyle(JTable table) {
         JTableHeader header = table.getTableHeader();
+        
         header.setFont(font.deriveFont(26f));
         header.setBackground(Color.BLACK);
         header.setForeground(Color.WHITE);
-
+    
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer();
-        headerRenderer.setHorizontalAlignment(JLabel.CENTER); 
+        headerRenderer.setHorizontalAlignment(JLabel.CENTER);
         headerRenderer.setForeground(Color.WHITE);
         headerRenderer.setBackground(Color.BLACK);
-        
+
         table.getColumnModel().getColumn(0).setHeaderRenderer(headerRenderer);
         table.getColumnModel().getColumn(1).setHeaderRenderer(headerRenderer);
-
+    }
+    
+    private void styleGrid(JTable table) {
         table.setShowGrid(false);
         table.setBackground(Color.BLACK);
     }
