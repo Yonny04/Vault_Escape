@@ -43,6 +43,9 @@ public class BestScoresPanel extends JPanel {
 
         JButton backButton = createBackButton(backListener);
         add(backButton, BorderLayout.SOUTH);
+
+        JButton resetButton = createResetButton();
+        add(resetButton, BorderLayout.EAST);
     }
 
     public static void setTestMode(boolean testMode) {
@@ -54,6 +57,15 @@ public class BestScoresPanel extends JPanel {
         if (!isTestMode) {
             JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private JButton createResetButton() {
+        JButton resetButton = new JButton("RESET SCORES");
+        styleButton(resetButton);
+        resetButton.addActionListener(e -> {
+            resetScores();
+        });
+        return resetButton;
     }
     
 
@@ -184,6 +196,12 @@ public class BestScoresPanel extends JPanel {
         saveTopScores();
         updateTable();
     }
+
+    public void resetScores() {
+        topScores.clear();
+        saveTopScores();
+        updateTable();
+    }    
 
     /**
      * Updates the JTable data to reflect the latest top scores.
