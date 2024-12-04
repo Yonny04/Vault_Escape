@@ -121,21 +121,19 @@ public class BestScoresPanel extends JPanel {
      * @return a list of the top 5 scores
      */
     protected List<Integer> loadTopScores() {
-        List<Integer> scores = new ArrayList<>();
-        File file = new File(SCORES_FILE_PATH);
-        if (file.exists()) {
-            try  {
-                String jsonContent = readFileContent(file);
-                scores = parseToJson(jsonContent);
-                scores.sort(Collections.reverseOrder());
-                if (scores.size() > 5) {
-                    scores = scores.subList(0, 5);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            String jsonContent = readFileContent(new File(SCORES_FILE_PATH));
+            List<Integer> scores = parseToJson(jsonContent);
+            return processTopScores(scores);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-        return scores;
+    }
+
+    private List<Integer> processTopScores(List<Integer> scores) {
+        scores.sort(Collections.reverseOrder());
+        return scores.size() > 5 ? scores.subList(0, 5) : scores;
     }
 
     /**
