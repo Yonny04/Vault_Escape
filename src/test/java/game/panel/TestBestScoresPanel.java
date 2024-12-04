@@ -12,6 +12,7 @@ class TestBestScoresPanel {
 
     @BeforeEach
     void setUp() {
+        BestScoresPanel.setTestMode(true);
         BestScoresPanel.SCORES_FILE_PATH = TEST_FILE_PATH;
         bestScoresPanel = new BestScoresPanel(e -> {});
         bestScoresPanel.topScores = new ArrayList<>(); 

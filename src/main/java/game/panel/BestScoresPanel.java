@@ -21,6 +21,7 @@ public class BestScoresPanel extends JPanel {
     private Font font;
     private JTable scoresTable;
     protected List<Integer> topScores;
+    private static boolean isTestMode = false;
 
     /**
      * Constructs the BestScoresPanel with a specified action listener for the back button.
@@ -43,6 +44,18 @@ public class BestScoresPanel extends JPanel {
         JButton backButton = createBackButton(backListener);
         add(backButton, BorderLayout.SOUTH);
     }
+
+    public static void setTestMode(boolean testMode) {
+        isTestMode = testMode;
+    }
+
+    private void handleError(String message, Exception e) {
+        e.printStackTrace();
+        if (!isTestMode) {
+            JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
 
     /**
      * Creates the title
@@ -126,7 +139,7 @@ public class BestScoresPanel extends JPanel {
             List<Integer> scores = parseToJson(jsonContent);
             return processTopScores(scores);
         } catch (Exception e) {
-            e.printStackTrace();
+            handleError("failed to load scores. default to empty list is being proceed", e);
             return new ArrayList<>();
         }
     }
@@ -153,7 +166,7 @@ public class BestScoresPanel extends JPanel {
         try (FileWriter writer = new FileWriter(SCORES_FILE_PATH)) {
             writer.write(json.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            handleError("failed to save scores", e);
         }
     }
 
