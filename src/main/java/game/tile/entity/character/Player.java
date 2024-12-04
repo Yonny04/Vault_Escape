@@ -79,9 +79,9 @@ public class Player extends Character {
         // Handle movement input from the key detector
         if (keyh.up || keyh.left || keyh.down || keyh.right) {
             if (keyh.left) move(Direction.LEFT);
-            else if (keyh.right) move(Direction.RIGHT);
+            if (keyh.right) move(Direction.RIGHT);
             if (keyh.up) move(Direction.UP);
-            else if (keyh.down) move(Direction.DOWN);
+            if (keyh.down) move(Direction.DOWN);
 
             // Footstep sound effect
             int oldFrame = getAnimationPlayer().getFrame();

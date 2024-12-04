@@ -76,25 +76,39 @@ public class Dog extends Enemy {
      * Adjusts the position based on obstacles and checks for collisions.
      */
     private void chasePlayer() {
-        
         Vector player = gp.getPlayer().getRect();
         Vector delta = player.subtract(getPosition());
-
-        
-        if (delta.x > 1) move(Direction.RIGHT);
-        else if (delta.x < 1) move(Direction.LEFT);
-        if (delta.y > 1) move(Direction.DOWN);
-        else if (delta.y < 1) move(Direction.UP);
-
-        if (Math.abs(delta.x) > Math.abs(delta.y)) {
-            if (delta.x > 0) setDirection(Direction.RIGHT);
-            else setDirection(Direction.LEFT);
-        } else {
-            if (delta.y > 0) setDirection(Direction.DOWN);
-            else if (delta.y < 0) setDirection(Direction.UP);   
-        }
+    
+        moveTowards(delta);
+        updateDirection(delta);
         getAnimationPlayer().playAnimation(direction.name());
     }
+    
+    /**
+     *  Adjusts the position based on obstacles and checks for collisions.
+     *  @param delta
+     */
+    private void moveTowards(Vector delta) {
+        if (delta.x > 1) move(Direction.RIGHT);
+        else if (delta.x < -1) move(Direction.LEFT);
+        if (delta.y > 1) move(Direction.DOWN);
+        else if (delta.y < -1) move(Direction.UP);
+    }
+    
+
+    /**
+     * Updates the direction of the Dog
+     * @param delta
+     */
+
+    private void updateDirection(Vector delta) {
+        if (Math.abs(delta.x) > Math.abs(delta.y)) {
+            direction = (delta.x > 0) ? Direction.RIGHT : Direction.LEFT;
+        } else {
+            direction = (delta.y > 0) ? Direction.DOWN : Direction.UP;
+        }
+    }
+    
 
     /**
      * Draws the dog entity, including a semi-transparent oval indicating its chase range.
