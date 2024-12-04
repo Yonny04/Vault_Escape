@@ -38,39 +38,44 @@ public class Level{
      */
     private void loadLevel() {
         String path = String.format("/level/%d.level", levelNumber);
-
-        try (BufferedReader reader = ResourceLoader.loadFile(path)){
-            // Valuable Count
-            VALUABLES_COUNT = Integer.parseInt(reader.readLine());
-
-            //Time Limit
-            TIME_LIMIT = Double.parseDouble(reader.readLine());
-
-            // For Reading Enemy Count
-            String[] enemiesString = reader.readLine().split(" ");
-            
-            GUARDS_COUNT = Integer.parseInt(enemiesString[0]);
-            DOGS_COUNT = Integer.parseInt(enemiesString[1]);
-            CAMERA_COUNT = Integer.parseInt(enemiesString[2]);
-            LASER_COUNT = Integer.parseInt(enemiesString[3]);
-
-            String[] mapString = reader.readLine().split(" ");
-            Vector mapSize = new Vector(Integer.parseInt(mapString[0]), Integer.parseInt(mapString[1]));
-            gp.getTileManager().loadMap(reader, mapSize.x,mapSize.y);
-            // reader.close();
-
-        } catch (IOException e) {
-            System.err.print("Failed to Load Map at " + path);
-            e.printStackTrace();
-            //added more exceptions to catch
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid number format at " + path);
-            e.printStackTrace();
-            //added more exceptions to catch
+        try (BufferedReader reader = ResourceLoader.loadFile(path)) {
+            parseLevelData(reader);
+            loadMap(reader);
+        } catch (IOException | NumberFormatException e) {
+            handleLoadingError(e, path);
         } catch (Exception e) {
-            System.err.println("An unexpected error occurred while loading level: " + path);
-            e.printStackTrace();
+            handleUnexpectedError(e, path);
         }
     }
-    
+
+    private void parseLevelData(BufferedReader reader) throws IOException, NumberFormatException {
+        // Parsing valuable count
+        VALUABLES_COUNT = Integer.parseInt(reader.readLine());
+
+        // Parsing time limit
+        TIME_LIMIT = Double.parseDouble(reader.readLine());
+
+        // Parsing enemy counts
+        String[] enemiesString = reader.readLine().split(" ");
+        GUARDS_COUNT = Integer.parseInt(enemiesString[0]);
+        DOGS_COUNT = Integer.parseInt(enemiesString[1]);
+        CAMERA_COUNT = Integer.parseInt(enemiesString[2]);
+        LASER_COUNT = Integer.parseInt(enemiesString[3]);
+    }
+
+    private void loadMap(BufferedReader reader) throws IOException {
+        String[] mapString = reader.readLine().split(" ");
+        Vector mapSize = new Vector(Integer.parseInt(mapString[0]), Integer.parseInt(mapString[1]));
+        gp.getTileManager().loadMap(reader, mapSize.x, mapSize.y);
+    }
+
+    private void handleLoadingError(Exception e, String path) {
+        System.err.println("Error loading level at " + path);
+        e.printStackTrace();
+    }
+
+    private void handleUnexpectedError(Exception e, String path) {
+        System.err.println("An unexpected error occurred while loading level: " + path);
+        e.printStackTrace();
+    }
 }
