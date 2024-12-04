@@ -57,17 +57,20 @@ public class Level{
             String[] mapString = reader.readLine().split(" ");
             Vector mapSize = new Vector(Integer.parseInt(mapString[0]), Integer.parseInt(mapString[1]));
             gp.getTileManager().loadMap(reader, mapSize.x,mapSize.y);
-            reader.close();
+            // reader.close();
 
         } catch (IOException e) {
             System.err.print("Failed to Load Map at " + path);
             e.printStackTrace();
+            //added more exceptions to catch
         } catch (NumberFormatException e) {
             System.err.println("Invalid number format at " + path);
             e.printStackTrace();
+            //added more exceptions to catch
         } catch (Exception e) {
             System.err.println("An unexpected error occurred while loading level: " + path);
             e.printStackTrace();
         }
     }
+    
 }

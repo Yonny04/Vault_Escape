@@ -26,6 +26,8 @@ public class Camera extends Enemy {
     private static final int SPOTLIGHT_OFFSET_X = 32;
     private static final int SPOTLIGHT_OFFSET_Y = 16;
     private static final int CAMERA_SPEED = 3;
+    private static final double SCALE_FACTOR = 0.5;
+    private static final int ENEMY_SPEED = 1;
     
     private Entity spotlight;
     private Timer spotlightTimer = new Timer(SPOTLIGHT_TIMER_DURATION);
@@ -68,7 +70,7 @@ public class Camera extends Enemy {
     private void moveSpotlight() {
         Random random = new Random();
         Vector next = new Vector(random.nextInt(-3,3),random.nextInt(0,3)+2).toGlobal();
-        next = next.add(spotlight.getSize().scale(0.5));
+        next = next.add(spotlight.getSize().scale(SCALE_FACTOR));
         spotlight.setPosition(rect.add(next));
     }
 
@@ -128,7 +130,7 @@ public class Camera extends Enemy {
         gp.getSFX().play("alarm");
         spotlightTimer.start();
         getAnimationPlayer().setFrame(2,direction.ordinal());
-        gp.getEnemyGenerator().addEnemySpeed(1);
+        gp.getEnemyGenerator().addEnemySpeed(ENEMY_SPEED);
         super.attack();
     }
 }

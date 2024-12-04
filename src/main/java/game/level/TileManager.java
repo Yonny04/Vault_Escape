@@ -273,7 +273,7 @@ public class TileManager {
      * This includes drawing enemies, rewards, ordered wall tiles, the player, and the exit.
      *
      * @param g2 The Graphics2D object used for drawing.
-     */
+     */ 
     public void drawOrdered(Graphics2D g2) {
         List<Enemy> enemies = gp.getEnemyGenerator().getEnemies();
         List<Reward> rewards = gp.getRewardGenerator().getRewards();
