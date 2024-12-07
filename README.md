@@ -1,6 +1,9 @@
 ## CMPT276 Project Group 12
 # Vault Escape
 
+## Video Demonstration
+https://youtu.be/UI2wqSLGMgY
+
 ## Instructions
 - Prerequisites: Ensure you have Maven `3.9.9` and JDK `17` installed and properly configured.
 - Build: Clone the repository. Then, open the repo folder in a terminal and run `mvn clean install`.
