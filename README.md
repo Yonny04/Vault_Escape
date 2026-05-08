@@ -2,7 +2,7 @@
 # Vault Escape
 
 ## Video Demonstration
-https://youtu.be/UI2wqSLGMgY
+[Watch the Gameplay Demonstration HERE!!!](https://www.youtube.com/watch?v=UI2wqSLGMgY&loop=1&playlist=UI2wqSLGMgY)
 
 ## Instructions
 - Prerequisites: Ensure you have Maven `3.9.9` and JDK `17` installed and properly configured.
